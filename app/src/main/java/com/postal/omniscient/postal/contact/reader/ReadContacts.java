@@ -14,6 +14,10 @@ public class ReadContacts {
     private static String Msg = "MyMsg";
     private int x=0,y=21;
 
+    public ReadContacts(ContentResolver contentResolver) {
+        this.contentResolver = contentResolver;
+    }
+
     public int getX() {
         return x;
     }
@@ -22,9 +26,6 @@ public class ReadContacts {
         return y;
     }
 
-    public void setContentResolver(ContentResolver contentResolver) {
-        this.contentResolver = contentResolver;
-    }
 
     public String[][] readContacts() {
 
@@ -46,7 +47,7 @@ public class ReadContacts {
                         .getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                 if (Integer.parseInt(cur.getString(cur.getColumnIndex
                         (ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                    Log.i(Msg,": name : " + name + ", ID : " + id);
+//                    Log.i(Msg,": name : " + name + ", ID : " + id);
 
                     phone_contacts[i][0] = name;
 
@@ -58,7 +59,7 @@ public class ReadContacts {
                     for (int k=1; pCur.moveToNext(); k++) {
                             String phone = pCur.getString(
                                     pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        Log.i(Msg,": phone : " + phone);
+//                        Log.i(Msg,": phone : " + phone);
                             phone_contacts[i][k] = phone;
                     }
                     pCur.close();
@@ -169,7 +170,6 @@ public class ReadContacts {
                 }
             }
             cur.close();
-
         }
 
         return phone_contacts;
