@@ -40,7 +40,7 @@ public class ReadSms {
 
 //       Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
 //               null, null, null, null);
-//
+//some cheng
 //
 //
 //           while (cur.moveToNext()) {
