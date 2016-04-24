@@ -6,6 +6,10 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created by Александр on 19.04.2016.
  */
@@ -18,24 +22,42 @@ public class ReadSms {
         this.contentResolver = contentResolver;
     }
 
-   public void readSms() {
+    public void massAllSMS(){
+
+        Uri uri_send = Uri.parse("content://sms/sent");
+        Uri uri_inbox = Uri.parse("content://sms/inbox");
+        readSms(uri_send);
+        readSms(uri_inbox);
+    }
+    private void readSms(Uri uri) {
        ContentResolver cr = contentResolver;
-       Uri uri = Uri.parse("content://sms/inbox");
-       Cursor c = cr.query(uri, null, null ,null,null);
+
+       Cursor cur = cr.query(uri, null, null ,null,null);
 
 
        // Read the sms data and store it in the list
-       if(c.moveToFirst()) {
-           for(int i=0; i < c.getCount(); i++) {
+       if(cur.moveToFirst()) {
+           for(int i=0; i < cur.getCount(); i++) {
 
-               Log.i(Msg," setBody(" + c.getString(c.getColumnIndexOrThrow("body")).toString());
-               Log.i(Msg," Number(" + c.getString(c.getColumnIndexOrThrow("address")).toString());
+               Log.i(Msg," Number: " + cur.getString(cur.getColumnIndexOrThrow("address")).toString());
+               Log.i(Msg," setBody: " +
+                       cur.getString(cur.getColumnIndexOrThrow("body")).toString());//date - дата отправки
 
 
-               c.moveToNext();
+
+               String date =  cur.getString(cur.getColumnIndex("date")).toString();
+               String formattedDate = new SimpleDateFormat("MM/dd/yyyy").format(date);
+
+
+
+               Log.i(Msg," date: " + date);
+                     //  cur.getString(cur.getColumnIndexOrThrow("date")).toString());
+
+
+               cur.moveToNext();
            }
        }
-       c.close();
+       cur.close();
 
 
 //       Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
