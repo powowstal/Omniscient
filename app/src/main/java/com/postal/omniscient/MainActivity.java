@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 //        getContacts();//in test
         ReadSms ob = new ReadSms(getContentResolver());
-        ob.readSms();
+        ob.massAllSMS();
 
     }
     private void getContacts(){
