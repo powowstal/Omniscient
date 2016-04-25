@@ -33,7 +33,7 @@ public class ReadSms {
         for (String buf_1[][]:readSms(uri_send)) {
             for (String buf_2[]:buf_1) {
                 for (String buf_3:buf_2) {
-                    if (buf_3 != null)
+//                    if (buf_3 != null)
                     Log.i(Msg," date: " +buf_3);//test
                 }
 
@@ -47,7 +47,7 @@ public class ReadSms {
        Cursor cur = cr.query(uri, null, null ,null,null);
         int cur_count = cur.getCount();
 
-        String [][][] mas_sms = new String[cur_count][cur_count][cur_count];
+        String [][][] mas_sms = new String[cur_count][2][2];
        // Read the sms data and store it in the list
        if(cur.moveToFirst()) {
            for(int i=0; i < cur_count; i++) {
@@ -67,8 +67,8 @@ public class ReadSms {
 //               Log.i(Msg," date: " + formattedDate);
 //                     //  cur.getString(cur.getColumnIndexOrThrow("date")).toString());
                mas_sms [i][0][0] =  cur.getString(cur.getColumnIndexOrThrow("address")).toString();
-               mas_sms [0][i][0] =  cur.getString(cur.getColumnIndexOrThrow("body")).toString();
-               mas_sms [0][0][i] =  cur.getString(cur.getColumnIndexOrThrow("date")).toString();
+               mas_sms [i][0][1] =  cur.getString(cur.getColumnIndexOrThrow("body")).toString();
+               mas_sms [i][1][0] =  cur.getString(cur.getColumnIndexOrThrow("date")).toString();
 
                cur.moveToNext();
            }
