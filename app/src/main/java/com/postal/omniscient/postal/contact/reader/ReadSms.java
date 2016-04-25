@@ -34,7 +34,7 @@ public class ReadSms {
             for (String buf_2[]:buf_1) {
                 for (String buf_3:buf_2) {
                     if (buf_3 != null)
-                    Log.i(Msg," date: " +buf_3);//l
+                    Log.i(Msg," date: " +buf_3);
                 }
 
             }
