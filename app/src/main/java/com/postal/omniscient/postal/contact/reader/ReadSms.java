@@ -4,12 +4,17 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.provider.Telephony;
 import android.util.Log;
 
 import java.sql.SQLOutput;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Александр on 19.04.2016.
@@ -30,28 +35,67 @@ public class ReadSms {
 //        readSms(uri_send);
 //        readSms(uri_inbox);
 
-        for (String buf_1[][]:readSms(uri_send)) {
-            for (String buf_2[]:buf_1) {
-                for (String buf_3:buf_2) {
-//                    if (buf_3 != null)
-                    Log.i(Msg," date: " +buf_3);//test
-                }
+        List<SmsFilds> sent_buf = new ArrayList<SmsFilds>(readSms(uri_send));
+//        sent_buf.addAll(readSms(uri_send));
+        sent_buf.addAll(readSms(uri_inbox));
 
+//        for (int i = 0; i < sent_buf.length; i++) {
+//            for (String buf_2:buf_1) {
+//                //                    if (buf_3 != null)
+//                Log.i(Msg," date: " +buf_2);//test
+//            }
+//
+//        }
+
+//        for (String buf_1[]:readSms(uri_send)) {
+//            for (String buf_2:buf_1) {
+//
+////                    if (buf_3 != null)
+//                Log.i(Msg, " date: " + buf_2);//test
+//
+//            }
+//            }
+
+        Collections.sort(sent_buf, new Comparator<SmsFilds>() {
+            @Override
+            public int compare(SmsFilds fruit2, SmsFilds fruit1)
+            {
+
+                return  fruit1.getAddress().compareTo(fruit2.getAddress());
             }
+        });
 
+
+        for (SmsFilds buf:sent_buf) {
+            Log.i(Msg, " adress: " + buf.getAddress());
+            Log.i(Msg, " msg: " + buf.getMsg());
+            Long buf_data= Long.parseLong(buf.getTime());
+            Log.i(Msg, " date: " +  new SimpleDateFormat("dd/MM/yyyy HH:mm").format(buf_data));
         }
+
+
+
+
+
     }
-    private String[][][] readSms(Uri uri) {
+    private List<SmsFilds> readSms(Uri uri) {
        ContentResolver cr = contentResolver;
 
        Cursor cur = cr.query(uri, null, null ,null,null);
         int cur_count = cur.getCount();
-
-        String [][][] mas_sms = new String[cur_count][2][2];
+//        выводим имена всех столбцов таблицы
+//        for(String str:
+//        cur.getColumnNames()){
+//            Log.i(Msg," date: " +str);
+//        }
+        String [][] mas_sms = new String[cur_count][3];
+        List<SmsFilds> sms = new ArrayList<SmsFilds>();
+        SmsFilds sms_ob = new SmsFilds();
        // Read the sms data and store it in the list
        if(cur.moveToFirst()) {
            for(int i=0; i < cur_count; i++) {
 
+               sms_ob = new SmsFilds();
 //               Log.i(Msg," Number: " + cur.getString(cur.getColumnIndexOrThrow("address")).toString());
 //               Log.i(Msg," setBody: " +
 //                       cur.getString(cur.getColumnIndexOrThrow("body")).toString());//date - дата отправки
@@ -66,9 +110,15 @@ public class ReadSms {
 //
 //               Log.i(Msg," date: " + formattedDate);
 //                     //  cur.getString(cur.getColumnIndexOrThrow("date")).toString());
-               mas_sms [i][0][0] =  cur.getString(cur.getColumnIndexOrThrow("address")).toString();
-               mas_sms [i][0][1] =  cur.getString(cur.getColumnIndexOrThrow("body")).toString();
-               mas_sms [i][1][0] =  cur.getString(cur.getColumnIndexOrThrow("date")).toString();
+//               mas_sms [i][0] =  cur.getString(cur.getColumnIndexOrThrow("address")).toString();
+//               mas_sms [i][1] =  cur.getString(cur.getColumnIndexOrThrow("body")).toString();
+//               mas_sms [i][2] =  cur.getString(cur.getColumnIndexOrThrow("date")).toString();
+
+
+               sms_ob.setAddress(cur.getString(cur.getColumnIndexOrThrow("address")).toString());
+               sms_ob.setMsg(cur.getString(cur.getColumnIndexOrThrow("body")).toString());
+               sms_ob.setTime(cur.getString(cur.getColumnIndexOrThrow("date")).toString());
+               sms.add(sms_ob);
 
                cur.moveToNext();
            }
@@ -105,7 +155,7 @@ public class ReadSms {
 //           }
 //       cur.close();
 
-        return mas_sms;
+        return sms;
                }
 
 }
