@@ -56,23 +56,56 @@ public class ReadSms {
 //            }
 //            }
 
+
         Collections.sort(sent_buf, new Comparator<SmsFilds>() {
             @Override
-            public int compare(SmsFilds fruit2, SmsFilds fruit1)
+            public int compare(SmsFilds id1, SmsFilds id2)
             {
 
-                return  fruit1.getAddress().compareTo(fruit2.getAddress());
+                int c;
+              //  c = id1.getId().toString().compareTo(id2.getId().toString());
+
+                    c = id1.getId().toString().compareTo(id2.getId().toString());
+                return c;
             }
         });
 
 
+        List<SmsFilds> sent_buf_buf = new ArrayList<SmsFilds>();
+        String sort;
+//        for (SmsFilds buf:sent_buf) {
+//
+//            sort = buf.getAddress();
+//
+//            for (SmsFilds buf1:sent_buf) {
+//                if(buf.getAddress().equals(buf1.getAddress()) &&
+//                       ! buf.getId().equals(buf1.getId())){
+//
+//                    sent_buf_buf.;
+//
+//                }
+//            }
+//
+//        }
+//        Collections.sort(sent_buf, new Comparator<SmsFilds>() {
+//            @Override
+//            public int compare(SmsFilds fruit2, SmsFilds fruit1)
+//            {
+//
+//                return  fruit2.getAddress().toString().compareTo(fruit1.getAddress().toString());
+//            }
+//        });
+
+
         for (SmsFilds buf:sent_buf) {
+            Log.i(Msg, " id: " + buf.getId());
             Log.i(Msg, " adress: " + buf.getAddress());
             Log.i(Msg, " msg: " + buf.getMsg());
-            Long buf_data= Long.parseLong(buf.getTime());
-            Log.i(Msg, " date: " +  new SimpleDateFormat("dd/MM/yyyy HH:mm").format(buf_data));
-        }
 
+            Long buf_data= Long.parseLong(buf.getTime());
+            Log.i(Msg, " date: " + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(buf_data));
+        }
+        Log.i(Msg, " lol: " +sent_buf.size());
 
 
 
@@ -81,7 +114,7 @@ public class ReadSms {
     private List<SmsFilds> readSms(Uri uri) {
        ContentResolver cr = contentResolver;
 
-       Cursor cur = cr.query(uri, null, null ,null,null);
+       Cursor cur = cr.query(uri, null, null ,null, null);
         int cur_count = cur.getCount();
 //        выводим имена всех столбцов таблицы
 //        for(String str:
@@ -118,6 +151,7 @@ public class ReadSms {
                sms_ob.setAddress(cur.getString(cur.getColumnIndexOrThrow("address")).toString());
                sms_ob.setMsg(cur.getString(cur.getColumnIndexOrThrow("body")).toString());
                sms_ob.setTime(cur.getString(cur.getColumnIndexOrThrow("date")).toString());
+               sms_ob.setId(cur.getString(cur.getColumnIndexOrThrow("_id")));
                sms.add(sms_ob);
 
                cur.moveToNext();
