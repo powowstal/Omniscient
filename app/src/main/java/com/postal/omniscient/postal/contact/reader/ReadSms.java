@@ -7,6 +7,8 @@ import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.util.Log;
 
+import com.postal.omniscient.postal.sort.Comp;
+
 import java.sql.SQLOutput;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
  * Created by Александр on 19.04.2016.
@@ -57,18 +60,18 @@ public class ReadSms {
 //            }
 
 
-        Collections.sort(sent_buf, new Comparator<SmsFilds>() {
-            @Override
-            public int compare(SmsFilds id1, SmsFilds id2)
-            {
-
-                int c;
-              //  c = id1.getId().toString().compareTo(id2.getId().toString());
-
-                    c = id1.getId().toString().compareTo(id2.getId().toString());
-                return c;
-            }
-        });
+//        Collections.sort(sent_buf, new Comparator<SmsFilds>() {
+//            @Override
+//            public int compare(SmsFilds id1, SmsFilds id2)
+//            {
+//
+//                int c;
+//              //  c = id1.getId().toString().compareTo(id2.getId().toString());
+//
+//                    c = id2.getTime().compareTo(id1.getTime());
+//                return c;
+//            }
+//        });
 
 
         List<SmsFilds> sent_buf_buf = new ArrayList<SmsFilds>();
@@ -97,15 +100,20 @@ public class ReadSms {
 //        });
 
 
-        for (SmsFilds buf:sent_buf) {
-            Log.i(Msg, " id: " + buf.getId());
-            Log.i(Msg, " adress: " + buf.getAddress());
-            Log.i(Msg, " msg: " + buf.getMsg());
 
-            Long buf_data= Long.parseLong(buf.getTime());
-            Log.i(Msg, " date: " + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(buf_data));
-        }
-        Log.i(Msg, " lol: " +sent_buf.size());
+
+
+//        for (SmsFilds buf:sent_buf) {
+//            Comp n = new Comp(buf.getAddress(),buf.getTime());
+//            Log.i(Msg, " id: " + buf.getId());
+//            Log.i(Msg, " adress: " + buf.getAddress());
+//            Log.i(Msg, " msg: " + buf.getMsg());
+//
+//            Long buf_data = Long.parseLong(buf.getTime());
+//            Log.i(Msg, " date: " + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(buf_data));
+//
+//        }
+     //   Log.i(Msg, " lol: " +sent_buf.size());
 
 
 
@@ -191,5 +199,21 @@ public class ReadSms {
 
         return sms;
                }
+
+//    @Override
+//    public int compareTo(Object obj) {
+//        SmsFilds sms = (SmsFilds) obj;
+//
+//        int result = sms.getId().compareTo(sms.getTime());
+//        if(result != 0) {
+//            return result;
+//        }
+//
+//        result = number - entry.number;
+//        if(result != 0) {
+//            return (int) result / Math.abs( result );
+//        }
+//        return 0;
+//    }
 
 }
