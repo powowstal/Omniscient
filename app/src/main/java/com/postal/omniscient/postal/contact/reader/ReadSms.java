@@ -38,9 +38,12 @@ public class ReadSms {
 //        readSms(uri_send);
 //        readSms(uri_inbox);
 
-        List<SmsFilds> sent_buf = new ArrayList<SmsFilds>(readSms(uri_send));
+        TreeSet<SmsFilds> sent_buf = new TreeSet<SmsFilds>(readSms(uri_send));
 //        sent_buf.addAll(readSms(uri_send));
         sent_buf.addAll(readSms(uri_inbox));
+
+
+
 
 //        for (int i = 0; i < sent_buf.length; i++) {
 //            for (String buf_2:buf_1) {
@@ -103,24 +106,26 @@ public class ReadSms {
 
 
 
-//        for (SmsFilds buf:sent_buf) {
-//            Comp n = new Comp(buf.getAddress(),buf.getTime());
-//            Log.i(Msg, " id: " + buf.getId());
-//            Log.i(Msg, " adress: " + buf.getAddress());
-//            Log.i(Msg, " msg: " + buf.getMsg());
-//
-//            Long buf_data = Long.parseLong(buf.getTime());
-//            Log.i(Msg, " date: " + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(buf_data));
-//
-//        }
+        for (SmsFilds buf:sent_buf) {
+            Comp n = new Comp(buf.getAddress(),buf.getTime());
+            Log.i(Msg, " id: " + buf.getId());
+            Log.i(Msg, " adress: " + buf.getAddress());
+            Log.i(Msg, " msg: " + buf.getMsg());
+
+            Long buf_data = Long.parseLong(buf.getTime());
+            Log.i(Msg, " date: " + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(buf_data));
+
+        }
      //   Log.i(Msg, " lol: " +sent_buf.size());
 
 
 
 
     }
-    private List<SmsFilds> readSms(Uri uri) {
+    private TreeSet<SmsFilds> readSms(Uri uri) {
        ContentResolver cr = contentResolver;
+
+        TreeSet<SmsFilds> sms = new TreeSet<SmsFilds>();
 
        Cursor cur = cr.query(uri, null, null ,null, null);
         int cur_count = cur.getCount();
@@ -130,7 +135,7 @@ public class ReadSms {
 //            Log.i(Msg," date: " +str);
 //        }
         String [][] mas_sms = new String[cur_count][3];
-        List<SmsFilds> sms = new ArrayList<SmsFilds>();
+        List<SmsFilds> sms1 = new ArrayList<SmsFilds>();
         SmsFilds sms_ob = new SmsFilds();
        // Read the sms data and store it in the list
        if(cur.moveToFirst()) {

@@ -40,7 +40,17 @@ public class SmsFilds implements Comparable<SmsFilds> {
 
 
     @Override
-    public int compareTo(SmsFilds another) {
+    public int compareTo(SmsFilds obj) {
+        SmsFilds entry = (SmsFilds) obj;
+
+        int result = _address.compareTo(entry._address);
+        if(result != 0) {
+            return result;
+        }
+        result = _time.compareTo(entry._time);
+        if(result != 0) {
+            return result;
+        }
         return 0;
     }
 }
