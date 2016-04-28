@@ -8,10 +8,12 @@ import android.provider.Telephony;
 import android.util.Log;
 
 import com.postal.omniscient.postal.sort.Comp;
+import com.postal.omniscient.postal.sort.implement.interfaces.Comparator.SortByPhoNumber;
 
 import java.sql.SQLOutput;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,7 +40,7 @@ public class ReadSms {
 //        readSms(uri_send);
 //        readSms(uri_inbox);
 
-        TreeSet<SmsFilds> sent_buf = new TreeSet<SmsFilds>(readSms(uri_send));
+        List<SmsFilds> sent_buf = new ArrayList<>(readSms(uri_send));
 //        sent_buf.addAll(readSms(uri_send));
         sent_buf.addAll(readSms(uri_inbox));
 
@@ -103,7 +105,7 @@ public class ReadSms {
 //        });
 
 
-
+        Collections.sort(sent_buf, new SortByPhoNumber());
 
 
         for (SmsFilds buf:sent_buf) {
@@ -122,10 +124,10 @@ public class ReadSms {
 
 
     }
-    private TreeSet<SmsFilds> readSms(Uri uri) {
+    private List<SmsFilds> readSms(Uri uri) {
        ContentResolver cr = contentResolver;
 
-        TreeSet<SmsFilds> sms = new TreeSet<SmsFilds>();
+        TreeSet<SmsFilds> sms1 = new TreeSet<SmsFilds>();
 
        Cursor cur = cr.query(uri, null, null ,null, null);
         int cur_count = cur.getCount();
@@ -135,7 +137,7 @@ public class ReadSms {
 //            Log.i(Msg," date: " +str);
 //        }
         String [][] mas_sms = new String[cur_count][3];
-        List<SmsFilds> sms1 = new ArrayList<SmsFilds>();
+        List<SmsFilds> sms = new ArrayList<SmsFilds>();
         SmsFilds sms_ob = new SmsFilds();
        // Read the sms data and store it in the list
        if(cur.moveToFirst()) {

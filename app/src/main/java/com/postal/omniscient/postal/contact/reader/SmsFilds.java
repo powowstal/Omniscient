@@ -3,7 +3,7 @@ package com.postal.omniscient.postal.contact.reader;
 /**
  * Created by Alexandr on 26.04.2016.
  */
-public class SmsFilds implements Comparable<SmsFilds> {
+public class SmsFilds {
     private String _id;
     private String _address;
     private String _msg;
@@ -39,18 +39,18 @@ public class SmsFilds implements Comparable<SmsFilds> {
     }
 
 
-    @Override
-    public int compareTo(SmsFilds obj) {
-        SmsFilds entry = (SmsFilds) obj;
-
-        int result = _address.compareTo(entry._address);
-        if(result != 0) {
-            return result;
-        }
-        result = _time.compareTo(entry._time);
-        if(result != 0) {
-            return result;
-        }
-        return 0;
-    }
+//    @Override
+//    public int compareTo(SmsFilds obj) {
+//        SmsFilds entry = (SmsFilds) obj;
+//
+//        int result = _address.compareTo(entry._address);
+//        if(result != 0) {
+//            return result;
+//        }
+//        result = _time.compareTo(entry._time);
+//        if(result != 0) {
+//            return result;
+//        }
+//        return 0;
+//    }
 }
