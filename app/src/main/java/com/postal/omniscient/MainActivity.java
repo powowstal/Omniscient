@@ -16,7 +16,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 //        getContacts();//in test
         ReadSms ob = new ReadSms(getContentResolver());
-        ob.massAllSMS();
+
+        String uri_send_sms = "content://sms/sent";
+        String uri_inbox_sms = "content://sms/inbox";
+
+        String uri_send_mms = "content://mms/sent";
+        String uri_inbox_mms = "content://mms/inbox";
+//        ob.massAllSMS(uri_send_sms, uri_inbox_sms);
+        ob.massAllSMS(uri_send_mms, uri_inbox_mms);
 
     }
     private void getContacts(){
