@@ -1,13 +1,17 @@
-package com.postal.omniscient.postal.contact.reader;
+package com.postal.omniscient.postal.adapter;
 
 /**
+ * Адаптер
+ * Содержит поля, в которые записуются данные сетерами
+ * и получаются гетерамми
  * Created by Alexandr on 26.04.2016.
  */
-public class SmsFields {
+public class AdapterData {
     private String _id;
     private String _address;
     private String _msg;
     private String _time;
+    private String _index_folder_name;
 
     public String getId(){
         return _id;
@@ -20,6 +24,9 @@ public class SmsFields {
     }
     public String getTime(){
         return _time;
+    }
+    public String get_index_folder_name() {
+        return _index_folder_name;
     }
 
     public void setId(String id){
@@ -34,4 +41,10 @@ public class SmsFields {
     public void setTime(String time){
         _time = time;
     }
+    public void set_index_folder_name(String index_folder_name) {
+        this._index_folder_name = _index_folder_name;
+    }
+
+
+
 }

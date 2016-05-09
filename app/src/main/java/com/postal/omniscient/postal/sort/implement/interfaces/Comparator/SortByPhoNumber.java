@@ -1,6 +1,7 @@
 package com.postal.omniscient.postal.sort.implement.interfaces.Comparator;
 
-import com.postal.omniscient.postal.contact.reader.SmsFields;
+import com.postal.omniscient.postal.adapter.AdapterData;
+
 import java.util.Comparator;
 
 /**
@@ -10,9 +11,9 @@ import java.util.Comparator;
  * в ReadContacts
  * сортировка по номеру и по дате
  */
-public class SortByPhoNumber implements Comparator <SmsFields> {
+public class SortByPhoNumber implements Comparator <AdapterData> {
     @Override
-    public int compare(SmsFields ob1, SmsFields ob2) {
+    public int compare(AdapterData ob1, AdapterData ob2) {
 /**способ сортировки*/
         int result = ob1.getAddress().compareTo(ob2.getAddress());
         if(result != 0) {

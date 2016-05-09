@@ -1,18 +1,27 @@
-package com.postal.omniscient.postal.contact.reader;
+package com.postal.omniscient.postal.reader.contact;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.Log;
 
 /**
+ * Кдасс читает все контакты
  * Created by Александр on 13.04.2016.
  */
 public class ReadContacts {
 
     private ContentResolver contentResolver;
     private static String Msg = "MyMsg";
-    private int x=0,y=21;
+    private static String _id ="_id";
+    private static String url = "content://com.android.contacts/contacts";
+    private static String display_name = "display_name";
+    private static String has_phone_number = "has_phone_number";
+    private static String number = "data1";
+    private static String contact_id = "contact_id";
+    private static String phone_url = "content://com.android.contacts/data/phones";
+    private int x=0,y=21;// сколько полей телефонов считывать, думаю все поместятса (21 поле)
 
     public ReadContacts(ContentResolver contentResolver) {
         this.contentResolver = contentResolver;
@@ -26,14 +35,20 @@ public class ReadContacts {
         return y;
     }
 
-
+    /**
+     * Читаем все контакты
+     * Возвращяет 2х мерный массив типа String
+     * массив [имя][телефоны]
+     * Created by Александр on 13.04.2016.
+     */
     public String[][] readContacts() {
-
+        Uri uri = Uri.parse(url);
+        Uri phone_uri = Uri.parse(phone_url);
         ContentResolver cr = contentResolver;
-        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+        Cursor cur = cr.query(uri, //ContactsContract.Contacts.CONTENT_URI
                 null, null, null, null);
 
-        Log.i(Msg,(": cur : " + cur.getCount()));
+        Log.i(Msg,": cur : " + cur.getCount());
         x=cur.getCount();
 
         String [][] phone_contacts = new String[x][y];
@@ -42,24 +57,24 @@ public class ReadContacts {
             for (int i=0; cur.moveToNext(); i++) {
 
                 String id = cur
-                        .getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
+                        .getString(cur.getColumnIndex(_id));//ContactsContract.Contacts._ID));
                 String name = cur
-                        .getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                        .getString(cur.getColumnIndex(display_name));//ContactsContract.Contacts.DISPLAY_NAME));
                 if (Integer.parseInt(cur.getString(cur.getColumnIndex
-                        (ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-//                    Log.i(Msg,": name : " + name + ", ID : " + id);
+                        (has_phone_number))) > 0) {//ContactsContract.Contacts.HAS_PHONE_NUMBER
+                    Log.i(Msg,": name : " + name + ", ID : " + id);
 
                     phone_contacts[i][0] = name;
 
 
                     // get the phone number
-                    Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                    Cursor pCur = cr.query(phone_uri, null, //ContactsContract.CommonDataKinds.Phone.CONTENT_URI
+                            contact_id + " = ?", //ContactsContract.CommonDataKinds.Phone.CONTACT_ID
                             new String[]{id}, null);
                     for (int k=1; pCur.moveToNext(); k++) {
                             String phone = pCur.getString(
-                                    pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-//                        Log.i(Msg,": phone : " + phone);
+                                    pCur.getColumnIndex(number)); //ContactsContract.CommonDataKinds.Phone.NUMBER;
+                        Log.i(Msg,": phone : " + phone);
                             phone_contacts[i][k] = phone;
                     }
                     pCur.close();
