@@ -3,12 +3,18 @@ package com.postal.omniscient.postal.reader.mms;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.Telephony;
 import android.util.Log;
+import android.widget.Adapter;
+
+import com.postal.omniscient.postal.adapter.AdapterData;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Александр on 29.04.2016.
@@ -17,6 +23,12 @@ import java.io.InputStreamReader;
 public class ReadMms {
     private ContentResolver contentResolver;
     private  String Msg = "MyMsg";
+    private static String id = "_id";
+    private static String address = "address";
+    private static String body = "body";
+    private static String date = "date";
+    private static String content_part = "content://mms/part";
+    private static String content_mms = "content://mms";
 
     public ReadMms (ContentResolver contentResolver) {
         this.contentResolver = contentResolver;
@@ -24,21 +36,22 @@ public class ReadMms {
 
     public void massAllMms() {
 
-       try {
-           final String[] projection = new String[]{"ct_t"};
-           Uri uri = Uri.parse("content://mms/conversations?simple=false");
-           Cursor cur = contentResolver.query(uri, null, null, null, null);
-           if (cur.moveToFirst()) {
-               do {
-                   for (int i = 0; i < cur.getColumnCount(); i++) {
-                                                   Log.i(Msg, " msg: " + cur.getColumnName(i));
-                            try {
-                                Log.i(Msg, " Содержание0: " +cur.getString(cur.getColumnIndexOrThrow(cur.getColumnName(i))));
 
-                            } catch (Exception e) {
-                                Log.i(Msg, e.toString());
-                            }
-                        }
+//       try {
+//           final String[] projection = new String[]{"ct_t"};
+//           Uri uri = Uri.parse("content://mms/conversations?simple=false");
+//           Cursor cur = contentResolver.query(uri, null, null, null, null);
+//           if (cur.moveToFirst()) {
+//               do {
+//                   for (int i = 0; i < cur.getColumnCount(); i++) {
+//                                                   Log.i(Msg, " msg: " + cur.getColumnName(i));
+//                            try {
+//                                Log.i(Msg, " Содержание0: " +cur.getString(cur.getColumnIndexOrThrow(cur.getColumnName(i))));
+//
+//                            } catch (Exception e) {
+//                                Log.i(Msg, e.toString());
+//                            }
+//                        }
 
 //                   String string = cur.getString(cur.getColumnIndex("ct_t"));
 //                   if ("application/vnd.wap.multipart.related".equals(string)) {
@@ -88,12 +101,37 @@ public class ReadMms {
 //                            Log.i(Msg, "body21: " + body);
 //                        }
 //                    }
-               } while (cur.moveToNext());
-           }
-           cur.close();
+//               }
+//    while (cur.moveToNext());
+//           }
+//           cur.close();
+//
+//       }catch (Exception e){
+//           Log.i(Msg, " msg: " + e);}
 
-       }catch (Exception e){
-           Log.i(Msg, " msg: " + e);}
+        ContentResolver cr = contentResolver;
+        Uri partURI = Uri.parse(content_mms);
+        String [] projection = {id,date};
+        AdapterData mms;
+        List<AdapterData> listOfAllMms = new ArrayList<>();
+        int id_column_index, date_column_index;
+        id_column_index = cur.getColumnIndexOrThrow(id);
+        date_column_index = cur.getColumnIndexOrThrow(id);
+
+        breowse_ob.setId(cur.getString(id_column_index));
+        breowse_ob.setId(cur.getString(id_column_index));
+        breowse_ob.setId(cur.getString(id_column_index));
+
+        Cursor cur = cr.query(partURI, projection, null, null, date+" DESC");
+        while (cur.moveToNext()){
+            mms = new AdapterData();
+
+            mms.setId(cur.getString(id));
+            mms.setTime();
+            listOfAllMms.add(mms);
+
+        }
+        cur.close();
     }
 
 
