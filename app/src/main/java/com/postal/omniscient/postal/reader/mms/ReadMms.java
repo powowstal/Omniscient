@@ -212,7 +212,7 @@ public class ReadMms {
     private String getANumber(int id) {
         String add = "";
         final String[] projection = new String[] {"address","contact_id","charset","type"};
-        Uri.Builder builder = Uri.parse("content://mms").buildUpon();
+        Uri.Builder builder = Uri.parse(content_mms).buildUpon();
         builder.appendPath(String.valueOf(id)).appendPath("addr");
         Cursor cursor = contentResolver.query(
                 builder.build(),
@@ -221,9 +221,23 @@ public class ReadMms {
                 null, null);
         if (cursor.moveToFirst()) {
             add = cursor.getString(cursor.getColumnIndex("address"));
+            try {
+                if (add.equals("insert-address-token")) {
+//                    Uri uriAddr = Uri.parse("content://mms/" + "6" + "/addr");
+//                    Cursor curAddr2 = contentResolver.query(builder.build(), null, "type=151", null, null);
+//
+//
+//                    add = curAddr2.getString(curAddr2.getColumnIndex("address"));
+
+                    Integer s =cursor.getInt(cursor.getColumnIndex("type"));
+//                    add=s.toString();
+                    Log.i("MyMsg", "GGGGG"+ add);
+                }
+            } catch (Exception e){Log.i("MyMsg", e.toString());}
         }
+        cursor.close();
         return add;
     }
-
+///////////////////////////////////////////////////////////////////////////////////
 
 }
