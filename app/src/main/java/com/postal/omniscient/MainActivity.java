@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i(Msg, "date : " + new SimpleDateFormat("dd/MM/yyyy HH:mm")
                     .format(buf_date*1000));
         }
-
+//
 
 //        PhoneCall phoneCall = new PhoneCall();
 //        phoneCall.onReceive(getApplicationContext(),null);
