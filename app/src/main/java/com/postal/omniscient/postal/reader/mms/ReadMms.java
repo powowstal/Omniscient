@@ -27,6 +27,10 @@ public class ReadMms {
     private static String address = "address";
     private static String body = "body";
     private static String date = "date";
+    private static String text = "text";
+    private static String ct = "ct";
+    private static String mid = "mid";
+    private static String text_plain = "text/plain";
     private static String content_part = "content://mms/part";
     private static String content_mms = "content://mms";
 
@@ -34,7 +38,7 @@ public class ReadMms {
         this.contentResolver = contentResolver;
     }
 
-    public void massAllMms() {
+    public List<AdapterData> massAllMms() {
 
 
 //       try {
@@ -115,23 +119,62 @@ public class ReadMms {
         AdapterData mms;
         List<AdapterData> listOfAllMms = new ArrayList<>();
         int id_column_index, date_column_index;
-        id_column_index = cur.getColumnIndexOrThrow(id);
-        date_column_index = cur.getColumnIndexOrThrow(id);
-
-        breowse_ob.setId(cur.getString(id_column_index));
-        breowse_ob.setId(cur.getString(id_column_index));
-        breowse_ob.setId(cur.getString(id_column_index));
 
         Cursor cur = cr.query(partURI, projection, null, null, date+" DESC");
+
+        id_column_index = cur.getColumnIndexOrThrow(id);
+        date_column_index = cur.getColumnIndexOrThrow(date);
+
         while (cur.moveToNext()){
             mms = new AdapterData();
 
-            mms.setId(cur.getString(id));
-            mms.setTime();
+            mms.setId(cur.getString(id_column_index));
+            mms.setTime(cur.getString(date_column_index));
             listOfAllMms.add(mms);
 
         }
         cur.close();
+
+
+
+        return getTextOfMms(listOfAllMms);
+    }
+
+    private List<AdapterData> getTextOfMms(List<AdapterData> mms_id){
+        ContentResolver cr = contentResolver;
+        Uri partURI = Uri.parse(content_part);
+        String [] projection = {mid, text};
+        String selection = ct+" = ?";
+        String[] sortOrder = {text_plain};
+        AdapterData mms;
+        List<AdapterData> listOfAllMms = new ArrayList<>();
+        int mid_column_index, text_column_index;
+
+        Cursor cur = cr.query(partURI, projection, selection, sortOrder, null);
+
+        mid_column_index = cur.getColumnIndexOrThrow(mid);
+        text_column_index = cur.getColumnIndexOrThrow(text);
+
+        while (cur.moveToNext()){
+            mms = new AdapterData();
+
+            for (AdapterData buf : mms_id) {
+                if(buf.getId().equals(cur.getString(mid_column_index))){
+                    buf.setMsg(cur.getString(text_column_index));
+                    buf.setAddress(getANumber(Integer.parseInt(buf.getId())));
+
+                }
+            }
+//
+//            mms.setId(cur.getString(mid_column_index));
+//            mms.setTime(cur.getString(text_column_index));
+//            listOfAllMms.add(mms);
+
+        }
+        cur.close();
+
+        return  mms_id;
+//        return listOfAllMms;
     }
 
 
