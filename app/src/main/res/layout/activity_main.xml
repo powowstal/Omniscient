@@ -7,7 +7,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.postal.omniscient.MainActivity">
+    tools:context="com.postal.omniscient.MainActivity"
+    android:theme="@android:style/Theme.Translucent.NoTitleBar">
 
     <TextView
         android:layout_width="wrap_content"
