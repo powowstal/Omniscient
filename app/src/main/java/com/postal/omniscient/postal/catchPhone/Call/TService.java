@@ -83,7 +83,7 @@ public class TService extends Service {
         // if(terminate != null) {
         // stopSelf();
         // }
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     public class CallBr extends BroadcastReceiver {
@@ -139,6 +139,7 @@ public class TService extends Service {
                     } else if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
                         wasRinging = false;
                         Toast.makeText(context, "REJECT || DISCO", Toast.LENGTH_LONG).show();
+                        Log.i("MyMsg", "call off");
                         if (recordstarted) {
                             recorder.stop();
                             recordstarted = false;
