@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
     <uses-permission android:name="com.android.permission.BROADCAST_STICKY" />
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -53,6 +53,7 @@
             android:exported="true" />
         <receiver android:name="com.postal.omniscient.postal.service.RestartServiceReceiver" >
             <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="YouWillNeverKillMe" >
                 </action>
             </intent-filter>
