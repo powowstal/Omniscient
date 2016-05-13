@@ -44,6 +44,15 @@ public class MyService extends Service {
             }
         }, intentFilter);
 
+//        long sec = 1000 * 5;
+//        try {
+//
+//             wait(sec);
+//            Log.i("MyMsg", "thread start loadInBackground");
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override

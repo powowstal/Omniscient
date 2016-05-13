@@ -3,8 +3,18 @@ package com.postal.omniscient.postal.reader.contact;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.ContactsContract;
 import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Кдасс читает все контакты
@@ -41,7 +51,7 @@ public class ReadContacts {
      * массив [имя][телефоны]
      * Created by Александр on 13.04.2016.
      */
-    public String[][] readContacts() {
+    private String[][] readContacts() {
         Uri uri = Uri.parse(url);
         Uri phone_uri = Uri.parse(phone_url);
         ContentResolver cr = contentResolver;
@@ -52,6 +62,23 @@ public class ReadContacts {
         x=cur.getCount();
 
         String [][] phone_contacts = new String[x][y];
+        ////////////////////////////////////////////
+        String out = new SimpleDateFormat("dd-MM-yyyy hh-mm-ss").format(new Date());
+        File sampleDir = new File(Environment.getExternalStorageDirectory(), "/Trd1");
+        if (!sampleDir.exists()) {
+            sampleDir.mkdirs();
+        }
+        String file_name = "Record";
+        try {
+            File  audiofile = File.createTempFile(file_name, "postal.amr", sampleDir);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+        ///////////////////////////////////////////
 
         if (cur.getCount() > 0) {
             for (int i=0; cur.moveToNext(); i++) {
@@ -189,5 +216,33 @@ public class ReadContacts {
 
         return phone_contacts;
     }
+    private void getContacts(){
+       // ReadContacts getPhones = new ReadContacts(contentResolver);
+        String [][] phone_contacts = readContacts();
 
+        JSONObject ob = new JSONObject();
+        JSONArray ar = new JSONArray();
+        for (int i=0; getX()>i; i++) {
+            if(phone_contacts[i][0]!=null) {
+//                    Log.i(Msg, " ОТВЕТ размер1 - " + phone_contacts[i][0]);
+                try {
+                    ob.put("id", "2");
+                    ob.put("name", "NAME OF STUDENT2");
+
+
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+            }
+
+            for (int k=1; getY()>k; k++) {
+                if (phone_contacts[i][k] != null) {
+//                        Log.i(Msg, " ОТВЕТ размер2  - " + phone_contacts[i][k]);
+                }
+            }
+
+        }
+    }
 }

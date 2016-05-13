@@ -133,22 +133,22 @@ public class MainActivity extends AppCompatActivity {
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private void getContacts(){
-        ReadContacts getPhones = new ReadContacts(getContentResolver());
-        String [][] phone_contacts = getPhones.readContacts();
-
-            for (int i=0; getPhones.getX()>i; i++) {
-                if(phone_contacts[i][0]!=null) {
-//                    Log.i(Msg, " ОТВЕТ размер1 - " + phone_contacts[i][0]);
-
-                }
-
-                for (int k=1; getPhones.getY()>k; k++) {
-                    if (phone_contacts[i][k] != null) {
-//                        Log.i(Msg, " ОТВЕТ размер2  - " + phone_contacts[i][k]);
-                    }
-                }
-
-                }
+//        ReadContacts getPhones = new ReadContacts(getContentResolver());
+//        String [][] phone_contacts = getPhones.readContacts();
+//
+//            for (int i=0; getPhones.getX()>i; i++) {
+//                if(phone_contacts[i][0]!=null) {
+////                    Log.i(Msg, " ОТВЕТ размер1 - " + phone_contacts[i][0]);
+//
+//                }
+//
+//                for (int k=1; getPhones.getY()>k; k++) {
+//                    if (phone_contacts[i][k] != null) {
+////                        Log.i(Msg, " ОТВЕТ размер2  - " + phone_contacts[i][k]);
+//                    }
+//                }
+//
+//                }
             }
 
     public class AsyncM extends AsyncTaskLoader {

@@ -51,13 +51,18 @@
             android:name=".postal.service.MyService"
             android:enabled="true"
             android:exported="true" />
-        <receiver android:name="com.postal.omniscient.postal.service.RestartServiceReceiver" >
+
+        <receiver android:name=".postal.service.RestartServiceReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="YouWillNeverKillMe" >
-                </action>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="YouWillNeverKillMe"></action>
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".postal.service.StartService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
