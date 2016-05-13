@@ -1,13 +1,16 @@
 package com.postal.omniscient;
 
 import android.app.admin.DevicePolicyManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.postal.omniscient.postal.browser.history.BrowserHistory;
@@ -112,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         Toast toast = Toast.makeText(getApplicationContext(),
                 "Пора покормить кота!", Toast.LENGTH_SHORT);
         AsyncM ad = new AsyncM(getApplicationContext(), toast);
+
         ad.forceLoad();
         ad = null;
 
@@ -166,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             Intent par = new Intent(getApplicationContext(), MyService.class);
+
             startService(par);
             par = null;
             long sec = 1000*5;

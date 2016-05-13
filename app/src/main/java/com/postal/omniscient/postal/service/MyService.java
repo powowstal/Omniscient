@@ -2,8 +2,10 @@ package com.postal.omniscient.postal.service;
 
 import android.app.Notification;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.content.AsyncTaskLoader;
@@ -29,6 +31,18 @@ public class MyService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+                    Log.d(Msg, Intent.ACTION_SCREEN_OFF);
+                } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+                    Log.d(Msg, Intent.ACTION_SCREEN_ON);
+                }
+            }
+        }, intentFilter);
 
     }
 
@@ -50,7 +64,7 @@ public class MyService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.i("MyMsg", "onDestroy");
-        sendBroadcast(new Intent("YouWillNeverKillMe"));
+       // sendBroadcast(new Intent("YouWillNeverKillMe"));
     }
 
     public class AsyncL extends AsyncTaskLoader {
@@ -64,13 +78,23 @@ public class MyService extends Service {
 
             long sec = 1000 * 5;
             try {
-                while (true) {
-                    Thread.sleep(sec);
-                    Log.i("MyMsg", "thread start AsyncL");
-                }
-            } catch (InterruptedException e) {
+
+                   // Thread.sleep(sec);
+                    Log.i("MyMsg", "thread start loadInBackground");
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+            sendBroadcast(new Intent("YouWillNeverKillMe"));
+//            long sec = 1000 * 5;
+//            try {
+//                while (true) {
+//                    Thread.sleep(sec);
+//                    Log.i("MyMsg", "thread start AsyncL");
+//                }
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
 
 //            Intent par = new Intent(getApplicationContext(), MyService.class);
 //            startService(par);
