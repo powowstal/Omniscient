@@ -1,9 +1,11 @@
 package com.postal.omniscient.postal.service;
 
 import android.app.ActivityManager;
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Looper;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 import android.widget.Toast;
@@ -20,23 +22,28 @@ public class RestartServiceReceiver extends BroadcastReceiver
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.e(TAG, "onReceive");
-        long sec = 1000 * 8;
+        Log.e("MyMsg", "onReceive");
+        long sec = 1000 * 5;
+
+        AsyncR ad = new AsyncR(context);
+
         try {
 
-            Thread.sleep(sec);
-            Log.i("MyMsg", "RestartServiceReceiver");
+                    Thread.sleep(sec);
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+//            Intent par = new Intent(context, MyService.class);
+//            context.startService(par);
+                     ad.forceLoad();
+
+                   // ad = null;
+
+        } catch (Exception e) {
+            Log.e("MyMsg","1"+ e.toString());
         }
-        Toast toast = Toast.makeText(context,
-                "Пора покормить кота!", Toast.LENGTH_SHORT);
-        AsyncM ad = new AsyncM(context, toast);
 
-        ad.forceLoad();
-        ad = null;
-        context.startService(new Intent(context.getApplicationContext(), MyService.class));
+        Log.i("MyMsg", "END RES");
+
+        //context.startService(new Intent(context.getApplicationContext(), MyService.class));
 
 
 
@@ -48,16 +55,17 @@ public class RestartServiceReceiver extends BroadcastReceiver
 //                Log.i("MyMsg", " не ребочий");
 //
 //        }
+
     }
-    public class AsyncM extends AsyncTaskLoader {
+    public class AsyncR extends AsyncTaskLoader {
 
 
-        public AsyncM(Context context) {
+        public AsyncR(Context context) {
             super(context);
 
         }
         Toast toast;
-        public AsyncM(Context applicationContext, Toast toast) {
+        public AsyncR(Context applicationContext, Toast toast) {
             super(applicationContext);
             this.toast = toast;
         }
@@ -65,7 +73,20 @@ public class RestartServiceReceiver extends BroadcastReceiver
         @Override
         public Object loadInBackground() {
 
-            toast.show();
+            long sec = 1000 * 20;
+            try {
+               // while(true) {
+                    //Thread.sleep(sec);
+
+                    Log.i("MyMsg", "PotoCCCC");
+                //}
+            } catch (Exception e) {
+                Log.e("MyMsg","2"+ e.toString());
+            }
+
+            Intent par = new Intent(getContext(), MyService.class);
+            getContext().startService(par);
+            //getContext().sendBroadcast(new Intent("YouWillNeverKillMe"));
             return null;
         }
     }
