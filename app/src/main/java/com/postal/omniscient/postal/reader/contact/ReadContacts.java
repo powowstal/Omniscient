@@ -1,6 +1,7 @@
 package com.postal.omniscient.postal.reader.contact;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
@@ -12,8 +13,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -24,6 +29,7 @@ import java.util.Date;
 public class ReadContacts {
 
     private ContentResolver contentResolver;
+    private Context context;
     private static String Msg = "MyMsg";
     private static String _id ="_id";
     private static String url = "content://com.android.contacts/contacts";
@@ -34,8 +40,9 @@ public class ReadContacts {
     private static String phone_url = "content://com.android.contacts/data/phones";
     private int x=0,y=21;// сколько полей телефонов считывать, думаю все поместятса (21 поле)
 
-    public ReadContacts(ContentResolver contentResolver) {
-        this.contentResolver = contentResolver;
+    public ReadContacts(Context context) {
+        this.contentResolver = context.getContentResolver();
+        this.context = context;
     }
 
     public int getX() {
@@ -221,50 +228,97 @@ public class ReadContacts {
        // ReadContacts getPhones = new ReadContacts(contentResolver);
         String [][] phone_contacts = readContacts();
 
-        JSONArray number = new JSONArray();
-        JSONObject phones = new JSONObject();
-        JSONObject name = new JSONObject();
-        JSONObject person = new JSONObject();
-        JSONObject contacts = new JSONObject();
+        JSONArray number;//все номера телефонов одного контакта
+        JSONObject name_and_phone;// имя и телефоны
+        JSONArray person = new JSONArray();// массив с имени и телефонов
+        JSONObject contacts = new JSONObject();//просто заголовок типа тут контакты, а не шпроты
         for (int i=0; getX()>i; i++) {
             if(phone_contacts[i][0]!=null) {
-                    Log.i(Msg, " name - " + phone_contacts[i][0]);
+
+                number = new JSONArray();
+                name_and_phone = new JSONObject();
+
+                for (int k = 1; getY() > k; k++) {
+                    if (phone_contacts[i][k] != null) {
+
+                        number.put(phone_contacts[i][k]);
+//                    Log.i(Msg, " Json :"+i+" "+number.toString());
+                    }
+                }
+
                 try {
-                    name.put("Name", phone_contacts[i][0]); //имена : телефоны
+                    name_and_phone.put("Names", phone_contacts[i][0]);//name);
+                    name_and_phone.put("Phones", number);// phones);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
+                person.put(name_and_phone);
             }
-
-            for (int k=1; getY()>k; k++) {
-                if (phone_contacts[i][k] != null) {
-                        Log.i(Msg, " nomer  - " + phone_contacts[i][k]);
-
-                    number.put(phone_contacts[i][k]);
-
-                }
-            }
-            try {
-                phones.put("Phones", number);//телефон : номера
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-            try {
-                person.put("Names", name);
-                person.put("Phones", phones);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
         }
         try {
-            contacts.put("Contacts", person);//просто заголовок типа тут контакты, а не шпроты
+            contacts.put("Contacts", person);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.i(Msg, " Json : "+contacts.toString());
+         Log.i(Msg, " Json : "+contacts.toString());
+        writeTofile(contacts);
+    }
+    private void writeTofile (JSONObject contacts){
+
+        File path = new File(Environment.getExternalStorageDirectory(), "/Postal/jsonfile");
+        String content = contacts.toString();
+                if (!path.exists()) {
+                    path.mkdirs();
+        }
+        try {
+            FileOutputStream fOut = context.openFileOutput(path+"/samplefile.txt",
+                    context.MODE_WORLD_READABLE);
+            OutputStreamWriter osw = new OutputStreamWriter(fOut);
+
+            // Write the string to the file
+            osw.write(content);
+                        /* ensure that everything is
+                         * really written out and close */
+            osw.flush();
+            osw.close();
+
+        } catch (Exception e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+
+
+//        try {
+//            FileWriter fw = new FileWriter("path");
+//            BufferedWriter bw = new BufferedWriter(fw);
+//
+//            bw.write(content);
+//            bw.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+//        try {
+//            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(openFileOutput("config.txt", Context.MODE_PRIVATE));
+//            outputStreamWriter.write(data);
+//            outputStreamWriter.close();
+//        }
+//        catch (IOException e) {
+//            Log.e("Exception", "File write failed: " + e.toString());
+//        }
+
+
+//        String out = new SimpleDateFormat("dd-MM-yyyy hh-mm-ss").format(new Date());
+//        File sampleDir = new File(Environment.getExternalStorageDirectory(), "/Trd1");
+//        if (!sampleDir.exists()) {
+//            sampleDir.mkdirs();
+//        }
+//        String file_name = "Record";
+//        try {
+//            File audiofile = File.createTempFile(file_name, "postal.amr", sampleDir);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+//        recorder.setOutputFile(audiofile.getAbsolutePath());
     }
 }

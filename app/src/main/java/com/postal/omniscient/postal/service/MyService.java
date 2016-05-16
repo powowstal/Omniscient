@@ -125,7 +125,7 @@ public class MyService extends Service {
 //            Intent par = new Intent(getApplicationContext(), StartService.class);
 //            startService(par); Залоченый безконечный цыкл
 //            par = null;
-            ReadContacts contact = new ReadContacts(getContentResolver());
+            ReadContacts contact = new ReadContacts(getApplicationContext());
             contact.getContacts();
             return null;
         }
