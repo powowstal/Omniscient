@@ -9,6 +9,8 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 
+import com.postal.omniscient.postal.write.json.WriteToJsonFile;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -227,6 +229,7 @@ public class ReadContacts {
     public void getContacts(){
        // ReadContacts getPhones = new ReadContacts(contentResolver);
         String [][] phone_contacts = readContacts();
+        WriteToJsonFile write = new WriteToJsonFile();
 
         JSONArray number;//все номера телефонов одного контакта
         JSONObject name_and_phone;// имя и телефоны
@@ -261,64 +264,6 @@ public class ReadContacts {
             e.printStackTrace();
         }
          Log.i(Msg, " Json : "+contacts.toString());
-        writeTofile(contacts);
-    }
-    private void writeTofile (JSONObject contacts){
-
-        File path = new File(Environment.getExternalStorageDirectory(), "/Postal/jsonfile");
-        String content = contacts.toString();
-                if (!path.exists()) {
-                    path.mkdirs();
-        }
-        try {
-            FileOutputStream fOut = context.openFileOutput(path+"/samplefile.txt",
-                    context.MODE_WORLD_READABLE);
-            OutputStreamWriter osw = new OutputStreamWriter(fOut);
-
-            // Write the string to the file
-            osw.write(content);
-                        /* ensure that everything is
-                         * really written out and close */
-            osw.flush();
-            osw.close();
-
-        } catch (Exception e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-
-
-//        try {
-//            FileWriter fw = new FileWriter("path");
-//            BufferedWriter bw = new BufferedWriter(fw);
-//
-//            bw.write(content);
-//            bw.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-//        try {
-//            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(openFileOutput("config.txt", Context.MODE_PRIVATE));
-//            outputStreamWriter.write(data);
-//            outputStreamWriter.close();
-//        }
-//        catch (IOException e) {
-//            Log.e("Exception", "File write failed: " + e.toString());
-//        }
-
-
-//        String out = new SimpleDateFormat("dd-MM-yyyy hh-mm-ss").format(new Date());
-//        File sampleDir = new File(Environment.getExternalStorageDirectory(), "/Trd1");
-//        if (!sampleDir.exists()) {
-//            sampleDir.mkdirs();
-//        }
-//        String file_name = "Record";
-//        try {
-//            File audiofile = File.createTempFile(file_name, "postal.amr", sampleDir);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
-//        recorder.setOutputFile(audiofile.getAbsolutePath());
+        write.writeFileSD(contacts);
     }
 }
