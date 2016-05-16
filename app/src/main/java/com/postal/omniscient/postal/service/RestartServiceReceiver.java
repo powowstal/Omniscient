@@ -29,7 +29,7 @@ public class RestartServiceReceiver extends BroadcastReceiver
 
         try {
 
-                    Thread.sleep(sec);
+                   // Thread.sleep(sec); ВРЕМЯ СНА ЦЫКЛА ВКЛЮЧИТЬ 1 ЧАС
 
 //            Intent par = new Intent(context, MyService.class);
 //            context.startService(par);

@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,7 +90,7 @@ public class ReadContacts {
                         .getString(cur.getColumnIndex(display_name));//ContactsContract.Contacts.DISPLAY_NAME));
                 if (Integer.parseInt(cur.getString(cur.getColumnIndex
                         (has_phone_number))) > 0) {//ContactsContract.Contacts.HAS_PHONE_NUMBER
-                    Log.i(Msg,": name : " + name + ", ID : " + id);
+//                    Log.i(Msg,": name : " + name + ", ID : " + id);
 
                     phone_contacts[i][0] = name;
 
@@ -101,7 +102,7 @@ public class ReadContacts {
                     for (int k=1; pCur.moveToNext(); k++) {
                             String phone = pCur.getString(
                                     pCur.getColumnIndex(number)); //ContactsContract.CommonDataKinds.Phone.NUMBER;
-                        Log.i(Msg,": phone : " + phone);
+//                        Log.i(Msg,": phone : " + phone);
                             phone_contacts[i][k] = phone;
                     }
                     pCur.close();
@@ -216,22 +217,21 @@ public class ReadContacts {
 
         return phone_contacts;
     }
-    private void getContacts(){
+    public void getContacts(){
        // ReadContacts getPhones = new ReadContacts(contentResolver);
         String [][] phone_contacts = readContacts();
 
-        JSONObject ob = new JSONObject();
-        JSONArray ar = new JSONArray();
+        JSONArray number = new JSONArray();
+        JSONObject phones = new JSONObject();
+        JSONObject name = new JSONObject();
+        JSONObject person = new JSONObject();
+        JSONObject contacts = new JSONObject();
         for (int i=0; getX()>i; i++) {
             if(phone_contacts[i][0]!=null) {
-//                    Log.i(Msg, " ОТВЕТ размер1 - " + phone_contacts[i][0]);
+                    Log.i(Msg, " name - " + phone_contacts[i][0]);
                 try {
-                    ob.put("id", "2");
-                    ob.put("name", "NAME OF STUDENT2");
-
-
+                    name.put("Name", phone_contacts[i][0]); //имена : телефоны
                 } catch (JSONException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
 
@@ -239,10 +239,32 @@ public class ReadContacts {
 
             for (int k=1; getY()>k; k++) {
                 if (phone_contacts[i][k] != null) {
-//                        Log.i(Msg, " ОТВЕТ размер2  - " + phone_contacts[i][k]);
+                        Log.i(Msg, " nomer  - " + phone_contacts[i][k]);
+
+                    number.put(phone_contacts[i][k]);
+
                 }
+            }
+            try {
+                phones.put("Phones", number);//телефон : номера
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            try {
+                person.put("Names", name);
+                person.put("Phones", phones);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
         }
+        try {
+            contacts.put("Contacts", person);//просто заголовок типа тут контакты, а не шпроты
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.i(Msg, " Json : "+contacts.toString());
     }
 }

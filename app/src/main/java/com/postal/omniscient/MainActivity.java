@@ -43,11 +43,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main); //ЕТО ВЫКЛЮЧИТЬ
 
-        PackageManager pkg=this.getPackageManager();
-        pkg.setComponentEnabledSetting(new ComponentName(this,MainActivity.class),PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP);
+//        PackageManager pkg=this.getPackageManager();
+//        pkg.setComponentEnabledSetting(new ComponentName(this,MainActivity.class),PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+//                PackageManager.DONT_KILL_APP); ЕТО ВКЛЮЧИТЬ
+
+
 //        PackageManager p = getPackageManager();
 //        ComponentName componentName = new ComponentName(this,MainActivity.class);
 //        p.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
@@ -126,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         ad.forceLoad();
         ad = null;
 
-        finish();
+//        finish(); ЕТО ВКЛЮЧИТЬ
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
