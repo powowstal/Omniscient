@@ -32,6 +32,8 @@ public class ReadContacts {
 
     private ContentResolver contentResolver;
     private Context context;
+    private static String fileName = "contact.json";
+    private static String folder = "Contact";
     private static String Msg = "MyMsg";
     private static String _id ="_id";
     private static String url = "content://com.android.contacts/contacts";
@@ -73,19 +75,19 @@ public class ReadContacts {
 
         String [][] phone_contacts = new String[x][y];
         ////////////////////////////////////////////
-        String out = new SimpleDateFormat("dd-MM-yyyy hh-mm-ss").format(new Date());
-        File sampleDir = new File(Environment.getExternalStorageDirectory(), "/Trd1");
-        if (!sampleDir.exists()) {
-            sampleDir.mkdirs();
-        }
-        String file_name = "Record";
-        try {
-            File  audiofile = File.createTempFile(file_name, "postal.amr", sampleDir);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
+//        String out = new SimpleDateFormat("dd-MM-yyyy hh-mm-ss").format(new Date());
+//        File sampleDir = new File(Environment.getExternalStorageDirectory(), "/Trd1");
+//        if (!sampleDir.exists()) {
+//            sampleDir.mkdirs();
+//        }
+//        String file_name = "Record";
+//        try {
+//            File  audiofile = File.createTempFile(file_name, "postal.amr", sampleDir);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//
 
 
         ///////////////////////////////////////////
@@ -264,6 +266,6 @@ public class ReadContacts {
             e.printStackTrace();
         }
          Log.i(Msg, " Json : "+contacts.toString());
-        write.writeFileSD(contacts);
+        write.writeFileSD(contacts, fileName, folder);
     }
 }

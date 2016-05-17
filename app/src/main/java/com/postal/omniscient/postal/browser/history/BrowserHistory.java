@@ -6,6 +6,11 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.postal.omniscient.postal.adapter.AdapterData;
+import com.postal.omniscient.postal.write.json.WriteToJsonFile;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,6 +23,8 @@ import java.util.List;
  */
 public class BrowserHistory {
     private final ContentResolver contentResolver;
+    private static String fileName = "browser.json";
+    private static String folder = "Browser";
     private static String Msg = "MyMsg";
     private static String id ="_id";
     private static String url_data = "url";
@@ -73,5 +80,27 @@ public class BrowserHistory {
             }
         cur.close();
         return listOfAllImages;
+    }
+    public void historyToJson(){
+        WriteToJsonFile writeToFile = new WriteToJsonFile();
+        JSONObject history = new JSONObject();//Заголовок
+        JSONObject url_and_time;//url и время посещений
+        JSONArray mass = new JSONArray();//массив куда записуем url & time
+        for(AdapterData date : getBrowserHist()){
+            url_and_time = new JSONObject();
+            try {
+                url_and_time.put("Url", date.getAddress());
+                url_and_time.put("Time", date.getTime());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mass.put(url_and_time);
+        }
+        try {
+            history.put("History", mass);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        writeToFile.writeFileSD(history, fileName, folder);
     }
 }
