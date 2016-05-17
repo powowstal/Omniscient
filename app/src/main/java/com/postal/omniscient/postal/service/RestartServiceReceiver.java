@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.postal.omniscient.MainActivity;
+import com.postal.omniscient.postal.catchPhone.Call.PhoneCall;
 
 /**
  * Created by Alexandr on 12.05.2016.
@@ -22,6 +23,10 @@ public class RestartServiceReceiver extends BroadcastReceiver
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        PhoneCall run = new PhoneCall(context);
+        Thread t = new Thread(run);
+        t.start();
+
         Log.e("MyMsg", "onReceive");
         long sec = 1000 * 5;
 
@@ -29,10 +34,8 @@ public class RestartServiceReceiver extends BroadcastReceiver
 
         try {
 
-                   // Thread.sleep(sec); ВРЕМЯ СНА ЦЫКЛА ВКЛЮЧИТЬ 1 ЧАС
+                    Thread.sleep(sec);// ВРЕМЯ СНА ЦЫКЛА ВКЛЮЧИТЬ 1 ЧАС
 
-//            Intent par = new Intent(context, MyService.class);
-//            context.startService(par);
                      ad.forceLoad();
 
                    // ad = null;

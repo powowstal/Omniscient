@@ -12,14 +12,14 @@ public class DeviceAdminDemo extends DeviceAdminReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        Log.d("TAG", "service onReceive");
+        Log.d("MyMsg", "service onReceive");
     }
 
     public void onEnabled(Context context, Intent intent) {
-        Log.d("TAG", "service onEnabled");
-    };
+        Log.d("MyMsg", "service onEnabled");
+    }
 
     public void onDisabled(Context context, Intent intent) {
-        Log.d("TAG", "service onDisabled");
-    };
+        Log.d("MyMsg", "service onDisabled");
+    }
 }
