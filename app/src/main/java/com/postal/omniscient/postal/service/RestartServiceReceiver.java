@@ -23,9 +23,7 @@ public class RestartServiceReceiver extends BroadcastReceiver
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        PhoneCall run = new PhoneCall(context);
-        Thread t = new Thread(run);
-        t.start();
+
 
         Log.e("MyMsg", "onReceive");
         long sec = 1000 * 5;

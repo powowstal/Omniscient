@@ -179,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
             Intent par = new Intent(getApplicationContext(), StartService.class);
             startService(par);
+
             return null;
         }
     }

