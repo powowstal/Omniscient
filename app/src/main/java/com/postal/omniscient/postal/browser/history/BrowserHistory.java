@@ -1,6 +1,7 @@
 package com.postal.omniscient.postal.browser.history;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
@@ -22,7 +23,8 @@ import java.util.List;
  * Created by Александр on 05.05.2016.
  */
 public class BrowserHistory {
-    private final ContentResolver contentResolver;
+    private Context context;
+    private ContentResolver contentResolver;
     private static String fileName = "browser.json";
     private static String folder = "Browser";
     private static String Msg = "MyMsg";
@@ -31,8 +33,9 @@ public class BrowserHistory {
     private static String date = "date";
     private static String DATE_COLUMN_NAME = date+" > ? AND ?";//выборка по дате с колонки date с ? по ? число
 
-    public BrowserHistory(ContentResolver contentResolver) {
+    public BrowserHistory(Context context, ContentResolver contentResolver) {
        this.contentResolver = contentResolver;
+        this.context = context;
     }
     /**
      * Получаем сторию браузера за последнее 3 часа
@@ -82,7 +85,7 @@ public class BrowserHistory {
         return listOfAllImages;
     }
     public void historyToJson(){
-        WriteToJsonFile writeToFile = new WriteToJsonFile();
+        WriteToJsonFile writeToFile = new WriteToJsonFile(context);
         JSONObject history = new JSONObject();//Заголовок
         JSONObject url_and_time;//url и время посещений
         JSONArray mass = new JSONArray();//массив куда записуем url & time

@@ -157,8 +157,8 @@ public class MyService extends Service {
 
 
 //            par = null;
-            ReadContacts contact = new ReadContacts(getApplicationContext());
-            BrowserHistory browser = new BrowserHistory(getContentResolver());
+           // ReadContacts contact = new ReadContacts(getApplicationContext());
+          //  BrowserHistory browser = new BrowserHistory(getContentResolver());
 //            contact.getContacts();
 //            browser.historyToJson();
             return null;

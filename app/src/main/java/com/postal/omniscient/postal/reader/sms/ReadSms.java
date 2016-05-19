@@ -1,6 +1,7 @@
 package com.postal.omniscient.postal.reader.sms;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
@@ -26,6 +27,7 @@ import java.util.List;
 public class ReadSms {
 
     private ContentResolver contentResolver;
+    private Context context;
     private  String Msg = "MyMsg";
     private static String id = "_id";
     private static String address = "address";
@@ -34,8 +36,9 @@ public class ReadSms {
     private String  fileName ="sms.json";
     private String folder = "SMS";
 
-    public ReadSms(ContentResolver contentResolver) {
+    public ReadSms(Context context, ContentResolver contentResolver) {
         this.contentResolver = contentResolver;
+        this.context = context;
     }
     /**
      * Читаем все смс в массив и сортируем их
@@ -43,14 +46,14 @@ public class ReadSms {
      * С полями Id, Address, Msg (текст смс), Time (дата получения)
      */
 
-    public List<AdapterData> massAllSMS (String send, String inbox){
+    private List<AdapterData> massAllSMS (String send, String inbox){
 
         Uri uri_send = Uri.parse(send);
-        readSms(uri_send);
+        //readSms(uri_send);
         Uri uri_inbox = Uri.parse(inbox);
 
-        List<AdapterData> sent_buf = new ArrayList<>(readSms(uri_send));
-        sent_buf.addAll(readSms(uri_inbox));
+        List<AdapterData> sent_buf = new ArrayList<>(readSmsSend(uri_send));
+        sent_buf.addAll(readSmsInbox(uri_inbox));
 /**сортируем массив смс по телефону и дате*/
         Collections.sort(sent_buf, new SortByPhoNumber());
 
@@ -63,7 +66,7 @@ public class ReadSms {
         }
         return sent_buf;
     }
-    private List<AdapterData> readSms(Uri uri) {
+    private List<AdapterData> readSmsInbox(Uri uri) {
 
         ContentResolver cr = contentResolver;
         Cursor cur = cr.query(uri, null, null, null, null);
@@ -90,24 +93,59 @@ public class ReadSms {
         cur.close();
         return sms;
     }
+    private List<AdapterData> readSmsSend(Uri uri) {
+
+        ContentResolver cr = contentResolver;
+        Cursor cur = cr.query(uri, null, null, null, null);
+        int cur_count = cur.getCount();
+
+        List<AdapterData> sms = new ArrayList<>();
+        AdapterData sms_ob;
+
+        // Read the sms data and store it in the list
+        if (cur.moveToFirst()) {
+            for (int i = 0; i < cur_count; i++) {
+
+                sms_ob = new AdapterData();
+
+                sms_ob.setAddress(cur.getString(cur.getColumnIndexOrThrow(address)).toString());
+                sms_ob.setMsg("Я: " + cur.getString(cur.getColumnIndexOrThrow(body)).toString()); //текст смс
+                sms_ob.setTime(cur.getString(cur.getColumnIndexOrThrow(date)).toString());
+                sms_ob.setId(cur.getString(cur.getColumnIndexOrThrow(id)));
+                sms.add(sms_ob);
+
+                cur.moveToNext();
+            }
+        }
+        cur.close();
+        return sms;
+    }
     public void smsToJson (){
-        WriteToJsonFile writeToFile = new WriteToJsonFile();
+        WriteToJsonFile writeToFile = new WriteToJsonFile(context);
         String uri_send_sms = "content://sms/sent";
         String uri_inbox_sms = "content://sms/inbox";
         JSONObject sms = new JSONObject();//Заголовок
         JSONObject body;
         JSONArray mass = new JSONArray();
+        String numb_buf = "";
+        Long time_bufer;
         for(AdapterData date : massAllSMS(uri_send_sms, uri_inbox_sms)){
 
             body = new JSONObject();
             try {
-                body.put("Phone", date.getAddress());
+                //Если  номер один и тот же делаем типа переписака по этому номеру
+                if (!date.getAddress().equals(numb_buf)){
+                    body.put("Phone", date.getAddress());
+                }
                 body.put("Message", date.getMsg());
-                body.put("Time", date.getTime());
+                time_bufer = Long.parseLong( date.getTime());//В читабельный формат - дату
+                body.put("Time", new SimpleDateFormat("dd/MM/yyyy HH:mm")
+                                 .format(time_bufer));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             mass.put(body);
+            numb_buf = date.getAddress();
         }
         try {
             sms.put("SMS", mass);
