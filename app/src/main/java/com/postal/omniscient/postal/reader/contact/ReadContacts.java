@@ -231,7 +231,7 @@ public class ReadContacts {
     public void getContacts(){
        // ReadContacts getPhones = new ReadContacts(contentResolver);
         String [][] phone_contacts = readContacts();
-        WriteToJsonFile write = new WriteToJsonFile();
+        WriteToJsonFile write = new WriteToJsonFile(context);
 
         JSONArray number;//все номера телефонов одного контакта
         JSONObject name_and_phone;// имя и телефоны
