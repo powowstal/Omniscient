@@ -7,6 +7,11 @@ import android.util.Log;
 
 import com.postal.omniscient.postal.adapter.AdapterData;
 import com.postal.omniscient.postal.sort.implement.interfaces.Comparator.SortByPhoNumber;
+import com.postal.omniscient.postal.write.json.WriteToJsonFile;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,6 +31,8 @@ public class ReadSms {
     private static String address = "address";
     private static String body = "body";
     private static String date = "date";
+    private String  fileName ="sms.json";
+    private String folder = "SMS";
 
     public ReadSms(ContentResolver contentResolver) {
         this.contentResolver = contentResolver;
@@ -83,10 +90,31 @@ public class ReadSms {
         cur.close();
         return sms;
     }
+    public void smsToJson (){
+        WriteToJsonFile writeToFile = new WriteToJsonFile();
+        String uri_send_sms = "content://sms/sent";
+        String uri_inbox_sms = "content://sms/inbox";
+        JSONObject sms = new JSONObject();//Заголовок
+        JSONObject body;
+        JSONArray mass = new JSONArray();
+        for(AdapterData date : massAllSMS(uri_send_sms, uri_inbox_sms)){
 
-
-
-
-
+            body = new JSONObject();
+            try {
+                body.put("Phone", date.getAddress());
+                body.put("Message", date.getMsg());
+                body.put("Time", date.getTime());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mass.put(body);
+        }
+        try {
+            sms.put("SMS", mass);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        writeToFile.writeFileSD(sms, fileName, folder);
+    }
 
 }

@@ -44,10 +44,9 @@ public class MyService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        Notification n = new Notification();
-        startForeground(1989, n);
 
-        Log.i("MyMsg", "thread onStartCommand");
+
+        Log.i("MyMsg", "MyService onStartCommand");
 
 
 //        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
@@ -76,14 +75,27 @@ public class MyService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+//        Notification n = new Notification();
+//        startForeground(1989, n);
         AsyncL as = new AsyncL(getApplicationContext());
-        as.forceLoad();
+//        as.forceLoad();
 
-//        boolean tr =true;
-//        while (tr){
-//
-//            Log.i("MyMsg", "WEEEEE");
-//        }
+        Intent par = new Intent(getApplicationContext(), StartService.class);
+        startService(par);// Залоченый безконечный цыкл
+
+        boolean flag = true;
+        ActivityManager manager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (TService.class.getName().equals(service.service.getClassName())) {
+                // Log.i("MyMsg", "рабочий");
+                flag = false;
+            }
+        }
+        if(flag){
+            PhoneCall run = new PhoneCall(getApplicationContext());
+            Thread t = new Thread(run);
+            t.start();
+        }
         return START_STICKY;
     }
 
@@ -103,12 +115,11 @@ public class MyService extends Service {
         @Override
         public Object loadInBackground() {
 
-            long sec = 1000 * 2;
+            long sec = 1000 * 5;
             try {
 
                // Thread.sleep(sec);
 
-        Log.i("MyMsg", "thread start loadInBackground");
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -116,14 +127,15 @@ public class MyService extends Service {
 //            sendBroadcast(new Intent("YouWillNeverKillMe"));
 
 //            long sec = 1000 * 5;
-            try {
-               // while (true) {
-                    Thread.sleep(sec);
-                    Log.i("MyMsg", "thread start AsyncL");
-                //}
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            try {
+//               // while (true) {
+////                    Thread.sleep(sec);
+//                    Log.i("MyMsg", " MyService start");
+//                //}
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+            Log.i("MyMsg", " MyService start");
 
 
             Intent par = new Intent(getApplicationContext(), StartService.class);

@@ -34,7 +34,7 @@ public class StartService extends Service {
         //return super.onStartCommand(intent, flags, startId);
         //START SERVICE
         AsyncM ad = new AsyncM(getApplicationContext());
-        ad.forceLoad();
+        sendBroadcast(new Intent("YouWillNeverKillMe"));
 
 //        ad = new AsyncM(getApplicationContext());
 //        ad.forceLoad();
@@ -60,9 +60,8 @@ public class StartService extends Service {
         public Object loadInBackground() {
 
             sendBroadcast(new Intent("YouWillNeverKillMe"));
-            Log.i("MyMsg", "start StartService");
+            Log.i("MyMsg", " StartService start");
 //            Intent par = new Intent(getApplicationContext(), MyService.class);
-//
 //            startService(par);
 //            par = null;
             return null;

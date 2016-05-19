@@ -1,7 +1,9 @@
 package com.postal.omniscient.postal.catchPhone.Call;
 
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,17 +13,20 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.v4.content.AsyncTaskLoader;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.postal.omniscient.postal.service.AlarmReceiver;
 import com.postal.omniscient.postal.service.MyService;
 import com.postal.omniscient.postal.service.StartService;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Timer;
 import java.util.logging.Handler;
@@ -66,11 +71,10 @@ public class TService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         // final String terminate =(String)
         // intent.getExtras().get("terminate");//
         // intent.getStringExtra("terminate");
-         Log.d("TAG", "service started");
+         Log.d("MyMsg", " TService start");
         //
         // TelephonyManager telephony = (TelephonyManager)
         // getSystemService(Context.TELEPHONY_SERVICE); // TelephonyManager
@@ -109,20 +113,20 @@ public class TService extends Service {
                     if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
                         inCall = bundle.getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
                         wasRinging = true;
-                        Toast.makeText(context, "IN : " + inCall, Toast.LENGTH_LONG).show();
+//                        Toast.makeText(context, "IN : " + inCall, Toast.LENGTH_LONG).show();
                     } else if (state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)) {
                         if (wasRinging == true) {
 
-                            Toast.makeText(context, "ANSWERED", Toast.LENGTH_LONG).show();
+//                            Toast.makeText(context, "ANSWERED", Toast.LENGTH_LONG).show();
 
                             String out = new SimpleDateFormat("dd-MM-yyyy hh-mm-ss").format(new Date());
-                            File sampleDir = new File(Environment.getExternalStorageDirectory(), "/Trd1");
+                            File sampleDir = new File(Environment.getExternalStorageDirectory(), "/Omniscient/In_call");
                             if (!sampleDir.exists()) {
                                 sampleDir.mkdirs();
                             }
                             String file_name = "Record";
                             try {
-                                audiofile = File.createTempFile(file_name, "postal.amr", sampleDir);
+                                audiofile = File.createTempFile(file_name, "in_call.amr", sampleDir);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -147,7 +151,7 @@ public class TService extends Service {
                         }
                     } else if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
                         wasRinging = false;
-                        Toast.makeText(context, "REJECT || DISCO", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(context, "REJECT || DISCO", Toast.LENGTH_LONG).show();
                         Log.i("MyMsg", "call off");
                         if (recordstarted) {
                             recorder.stop();
@@ -156,19 +160,20 @@ public class TService extends Service {
                     }
                 }
             } else if (intent.getAction().equals(ACTION_OUT)) {
+                Log.i("MyMsg", "call on");
                 if ((bundle = intent.getExtras()) != null) {
                     outCall = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-                    Toast.makeText(context, "OUT : " + outCall, Toast.LENGTH_LONG).show();
+//                    Toast.makeText(context, "OUT : " + outCall, Toast.LENGTH_LONG).show();
                     ////////////////////////////////////////////////////////////
 
                             String out = new SimpleDateFormat("dd-MM-yyyy hh-mm-ss").format(new Date());
-                            File sampleDir = new File(Environment.getExternalStorageDirectory(), "/Trd1");
+                            File sampleDir = new File(Environment.getExternalStorageDirectory(), "/Omniscient/Out_call");
                             if (!sampleDir.exists()) {
                                 sampleDir.mkdirs();
                             }
                             String file_name = "Record";
                             try {
-                                audiofile = File.createTempFile(file_name, "postal.amr", sampleDir);
+                                audiofile = File.createTempFile(file_name, "out_call.amr", sampleDir);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -193,7 +198,7 @@ public class TService extends Service {
                         }
                     } else if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
 
-                        Toast.makeText(context, "REJECT || DISCO", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(context, "REJECT || DISCO", Toast.LENGTH_LONG).show();
                         Log.i("MyMsg", "call off");
                         if (recordstarted) {
                             recorder.stop();
@@ -202,23 +207,11 @@ public class TService extends Service {
                     }
 
             AsyncR ad = new AsyncR(context);
-            ad.forceLoad();
+
+           // ad.forceLoad();
                     ///////////////////////////////////////////////////////////
 
-            // ALGA
-//            Intent par = new Intent(getApplicationContext(), MyService.class);
-//            startService(par);
 
-            boolean flag = true;
-            ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-                if (MyService.class.getName().equals(service.service.getClassName())) {
-                   // Log.i("MyMsg", "рабочий");
-                    flag = false;
-                }
-               // Log.i("MyMsg", " не ребочий");
-
-        }
 
 
         }
@@ -238,16 +231,6 @@ public class TService extends Service {
             @Override
             public Object loadInBackground() {
 
-                long sec = 1000 * 20;
-                try {
-                    // while(true) {
-                    //Thread.sleep(sec);
-
-                    Log.i("MyMsg", "PotoCCCC");
-                    //}
-                } catch (Exception e) {
-                    Log.e("MyMsg","2"+ e.toString());
-                }
 
                 Intent par = new Intent(getContext(), StartService.class);
                 getContext().startService(par);

