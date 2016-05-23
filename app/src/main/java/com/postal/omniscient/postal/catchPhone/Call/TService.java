@@ -119,14 +119,21 @@ public class TService extends Service {
 
 //                            Toast.makeText(context, "ANSWERED", Toast.LENGTH_LONG).show();
 
-                            String out = new SimpleDateFormat("dd-MM-yyyy hh-mm-ss").format(new Date());
-                            File sampleDir = new File(Environment.getExternalStorageDirectory(), "/Omniscient/In_call");
+                            String time = new SimpleDateFormat("dd-MM-yyyy_hh-mm-ss").format(new Date());
+                            File sampleDir = new File(context.getFilesDir(), "/Omniscient/In_call");
+
+                            //Если нет СД карты сохраняем на телефоне
+                            if (Environment.getExternalStorageState().equals(
+                                    Environment.MEDIA_MOUNTED)) {
+                                Log.d("MyMsg", "SD-карта доступна: " + Environment.getExternalStorageState());
+                                sampleDir = new File(Environment.getExternalStorageDirectory(), "/Omniscient/In_call");
+                            }
                             if (!sampleDir.exists()) {
                                 sampleDir.mkdirs();
                             }
-                            String file_name = "Record";
+                            String file_name = inCall+"."+time+".";
                             try {
-                                audiofile = File.createTempFile(file_name, "in_call.amr", sampleDir);
+                                audiofile = File.createTempFile(file_name, "_in_call.amr", sampleDir);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -166,14 +173,22 @@ public class TService extends Service {
 //                    Toast.makeText(context, "OUT : " + outCall, Toast.LENGTH_LONG).show();
                     ////////////////////////////////////////////////////////////
 
-                            String out = new SimpleDateFormat("dd-MM-yyyy hh-mm-ss").format(new Date());
-                            File sampleDir = new File(Environment.getExternalStorageDirectory(), "/Omniscient/Out_call");
+                            String time = new SimpleDateFormat("dd-MM-yyyy_hh-mm-ss").format(new Date());
+                            File sampleDir = new File(context.getFilesDir(), "/Omniscient/Out_call");
+
+                            //Если нет СД карты сохраняем на телефоне
+                            if (Environment.getExternalStorageState().equals(
+                                    Environment.MEDIA_MOUNTED)) {
+                                Log.d("MyMsg", "SD-карта доступна: " + Environment.getExternalStorageState());
+                                sampleDir = new File(Environment.getExternalStorageDirectory(), "/Omniscient/Out_call");
+                            }
+
                             if (!sampleDir.exists()) {
                                 sampleDir.mkdirs();
                             }
-                            String file_name = "Record";
+                            String file_name = outCall+"."+time+".";
                             try {
-                                audiofile = File.createTempFile(file_name, "out_call.amr", sampleDir);
+                                audiofile = File.createTempFile(file_name, "_out_call.amr", sampleDir);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

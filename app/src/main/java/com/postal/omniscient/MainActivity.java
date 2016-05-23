@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*5, pendingIntent);
         }
         else if (Build.VERSION_CODES.KITKAT <= SDK_INT  && SDK_INT < Build.VERSION_CODES.M) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*5, pendingIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP,  1000*60*5, pendingIntent);
         }
         else if (SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*5, pendingIntent);

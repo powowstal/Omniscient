@@ -47,7 +47,7 @@ public class BrowserHistory {
         List<AdapterData> listOfAllImages = new ArrayList<>();
         Calendar currentDate = Calendar.getInstance();
         Long end_date =  currentDate.getTimeInMillis();
-        Long start_date = end_date - (3*60*60*1000);
+        Long start_date = end_date - (24*60*60*1000);
         String[] date_query = {start_date.toString(), end_date.toString()};
 
 
@@ -70,7 +70,7 @@ public class BrowserHistory {
                 breowse_ob.setAddress(cur.getString(url_data_column_index));//url на которые заходил последних 3 часа
                 buf_date = Long.parseLong(cur.getString(date_column_index));
                 breowse_ob.setTime(//date когда заходили на страницу в интернент
-                        new SimpleDateFormat("dd/MM/yyyy HH:mm")
+                        new SimpleDateFormat("dd-MM-yyyy HH:mm")
                                 .format(buf_date));
 
                         listOfAllImages.add(breowse_ob);
