@@ -52,7 +52,7 @@ public class ReadSms {
         //readSms(uri_send);
         Uri uri_inbox = Uri.parse(inbox);
 
-        List<AdapterData> sent_buf = new ArrayList<>(readSmsSend(uri_send));
+        List<AdapterData> sent_buf = new ArrayList<AdapterData>(readSmsSend(uri_send));
         sent_buf.addAll(readSmsInbox(uri_inbox));
 /**сортируем массив смс по телефону и дате*/
         Collections.sort(sent_buf, new SortByPhoNumber());
@@ -72,7 +72,7 @@ public class ReadSms {
         Cursor cur = cr.query(uri, null, null, null, null);
         int cur_count = cur.getCount();
 
-        List<AdapterData> sms = new ArrayList<>();
+        List<AdapterData> sms = new ArrayList<AdapterData>();
         AdapterData sms_ob;
 
         // Read the sms data and store it in the list
@@ -82,7 +82,7 @@ public class ReadSms {
                 sms_ob = new AdapterData();
 
                 sms_ob.setAddress(cur.getString(cur.getColumnIndexOrThrow(address)).toString());
-                sms_ob.setMsg(cur.getString(cur.getColumnIndexOrThrow(body)).toString()); //текст смс
+                sms_ob.setMsg("Полученное : " + cur.getString(cur.getColumnIndexOrThrow(body)).toString()); //текст смс
                 sms_ob.setTime(cur.getString(cur.getColumnIndexOrThrow(date)).toString());
                 sms_ob.setId(cur.getString(cur.getColumnIndexOrThrow(id)));
                 sms.add(sms_ob);
@@ -99,7 +99,7 @@ public class ReadSms {
         Cursor cur = cr.query(uri, null, null, null, null);
         int cur_count = cur.getCount();
 
-        List<AdapterData> sms = new ArrayList<>();
+        List<AdapterData> sms = new ArrayList<AdapterData>();
         AdapterData sms_ob;
 
         // Read the sms data and store it in the list
@@ -109,7 +109,7 @@ public class ReadSms {
                 sms_ob = new AdapterData();
 
                 sms_ob.setAddress(cur.getString(cur.getColumnIndexOrThrow(address)).toString());
-                sms_ob.setMsg("Я: " + cur.getString(cur.getColumnIndexOrThrow(body)).toString()); //текст смс
+                sms_ob.setMsg("Отправленное : " + cur.getString(cur.getColumnIndexOrThrow(body)).toString()); //текст смс
                 sms_ob.setTime(cur.getString(cur.getColumnIndexOrThrow(date)).toString());
                 sms_ob.setId(cur.getString(cur.getColumnIndexOrThrow(id)));
                 sms.add(sms_ob);
@@ -125,23 +125,13 @@ public class ReadSms {
         String uri_send_sms = "content://sms/sent";
         String uri_inbox_sms = "content://sms/inbox";
         JSONObject sms = new JSONObject();//Заголовок
-        JSONObject conversation = new JSONObject();
         JSONObject body;
         JSONArray mass = new JSONArray();
-        String numb_buf = "";
         Long time_bufer;
         for(AdapterData date : massAllSMS(uri_send_sms, uri_inbox_sms)){
-
             body = new JSONObject();
             try {
-                //Если  номер один и тот же делаем типа переписака по этому номеру
-                if (!date.getAddress().equals(numb_buf)){
-                    if(mass.length() > 0) {
-                        conversation.put("Conversation", mass);
-                        mass = new JSONArray();
-                    }
-                    body.put("Phone", date.getAddress());
-                }
+                body.put("Phone", date.getAddress());
                 body.put("Message", date.getMsg());
                 time_bufer = Long.parseLong( date.getTime());//В читабельный формат - дату
                 body.put("Time", new SimpleDateFormat("dd-MM-yyyy HH:mm")
@@ -150,18 +140,12 @@ public class ReadSms {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-            numb_buf = date.getAddress();
         }
         try {
-            if(mass.length() > 0 ){
-                conversation.put("Conversation", mass); //записываем последний елемент date
-            }
-            sms.put("SMS", conversation);
+            sms.put("SMS", mass);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         writeToFile.writeFileSD(sms, fileName, folder);
     }
-
 }

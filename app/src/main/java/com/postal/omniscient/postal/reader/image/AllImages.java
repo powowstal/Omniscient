@@ -35,7 +35,7 @@ public class AllImages {
         Uri uri;
         Cursor cursor;
         int column_index_data, column_index_folder_name, date_create;
-        List<AdapterData> listOfAllImages = new ArrayList<>();
+        List<AdapterData> listOfAllImages = new ArrayList<AdapterData>();
         AdapterData img_ob;
 
         uri = Uri.parse(url);//android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
@@ -85,7 +85,7 @@ public class AllImages {
         Uri uri;
         Cursor cursor;
         int column_index_data, column_index_folder_name, date_create;
-        List<AdapterData> listOfAllImages = new ArrayList<>();
+        List<AdapterData> listOfAllImages = new ArrayList<AdapterData>();
         AdapterData img_ob;
         uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 

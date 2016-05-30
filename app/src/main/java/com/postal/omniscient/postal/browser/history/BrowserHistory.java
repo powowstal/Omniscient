@@ -44,7 +44,7 @@ public class BrowserHistory {
     public List<AdapterData> getBrowserHist()  {
         Uri uri;
         AdapterData breowse_ob;
-        List<AdapterData> listOfAllImages = new ArrayList<>();
+        List<AdapterData> listOfAllImages = new ArrayList<AdapterData>();
         Calendar currentDate = Calendar.getInstance();
         Long end_date =  currentDate.getTimeInMillis();
         Long start_date = end_date - (24*60*60*1000);

@@ -117,7 +117,7 @@ public class ReadMms {
         Uri partURI = Uri.parse(content_mms);
         String [] projection = {id,date};
         AdapterData mms;
-        List<AdapterData> listOfAllMms = new ArrayList<>();
+        List<AdapterData> listOfAllMms = new ArrayList<AdapterData>();
         int id_column_index, date_column_index;
 
         Cursor cur = cr.query(partURI, projection, null, null, date+" DESC");
@@ -147,7 +147,7 @@ public class ReadMms {
         String selection = ct+" = ?";
         String[] sortOrder = {text_plain};
         AdapterData mms;
-        List<AdapterData> listOfAllMms = new ArrayList<>();
+        List<AdapterData> listOfAllMms = new ArrayList<AdapterData>();
         int mid_column_index, text_column_index;
 
         Cursor cur = cr.query(partURI, projection, selection, sortOrder, null);
