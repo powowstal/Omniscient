@@ -8,8 +8,8 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 public class NetworkStateReceiver extends BroadcastReceiver {
-    public NetworkStateReceiver() {
-    }
+//    public NetworkStateReceiver() {
+//    }
     private String Msg = "MyMsg";
     @Override
     public void onReceive(Context context, Intent intent) {

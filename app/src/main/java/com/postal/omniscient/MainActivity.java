@@ -42,7 +42,7 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
     private static String Msg = "MyMsg1";
     final int SDK_INT = Build.VERSION.SDK_INT;
-  
+
 
     private static final int REQUEST_CODE = 0;
     private DevicePolicyManager mDPM;

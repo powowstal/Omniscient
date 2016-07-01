@@ -17,6 +17,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.QUICKBOOT_POWERON" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -73,9 +74,7 @@
             android:enabled="true"
             android:exported="true" />
         <receiver
-            android:name=".postal.networkStateReceiver.NetworkStateReceiver"
-            android:enabled="true"
-            android:exported="true">
+            android:name=".postal.networkStateReceiver.NetworkStateReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
