@@ -29,7 +29,7 @@ public class DownloadFileRun implements Runnable {
     private void start() {
 
         String server = "10.0.2.2";
-        int port =2221;
+        int port = 2221;
         try {
             socket = new Socket(server, port);
             dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
