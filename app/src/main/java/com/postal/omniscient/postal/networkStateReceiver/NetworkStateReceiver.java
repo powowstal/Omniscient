@@ -53,7 +53,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         }
         @Override
         public Object loadInBackground() {
-            Log.i("MyMsg", "MyActyvity Start POSTAL 33954");
+            Log.i(Msg, "MyActyvity Start POSTAL 33954");
             Thread startDownload = new Thread(dwnloadFile);
             //поток для загрузки файлов на сервер
             startDownload.start();
