@@ -1,5 +1,6 @@
 package com.postal.omniscient.postal.downloadFiles;
 
+import android.content.Intent;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -28,13 +29,13 @@ public class DownloadFileRun implements Runnable {
     private String Msg = "MyMsg";
     private void start() {
 
-        String server = "10.0.2.2";
+        String server = "192.168.1.108";
         int port = 2221;
         try {
             socket = new Socket(server, port);
             dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             send2();
-            Log.i(Msg, "Postal work start2");
+            Log.d(Msg, "Postal work CHIDORY");
 
 
             try {
@@ -44,7 +45,7 @@ public class DownloadFileRun implements Runnable {
 
                 int a;
                 while ((line = reader.readLine()) != null)
-                    Log.i(Msg, "Postal work" + line);
+                    Log.d(Msg, "ANSWER" + line);
 
             } catch (IOException ex) {
 
@@ -120,6 +121,7 @@ public class DownloadFileRun implements Runnable {
 
         Log.i(Msg, "Postal work start");
         start();
+        Log.i(Msg, "Postal work END");
     }
 
 
