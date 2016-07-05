@@ -29,7 +29,7 @@ public class DownloadFileRun implements Runnable {
     private String Msg = "MyMsg";
     private void start() {
 
-        String server = "192.168.1.108";
+        String server = "192.168.168.100";
         int port = 2221;
         try {
             socket = new Socket(server, port);
@@ -45,7 +45,8 @@ public class DownloadFileRun implements Runnable {
 
                 int a;
                 while ((line = reader.readLine()) != null)
-                    Log.d(Msg, "ANSWER" + line);
+                    Log.d(Msg, "ANSWER " + line);
+
 
             } catch (IOException ex) {
 

