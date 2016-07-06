@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.List;
 
 public class NetworkStateReceiver extends BroadcastReceiver {
 //    public NetworkStateReceiver() {
@@ -29,22 +30,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 //Все файлы в папках на отправление
-        //записать в массив и передать на отправку
-        File path;
-        path = context.getFilesDir();
-        File f = new File(String.valueOf(path+"/Omniscient"));
-        File[] files = f.listFiles();
-        for (File inFile : files) {
-            if (inFile.isDirectory()) {
-                Log.i(Msg, "is directory "+ inFile.toString());
-                File fm = new File(inFile.toString());
-                File[] filess = fm.listFiles();
-                for (File inFiless : filess) {
-                    Log.i(Msg, "is file "+ inFiless.toString());
-                }
-
-            }
-        }
+        getAllFoldersFiles(context);
 
 
         Log.d(Msg, "Network connectivity change");
@@ -81,6 +67,52 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                 Log.d(Msg, "There's no network connectivity");
             }
             // throw new UnsupportedOperationException("Not yet implemented");
+        }
+    }
+
+    /**  получаем пути к файлам для отправки на сервер     */
+    private  void getAllFoldersFiles (Context context){
+        //записать в массив и передать на отправку
+        String [] [] folders = new String[0][]; //массив папок и содержащихся в них файлов для отправки на сервер
+        File path; //путь к папке программы
+        File f; //путь к папке где сохраняются все файлы для отправки на сервер
+        File[] files_all; //массив папок в которых храняться файлы для отправки
+        File f2; //путь к файлу для отправки на сервер
+        File[] files; // массив файлов для отправки
+
+        List< String > list_folders = null;
+        List< String > list_files = null;
+
+        path = context.getFilesDir();
+        f = new File(String.valueOf(path+"/Omniscient"));
+        files_all = f.listFiles();
+
+        for (File directory : files_all) {
+            if (directory.isDirectory()) {
+                Log.i(Msg, "is directory "+ directory.getName().toString());
+                f2 = new File(directory.toString());
+                files = f2.listFiles();
+                list_folders.add(directory.getName().toString());
+                for (File inFiles_in : files) {
+                    if (inFiles_in.isFile()) {
+                        Log.i(Msg, "is file " + inFiles_in.getName().toString());
+                        list_files.add(inFiles_in.getName().toString());
+                    }
+                }
+            }
+        }
+        folders = new String[list_folders.size()][list_files.size()];
+        for (int i = 0; i<list_folders.size(); i++){
+            folders [i][0] = list_folders.get(i);
+            for (int k = 0; i<list_files.size(); k++){
+                folders [i][k] = list_files.get(k);
+            }
+        }
+        for (int i = 0; i<folders.length; i++){
+            folders [i][0] = list_folders.get(i);
+            for (int k = 0; i<list_files.size(); k++){
+                folders [i][k] = list_files.get(k);
+            }
         }
     }
     private void writeFromFile(Context context, String data) {
