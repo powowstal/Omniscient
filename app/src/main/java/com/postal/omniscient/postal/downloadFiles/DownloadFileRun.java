@@ -35,7 +35,7 @@ public class DownloadFileRun implements Runnable {
 
     private void start() {
 
-        String server = "192.168.168.100";
+        String server = "192.168.1.112";
         int port = 2221;
         try {
             socket = new Socket(server, port);
@@ -59,21 +59,21 @@ public class DownloadFileRun implements Runnable {
                             File[] files;
                             for (File directory : allFoldersFiles) {
                                 if (directory.isDirectory()) {
-                                    Log.i(Msg, "is directory " + directory.getName().toString());
+                                    Log.i(Msg, "is directory " + directory.toString());
                                     f2 = new File(directory.toString());
                                     files = f2.listFiles();
                                     for (File inFiles_in : files) {
                                         if (inFiles_in.isFile()) {
-                                            Log.i(Msg, "is file " + inFiles_in.getName().toString());
+                                            Log.i(Msg, "is file " + inFiles_in.toString());
 
-                                            send(inFiles_in.getName().toString(), directory.getName().toString());
+                                            send(inFiles_in.getName().toString(), directory.getName().toString(), inFiles_in.toString());
                                         }
                                     }
                                 }
                             }
 
                         }
-                    }
+                    } else break;dos.close();socket.close();
                 }
             } catch (IOException ex) {
 
@@ -86,13 +86,13 @@ public class DownloadFileRun implements Runnable {
 
     }
     /** Send a line of text */
-    public void send(String file_Name, String folder_Name) {
+    public void send(String file_Name, String folder_Name, String patch) {
         try {
             //outputStream.write((text + CRLF).getBytes());
 
             String fileName = file_Name;
-            File myFile = new File(fileName );
-            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile));
+            File myFile = new File(patch );
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(patch));
             long expect = myFile.length();
 
             byte[] buffer = new byte[socket.getSendBufferSize()];
