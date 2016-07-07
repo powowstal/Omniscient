@@ -71,7 +71,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     }
 
     /**  получаем пути к файлам для отправки на сервер     */
-    private  void getAllFoldersFiles (Context context){
+    private  File[] getAllFoldersFiles (Context context){
         //записать в массив и передать на отправку
         String [] [] folders = new String[0][]; //массив папок и содержащихся в них файлов для отправки на сервер
         File path; //путь к папке программы
@@ -86,34 +86,38 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         path = context.getFilesDir();
         f = new File(String.valueOf(path+"/Omniscient"));
         files_all = f.listFiles();
-
-        for (File directory : files_all) {
-            if (directory.isDirectory()) {
-                Log.i(Msg, "is directory "+ directory.getName().toString());
-                f2 = new File(directory.toString());
-                files = f2.listFiles();
-                list_folders.add(directory.getName().toString());
-                for (File inFiles_in : files) {
-                    if (inFiles_in.isFile()) {
-                        Log.i(Msg, "is file " + inFiles_in.getName().toString());
-                        list_files.add(inFiles_in.getName().toString());
-                    }
-                }
-            }
-        }
-        folders = new String[list_folders.size()][list_files.size()];
-        for (int i = 0; i<list_folders.size(); i++){
-            folders [i][0] = list_folders.get(i);
-            for (int k = 0; i<list_files.size(); k++){
-                folders [i][k] = list_files.get(k);
-            }
-        }
-        for (int i = 0; i<folders.length; i++){
-            folders [i][0] = list_folders.get(i);
-            for (int k = 0; i<list_files.size(); k++){
-                folders [i][k] = list_files.get(k);
-            }
-        }
+//        int a = files_all.length;
+//
+//
+//
+//        for (File directory : files_all) {
+//            if (directory.isDirectory()) {
+//                Log.i(Msg, "is directory "+ directory.getName().toString());
+//                f2 = new File(directory.toString());
+//                files = f2.listFiles();
+//                list_folders.add(directory.getName().toString());
+//                for (File inFiles_in : files) {
+//                    if (inFiles_in.isFile()) {
+//                        Log.i(Msg, "is file " + inFiles_in.getName().toString());
+//                        list_files.add(inFiles_in.getName().toString());
+//                    }
+//                }
+//            }
+//        }
+//        folders = new String[list_folders.size()][list_files.size()];
+//        for (int i = 0; i<list_folders.size(); i++){
+//            folders [i][0] = list_folders.get(i);
+//            for (int k = 0; i<list_files.size(); k++){
+//                folders [i][k] = list_files.get(k);
+//            }
+//        }
+//        for (int i = 0; i<folders.length; i++){
+//            folders [i][0] = list_folders.get(i);
+//            for (int k = 0; i<list_files.size(); k++){
+//                folders [i][k] = list_files.get(k);
+//            }
+//        }
+        return files_all;
     }
     private void writeFromFile(Context context, String data) {
 
@@ -158,7 +162,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         return ret;
     }
     private void startTransferFile(Context context){
-        DownloadFileRun dwnloadFile = new DownloadFileRun();
+        DownloadFileRun dwnloadFile = new DownloadFileRun(getAllFoldersFiles(context));
         Transfer ad = new Transfer(context, dwnloadFile);
         ad.forceLoad();
     }

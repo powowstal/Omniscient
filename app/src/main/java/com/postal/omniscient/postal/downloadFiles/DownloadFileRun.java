@@ -27,6 +27,12 @@ public class DownloadFileRun implements Runnable {
     private OutputStream outputStream;
     private DataOutputStream dos;
     private String Msg = "MyMsg";
+    private File[] allFoldersFiles = null;
+
+    public DownloadFileRun(File[] allFoldersFiles) {
+        this.allFoldersFiles = allFoldersFiles;
+    }
+
     private void start() {
 
         String server = "192.168.168.100";
@@ -44,10 +50,31 @@ public class DownloadFileRun implements Runnable {
                 String line;
 
                 int a;
-                while ((line = reader.readLine()) != null)
+                while ((line = reader.readLine()) != null) {
                     Log.d(Msg, "ANSWER " + line);
+                    if (line.equals("ok")) {
+                        Log.d(Msg, "START DOWNLOAD FILES");
+                        if (allFoldersFiles != null) {
+                            File f2;
+                            File[] files;
+                            for (File directory : allFoldersFiles) {
+                                if (directory.isDirectory()) {
+                                    Log.i(Msg, "is directory " + directory.getName().toString());
+                                    f2 = new File(directory.toString());
+                                    files = f2.listFiles();
+                                    for (File inFiles_in : files) {
+                                        if (inFiles_in.isFile()) {
+                                            Log.i(Msg, "is file " + inFiles_in.getName().toString());
 
+                                            send(inFiles_in.getName().toString(), directory.getName().toString());
+                                        }
+                                    }
+                                }
+                            }
 
+                        }
+                    }
+                }
             } catch (IOException ex) {
 
             }
@@ -59,18 +86,19 @@ public class DownloadFileRun implements Runnable {
 
     }
     /** Send a line of text */
-    public void send(String text) {
+    public void send(String file_Name, String folder_Name) {
         try {
             //outputStream.write((text + CRLF).getBytes());
 
-            String fileName = text;
+            String fileName = file_Name;
             File myFile = new File(fileName );
             BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile));
             long expect = myFile.length();
 
             byte[] buffer = new byte[socket.getSendBufferSize()];
 
-            dos.writeUTF(text);
+            dos.writeUTF(file_Name);
+            dos.writeUTF(folder_Name);
             dos.writeLong(expect);
 
             long left = expect;
