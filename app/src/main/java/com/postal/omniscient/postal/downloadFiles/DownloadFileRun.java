@@ -37,6 +37,8 @@ public class DownloadFileRun implements Runnable {
 
         String server = "192.168.1.112";
         int port = 2221;
+
+        String isLoaded = "isLoaded ";
         try {
             socket = new Socket(server, port);
             dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
@@ -52,6 +54,10 @@ public class DownloadFileRun implements Runnable {
                 int a;
                 while ((line = reader.readLine()) != null) {
                     Log.d(Msg, "ANSWER " + line);
+                    if (line.startsWith(isLoaded)) {
+                        Log.i(Msg, "START DELETE FILES ");
+                        deleteFileIsLoaded(line.replaceFirst(isLoaded, ""));
+                    }
                     if (line.equals("ok")) {
                         Log.d(Msg, "START DOWNLOAD FILES");
                         if (allFoldersFiles != null) {
@@ -85,7 +91,36 @@ public class DownloadFileRun implements Runnable {
 
 
     }
-    /** Send a line of text */
+    /** Удаляем загруженые файлы */
+    private void deleteFileIsLoaded(String line) {
+
+        try {
+            if (allFoldersFiles != null) {
+                File f2;
+                File[] files;
+                for (File directory : allFoldersFiles) {
+                    if (directory.isDirectory()) {
+                        f2 = new File(directory.toString());
+                        files = f2.listFiles();
+                        for (File inFiles_in : files) {
+                            if (inFiles_in.isFile()) {
+                                Log.i(Msg, "is file " + inFiles_in.toString());
+                                if (line.equals(inFiles_in.getName().toString()))
+                                new File(inFiles_in.toString()).delete();
+                                Log.i(Msg, "DELETE "+inFiles_in.toString());
+                            }
+                        }
+                    }
+                }
+
+            }
+
+        } catch (Exception e){}
+
+    }
+
+    /** Send a line of text
+     * file_Name имя файла, folder_Name имя папки, patch путь к файлу*/
     public void send(String file_Name, String folder_Name, String patch) {
         try {
             //outputStream.write((text + CRLF).getBytes());
