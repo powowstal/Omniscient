@@ -36,14 +36,14 @@ public class DownloadFileRun implements Runnable {
 
     private void start() {
 
-        String server = "192.168.168.100";
+        String server = "192.168.1.114";
         int port = 2221;
 
         String isLoaded = "isLoaded ";
         try { long fff = 13;
             socket = new Socket();//(server, port);
             socket.connect(new InetSocketAddress(server, port),2000);
-            socket.setSoTimeout(10000);
+            socket.setSoTimeout(60000);
             dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             send2();
             Log.d(Msg, "Postal work CHIDORY");
@@ -71,22 +71,25 @@ public class DownloadFileRun implements Runnable {
 
                             Thread thread = new Thread(){
                                 public void run(){
-                                    final long sleep_time = 1000;
+                                    final long sleep_time = 3000;
                                     try {
                                     sleep(sleep_time);
                                         dos.writeUTF("isConnect");
-                                    } catch (InterruptedException e) {
-                                        Log.e(Msg, e.toString());
+                                        dos.flush();
+                                        Log.i(Msg, "Thread Running isConnect");
                                     } catch (IOException e) {
                                         Log.e(Msg, e.toString());
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
                                     }
-                                    Log.i(Msg, "Thread Running isConnect");
+
                                 }
                             };
                             thread.start();
                     }
                     if (line.equals("ok")) {
                         dos.writeUTF("isConnect");//начать поддержку соединения
+                        dos.flush();
                         if (allFoldersFiles != null) {
                             //отправка в новом потоке
                             SendFileToServer dwnloadFile = new SendFileToServer(allFoldersFiles, socket, dos);
@@ -99,7 +102,7 @@ public class DownloadFileRun implements Runnable {
                     } //else break;dos.close();socket.close();
                 }
             } catch (IOException ex) { Log.e(Msg, "Eror "+ex);
-
+                dos.close();socket.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
