@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
@@ -35,15 +36,18 @@ public class DownloadFileRun implements Runnable {
 
     private void start() {
 
-        String server = "192.168.1.112";
+        String server = "192.168.168.100";
         int port = 2221;
 
         String isLoaded = "isLoaded ";
-        try {
-            socket = new Socket(server, port);
+        try { long fff = 13;
+            socket = new Socket();//(server, port);
+            socket.connect(new InetSocketAddress(server, port),2000);
+            socket.setSoTimeout(10000);
             dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             send2();
             Log.d(Msg, "Postal work CHIDORY");
+
 
 
             try {
@@ -52,36 +56,49 @@ public class DownloadFileRun implements Runnable {
                 String line;
 
                 int a;
+
                 while ((line = reader.readLine()) != null) {
                     Log.d(Msg, "ANSWER " + line);
-                    if (line.startsWith(isLoaded)) {
-                        Log.i(Msg, "START DELETE FILES ");
-                        deleteFileIsLoaded(line.replaceFirst(isLoaded, ""));
+                    if (line.startsWith(isLoaded)) {// сделать в оддельном потоке, что бы прием- передача
+                        //были в разных потоках
+                        DeleteSendOutFiles deleteSendOutFiles = new DeleteSendOutFiles(allFoldersFiles);
+                        deleteSendOutFiles.setFeleNAme(line);
+                        Thread startDelete = new Thread(deleteSendOutFiles);
+                        //поток для удаления файлов
+                        startDelete.start();
+                    }
+                    if (line.equals("isConnect")) {
+
+                            Thread thread = new Thread(){
+                                public void run(){
+                                    final long sleep_time = 1000;
+                                    try {
+                                    sleep(sleep_time);
+                                        dos.writeUTF("isConnect");
+                                    } catch (InterruptedException e) {
+                                        Log.e(Msg, e.toString());
+                                    } catch (IOException e) {
+                                        Log.e(Msg, e.toString());
+                                    }
+                                    Log.i(Msg, "Thread Running isConnect");
+                                }
+                            };
+                            thread.start();
                     }
                     if (line.equals("ok")) {
-                        Log.d(Msg, "START DOWNLOAD FILES");
+                        dos.writeUTF("isConnect");//начать поддержку соединения
                         if (allFoldersFiles != null) {
-                            File f2;
-                            File[] files;
-                            for (File directory : allFoldersFiles) {
-                                if (directory.isDirectory()) {
-                                    Log.i(Msg, "is directory " + directory.toString());
-                                    f2 = new File(directory.toString());
-                                    files = f2.listFiles();
-                                    for (File inFiles_in : files) {
-                                        if (inFiles_in.isFile()) {
-                                            Log.i(Msg, "is file " + inFiles_in.toString());
+                            //отправка в новом потоке
+                            SendFileToServer dwnloadFile = new SendFileToServer(allFoldersFiles, socket, dos);
+                            Thread startDownlow = new Thread(dwnloadFile);
+                            //поток для загрузки файлов на сервер
+                            startDownlow.start();
 
-                                            send(inFiles_in.getName().toString(), directory.getName().toString(), inFiles_in.toString());
-                                        }
-                                    }
-                                }
-                            }
 
                         }
-                    } else break;dos.close();socket.close();
+                    } //else break;dos.close();socket.close();
                 }
-            } catch (IOException ex) {
+            } catch (IOException ex) { Log.e(Msg, "Eror "+ex);
 
             }
         } catch (IOException e) {
@@ -91,64 +108,11 @@ public class DownloadFileRun implements Runnable {
 
 
     }
-    /** Удаляем загруженые файлы */
-    private void deleteFileIsLoaded(String line) {
 
-        try {
-            if (allFoldersFiles != null) {
-                File f2;
-                File[] files;
-                for (File directory : allFoldersFiles) {
-                    if (directory.isDirectory()) {
-                        f2 = new File(directory.toString());
-                        files = f2.listFiles();
-                        for (File inFiles_in : files) {
-                            if (inFiles_in.isFile()) {
-                                Log.i(Msg, "is file " + inFiles_in.toString());
-                                if (line.equals(inFiles_in.getName().toString()))
-                                new File(inFiles_in.toString()).delete();
-                                Log.i(Msg, "DELETE "+inFiles_in.toString());
-                            }
-                        }
-                    }
-                }
-
-            }
-
-        } catch (Exception e){}
-
-    }
 
     /** Send a line of text
      * file_Name имя файла, folder_Name имя папки, patch путь к файлу*/
-    public void send(String file_Name, String folder_Name, String patch) {
-        try {
-            //outputStream.write((text + CRLF).getBytes());
 
-            String fileName = file_Name;
-            File myFile = new File(patch );
-            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(patch));
-            long expect = myFile.length();
-
-            byte[] buffer = new byte[socket.getSendBufferSize()];
-
-            dos.writeUTF(file_Name);
-            dos.writeUTF(folder_Name);
-            dos.writeLong(expect);
-
-            long left = expect;
-            int inlen = 0;
-            while (left > 0 && (inlen = bis.read(buffer, 0, (int)Math.min(left, buffer.length))) >= 0) {
-                dos.write(buffer, 0, inlen);
-                left -= inlen;
-            }
-
-            bis.close();
-            dos.flush();
-        } catch (IOException ex) {
-           // notifyObservers(ex);
-        }
-    }
 
     public void send2() {
         try {
