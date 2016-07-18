@@ -61,7 +61,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 //                            && connectivityManager.getActiveNetworkInfo().isAvailable()
 //                            && connectivityManager.getActiveNetworkInfo().isConnected()) {}
 
-                    
+
                         Log.i("MyMsg", "ЗАПУСК ПЕредаЧИ НА СЕРВЕР ИНФЫ");
                         startTransferFile(context);// Начать загрузку файлов на сервер при появлении интернета
 
