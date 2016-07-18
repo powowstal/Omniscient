@@ -2,6 +2,8 @@ package com.postal.omniscient.postal.downloadFiles;
 
 import android.util.Log;
 
+import com.postal.omniscient.postal.adapter.AdapterDownloadFlag;
+
 import java.io.BufferedInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -13,21 +15,25 @@ import java.net.Socket;
  * Created by Александр on 10.07.2016.
  */
 public class SendFileToServer implements Runnable {
+    private final AdapterDownloadFlag is_downloadFlag;
     private File[] allFoldersFiles;
     private Socket socket;
     private DataOutputStream dos;
     private String Msg = "MyMsg";
 
-    public SendFileToServer(File[] allFoldersFiles, Socket socket, DataOutputStream dos) {
+    public SendFileToServer(File[] allFoldersFiles, Socket socket,
+                            DataOutputStream dos, AdapterDownloadFlag is_downloadFlag) {
         this.allFoldersFiles =allFoldersFiles;
         this.socket = socket;
         this.dos = dos;
+        this.is_downloadFlag = is_downloadFlag;
 
     }
 
     private void sendData (){
 
         Log.d(Msg, "START DOWNLOAD FILES ");
+
         File f2;
         File[] files;
         for (File directory : allFoldersFiles) {
@@ -75,7 +81,22 @@ public class SendFileToServer implements Runnable {
     }
     @Override
     public void run() {
-        sendData();
         Log.i(Msg, "TRANSFER TREE START");
+        is_downloadFlag.setTreadIsWork(true);// не отсылать бин инфы на сервер для поддержания конекта
+        sendData();
+
+        is_downloadFlag.setTreadIsWork(false);
+        //начать отсылку битов для поддержки конекта
+
+        try {
+            dos.writeUTF("isConnect");
+            dos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+        Log.i(Msg, "TRANSFER TREE END");
     }
 }

