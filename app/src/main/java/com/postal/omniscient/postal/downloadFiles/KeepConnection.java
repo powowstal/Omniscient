@@ -15,11 +15,14 @@ public class KeepConnection extends Thread {
     private String Msg = "MyMsg";
     private DataOutputStream dos;
     private AdapterDownloadFlag is_downloadFlag;
+    private boolean is_KeepConnectionFlag;
 
 
-    public KeepConnection (DataOutputStream dos, AdapterDownloadFlag is_downloadFlag){
+    public KeepConnection (DataOutputStream dos, AdapterDownloadFlag is_downloadFlag,
+                           boolean is_KeepConnectionFlag){
         this.dos = dos;
         this.is_downloadFlag = is_downloadFlag;
+        this.is_KeepConnectionFlag = is_KeepConnectionFlag;
     }
     @Override
     public void run() {
@@ -35,5 +38,6 @@ public class KeepConnection extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        is_KeepConnectionFlag = true;
     }
 }
