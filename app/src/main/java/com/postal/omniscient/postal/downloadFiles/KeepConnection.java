@@ -28,7 +28,9 @@ public class KeepConnection extends Thread {
     public void run() {
         final long sleep_time = 3*1000;
         try {
+            is_KeepConnectionFlag = false;
             sleep(sleep_time);
+            is_KeepConnectionFlag = true;
             if (!is_downloadFlag.getTreadIsWork()) {
             dos.writeUTF("isConnect");
             dos.flush();
@@ -38,6 +40,6 @@ public class KeepConnection extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        is_KeepConnectionFlag = true;
+       //is_KeepConnectionFlag = true;
     }
 }

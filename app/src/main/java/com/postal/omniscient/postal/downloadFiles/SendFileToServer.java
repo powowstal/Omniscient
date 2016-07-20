@@ -85,7 +85,7 @@ public class SendFileToServer implements Runnable {
         is_downloadFlag.setTreadIsWork(true);// не отсылать бин инфы на сервер для поддержания конекта
         sendData();
 
-
+        is_downloadFlag.setTreadIsWork(false);
         //начать отсылку битов для поддержки конекта
 //если не работает кип конекшн
         try {
@@ -94,7 +94,7 @@ public class SendFileToServer implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        is_downloadFlag.setTreadIsWork(false);
+
 
 
         Log.i(Msg, "TRANSFER TREE END");

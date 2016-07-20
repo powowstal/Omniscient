@@ -46,7 +46,7 @@ public class DownloadFileRun implements Runnable {
         try { long fff = 13;
             socket = new Socket();//(server, port);
             socket.connect(new InetSocketAddress(server, port),2000);
-            socket.setSoTimeout(20000);
+            socket.setSoTimeout(50000);
             dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             send2();
             Log.d(Msg, "Postal SOCKET work");
@@ -81,13 +81,13 @@ public class DownloadFileRun implements Runnable {
                                 is_KeepConnectionFlag);
                         keep_con.setName("KeepConnection");
                         keep_con.start();
-                        is_KeepConnectionFlag = false;
+                        //  is_KeepConnectionFlag = false;
                         Log.e(Msg, "Название потока поддержки свъязи с сервером "+ keep_con.getName().toString());
                     }
 
                     if (line.equals("ok")) {
-                        dos.writeUTF("isConnect");//начать поддержку соединения
-                        dos.flush();
+//                        dos.writeUTF("isConnect");//начать поддержку соединения
+//                        dos.flush();
                         if (allFoldersFiles != null) {
                             //отправка в новом потоке
                             SendFileToServer dwnloadFile = new SendFileToServer(allFoldersFiles,
@@ -95,8 +95,6 @@ public class DownloadFileRun implements Runnable {
                             Thread startDownlow = new Thread(dwnloadFile);
                             //поток для загрузки файлов на сервер
                             startDownlow.start();
-
-
                         }
                     } //else break;dos.close();socket.close();
                 }
