@@ -87,7 +87,7 @@ public class SendFileToServer implements Runnable {
 
         is_downloadFlag.setTreadIsWork(false);
         //начать отсылку битов для поддержки конекта
-
+//если не работает кип конекшн
         try {
             dos.writeUTF("isConnect");
             dos.flush();
