@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.List;
+import java.util.Set;
 
 public class NetworkStateReceiver extends BroadcastReceiver {
 //    public NetworkStateReceiver() {
@@ -33,7 +34,16 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 //Все файлы в папках на отправление
         getAllFoldersFiles(context);
+        boolean start_or_no = true;
 
+        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+        for(Thread a: threadSet){
+          //  Log.d(Msg, "      GET THREADS NAME - "+ a.getName());
+            if(a.getName().equals("TreadConnect")){
+                start_or_no = false;
+            }
+
+        }
 
         Log.d(Msg, "Network connectivity change");
 
@@ -43,7 +53,8 @@ public class NetworkStateReceiver extends BroadcastReceiver {
             i = Integer.parseInt(a);
         }catch (Exception e){}
         i++;
-        if(i>4){i=1;}
+        if(i>4){i=1;
+ }
         writeFromFile(context, i.toString());
 
 
@@ -61,10 +72,14 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 //                            && connectivityManager.getActiveNetworkInfo().isAvailable()
 //                            && connectivityManager.getActiveNetworkInfo().isConnected()) {}
 
+                    
 
+
+                    if (start_or_no) {
                         Log.i("MyMsg", "ЗАПУСК ПЕредаЧИ НА СЕРВЕР ИНФЫ");
                         startTransferFile(context);// Начать загрузку файлов на сервер при появлении интернета
-
+                        //если она уже не идет и существует конект с сервером
+                    }
                 }
             } else if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, Boolean.FALSE)) {
                 Log.d(Msg, "There's no network connectivity");
@@ -184,7 +199,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         @Override
         public Object loadInBackground() {
             Log.i(Msg, "MyActyvity Start POSTAL 33954");
-            Thread startDownload = new Thread(dwnloadFile);
+            Thread startDownload = new Thread(dwnloadFile, "TreadConnect");
             //поток для загрузки файлов на сервер
             startDownload.start();
 
