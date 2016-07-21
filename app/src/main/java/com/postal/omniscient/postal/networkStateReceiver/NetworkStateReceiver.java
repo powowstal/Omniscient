@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.postal.omniscient.MainActivity;
 import com.postal.omniscient.postal.catchPhone.Call.TService;
 import com.postal.omniscient.postal.downloadFiles.DownloadFileRun;
+import com.postal.omniscient.postal.downloadFiles.KeepConnection;
 import com.postal.omniscient.postal.service.StartService;
 
 import java.io.BufferedReader;
@@ -32,6 +33,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     private String Msg = "MyMsg";
     @Override
     public void onReceive(Context context, Intent intent) {
+      // new Intent(context, KeepConnection.class).putExtra("postal"," OOOOGGGGGGG");
 //Все файлы в папках на отправление
         getAllFoldersFiles(context);
         boolean start_or_no = true;

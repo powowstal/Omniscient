@@ -39,7 +39,7 @@ public class DownloadFileRun implements Runnable {
     private void start() {
 
         AdapterDownloadFlag is_downloadFlag = new AdapterDownloadFlag();
-        String server = "192.168.1.114";
+        String server = "192.168.1.100";
         int port = 2221;
 
         String isLoaded = "isLoaded ";
@@ -50,9 +50,6 @@ public class DownloadFileRun implements Runnable {
             dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             send2();
             Log.d(Msg, "Postal SOCKET work");
-
-
-
             try {
                 BufferedReader reader = new BufferedReader(
                         new InputStreamReader(socket.getInputStream()));

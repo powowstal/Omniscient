@@ -1,5 +1,6 @@
 package com.postal.omniscient.postal.downloadFiles;
 
+import android.content.Intent;
 import android.util.Log;
 
 import com.postal.omniscient.postal.adapter.AdapterDownloadFlag;
@@ -28,6 +29,10 @@ public class KeepConnection extends Thread {
     public void run() {
         final long sleep_time = 3*1000;
         try {
+
+          //  Intent ii = null;
+          //  Log.d(Msg, "      POWOWSTAL - " + ii.getStringExtra("postal"));
+            //ii.removeExtra("postal");
             is_KeepConnectionFlag = false;
             sleep(sleep_time);
             is_KeepConnectionFlag = true;
