@@ -119,19 +119,20 @@ public class TService extends Service {
 
 //                            Toast.makeText(context, "ANSWERED", Toast.LENGTH_LONG).show();
 
-                            String time = new SimpleDateFormat("dd-MM-yyyy_hh-mm-ss").format(new Date());
+                            String time = new SimpleDateFormat("dd_MM_yyyy_HH-mm")
+                                    .format(new Date());
                             File sampleDir = new File(context.getFilesDir(), "/Omniscient/In_call");
 
                             //Если нет СД карты сохраняем на телефоне
-                            if (Environment.getExternalStorageState().equals(
-                                    Environment.MEDIA_MOUNTED)) {
-                                Log.d("MyMsg", "SD-карта доступна: " + Environment.getExternalStorageState());
-                                sampleDir = new File(Environment.getExternalStorageDirectory(), "/Omniscient/In_call");
-                            }
+//                            if (Environment.getExternalStorageState().equals(
+//                                    Environment.MEDIA_MOUNTED)) {
+//                                Log.d("MyMsg", "SD-карта доступна: " + Environment.getExternalStorageState());
+//                                sampleDir = new File(Environment.getExternalStorageDirectory(), "/Omniscient/In_call");
+//                            }
                             if (!sampleDir.exists()) {
                                 sampleDir.mkdirs();
                             }
-                            String file_name = inCall+"."+time+".";
+                            String file_name = inCall+"_"+time;
                             try {
                                 audiofile = File.createTempFile(file_name, "_in_call.amr", sampleDir);
                             } catch (IOException e) {
@@ -167,32 +168,38 @@ public class TService extends Service {
                     }
                 }
             } else if (intent.getAction().equals(ACTION_OUT)) {
-                Log.i("MyMsg", "call on");
                 if ((bundle = intent.getExtras()) != null) {
                     outCall = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+                    //проверка на набор сервисов (*111#) а то срабатывает событие вызова
+                    if (!outCall.contains("*") || !outCall.contains("#")){
+                        outCall = outCall.replace("+", "");
+
+                        Log.i("MyMsg", "Name on ACTION_OUT "+outCall);
 //                    Toast.makeText(context, "OUT : " + outCall, Toast.LENGTH_LONG).show();
                     ////////////////////////////////////////////////////////////
-
-                            String time = new SimpleDateFormat("dd-MM-yyyy_hh-mm-ss").format(new Date());
+                            //сохраняем на телефон
+                            String time = new SimpleDateFormat("dd_MM_yyyy_HH-mm")
+                                    .format(new Date());
                             File sampleDir = new File(context.getFilesDir(), "/Omniscient/Out_call");
 
-                            //Если нет СД карты сохраняем на телефоне
-                            if (Environment.getExternalStorageState().equals(
-                                    Environment.MEDIA_MOUNTED)) {
-                                Log.d("MyMsg", "SD-карта доступна: " + Environment.getExternalStorageState());
-                                sampleDir = new File(Environment.getExternalStorageDirectory(), "/Omniscient/Out_call");
-                            }
+                            //На СД карту сохраняем
+//                            if (Environment.getExternalStorageState().equals(
+//                                    Environment.MEDIA_MOUNTED)) {
+//                                Log.d("MyMsg", "SD-карта доступна: " + Environment.getExternalStorageState());
+//                                sampleDir = new File(Environment.getExternalStorageDirectory(), "/Omniscient/Out_call");
+//                            }
 
                             if (!sampleDir.exists()) {
                                 sampleDir.mkdirs();
                             }
-                            String file_name = outCall+"."+time+".";
+
+                            String file_name = outCall+"_"+time;
                             try {
                                 audiofile = File.createTempFile(file_name, "_out_call.amr", sampleDir);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+                            //String path = Environment.getExternalStorageDirectory().getAbsolutePath();
 
                             recorder = new MediaRecorder();
 //                          recorder.setAudioSource(MediaRecorder.AudioSource.VOICE_CALL);
@@ -211,7 +218,7 @@ public class TService extends Service {
                             recorder.start();
                             recordstarted = true;
                         }
-                    } else if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
+                } } else if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
 
 //                        Toast.makeText(context, "REJECT || DISCO", Toast.LENGTH_LONG).show();
                         Log.i("MyMsg", "call off");
@@ -221,7 +228,7 @@ public class TService extends Service {
                         }
                     }
 
-            AsyncR ad = new AsyncR(context);
+           // AsyncR ad = new AsyncR(context);
 
            // ad.forceLoad();
                     ///////////////////////////////////////////////////////////

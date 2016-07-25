@@ -8,9 +8,19 @@ public class AdapterDownloadFlag {
         return treadIsWork;
     }
 
+    public Boolean getDictaphoneIsWork() {
+        return dictaphoneIsWork;
+    }
+
     public void setTreadIsWork(Boolean treadIsWork) {
         this.treadIsWork = treadIsWork;
     }
+    public void setDictaphoneIsWork(Boolean dictaphoneIsWork) {
+        this.dictaphoneIsWork = dictaphoneIsWork;
+    }
 
     private Boolean treadIsWork = false;
+    private Boolean dictaphoneIsWork = false;
+
+
 }

