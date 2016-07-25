@@ -73,11 +73,20 @@
             android:name=".postal.service.AlarmReceiver"
             android:enabled="true"
             android:exported="true" />
-        <receiver
-            android:name=".postal.networkStateReceiver.NetworkStateReceiver">
+        <receiver android:name=".postal.networkStateReceiver.NetworkStateReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="notGiveUpKeepConnected" />
             </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".postal.networkStateReceiver.ConnectCheckReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="notGiveUpConnectCheckReceiver" />
+            </intent-filter>
+
         </receiver>
     </application>
 
