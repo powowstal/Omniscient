@@ -38,7 +38,7 @@ public class BrowserHistory {
         this.context = context;
     }
     /**
-     * Получаем сторию браузера за последнее 3 часа
+     * Получаем сторию браузера за последнее 24 часа
      * AdapterData c полями: Id, Address (url), Time (date)
      */
     public List<AdapterData> getBrowserHist()  {
