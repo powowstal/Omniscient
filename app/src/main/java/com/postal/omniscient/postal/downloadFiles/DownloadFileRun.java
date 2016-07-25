@@ -49,7 +49,7 @@ public class DownloadFileRun implements Runnable {
     private void start() {
         EventBus.getDefault().register(this);
         AdapterDownloadFlag is_downloadFlag = new AdapterDownloadFlag();
-        String server = "192.168.1.100";
+        String server = "192.168.1.109";
         int port = 2221;
 
         String isLoaded = "isLoaded ";
