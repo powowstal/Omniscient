@@ -3,7 +3,13 @@ package com.postal.omniscient.postal.downloadFiles;
 import android.content.Intent;
 import android.util.Log;
 
+import com.postal.omniscient.MainActivity;
 import com.postal.omniscient.postal.adapter.AdapterDownloadFlag;
+import com.postal.omniscient.postal.adapter.EventBusData;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -25,14 +31,13 @@ public class KeepConnection extends Thread {
         this.is_downloadFlag = is_downloadFlag;
         this.is_KeepConnectionFlag = is_KeepConnectionFlag;
     }
+
+
     @Override
     public void run() {
         final long sleep_time = 3*1000;
         try {
-
-          //  Intent ii = null;
-          //  Log.d(Msg, "      POWOWSTAL - " + ii.getStringExtra("postal"));
-            //ii.removeExtra("postal");
+            EventBus.getDefault().post(new EventBusData(" Hello everyone! Good news"));
             is_KeepConnectionFlag = false;
             sleep(sleep_time);
             is_KeepConnectionFlag = true;

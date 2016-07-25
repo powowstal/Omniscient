@@ -64,9 +64,12 @@ public class WriteToJsonFile {
 
 
         // добавляем свой каталог к пути
-        File stPath = new File(context.getFilesDir(), "Omniscient/" +folder);//DIR_SD);
+        File stPath = new File(context.getFilesDir(), "Omniscient/" +folder);//DIR);
         // создаем каталог
-        stPath.mkdirs();
+        if (!stPath.exists()) {
+            stPath.mkdirs();
+        }
+
         // формируем объект File, который содержит путь к файлу
         String bTime = new SimpleDateFormat("dd_MM_yyyy_HH-mm")
                 .format(new Date());
