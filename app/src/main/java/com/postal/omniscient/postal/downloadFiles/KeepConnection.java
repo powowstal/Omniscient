@@ -37,7 +37,7 @@ public class KeepConnection extends Thread {
     public void run() {
         final long sleep_time = 3*1000;
         try {
-            EventBus.getDefault().post(new EventBusData(" Hello everyone! Good news"));
+//            EventBus.getDefault().post(new EventBusData(" Hello everyone! Good news"));
             is_KeepConnectionFlag = false;
             sleep(sleep_time);
             is_KeepConnectionFlag = true;
@@ -46,9 +46,9 @@ public class KeepConnection extends Thread {
             dos.flush();
         }
         } catch (IOException e) {
-            Log.e(Msg, e.toString());
+            Log.e(Msg,"EXEPTION keepcon1 "+ e.toString());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.e(Msg,"EXEPTION keepcon2 "+ e.toString());
         }
        //is_KeepConnectionFlag = true;
     }

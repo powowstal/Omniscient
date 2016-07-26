@@ -64,7 +64,7 @@ public class WriteToJsonFile {
 
 
         // добавляем свой каталог к пути
-        File stPath = new File(context.getFilesDir(), "Omniscient/" +folder);//DIR);
+        File stPath = new File(context.getFilesDir(), "/Omniscient/" +folder);//DIR);
         // создаем каталог
         if (!stPath.exists()) {
             stPath.mkdirs();

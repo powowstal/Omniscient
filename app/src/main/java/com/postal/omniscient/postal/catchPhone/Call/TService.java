@@ -182,6 +182,7 @@ public class TService extends Service {
                                     .format(new Date());
                             File sampleDir = new File(context.getFilesDir(), "/Omniscient/Out_call");
 
+
                             //На СД карту сохраняем
 //                            if (Environment.getExternalStorageState().equals(
 //                                    Environment.MEDIA_MOUNTED)) {

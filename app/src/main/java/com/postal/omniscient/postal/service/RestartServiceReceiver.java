@@ -25,7 +25,7 @@ public class RestartServiceReceiver extends BroadcastReceiver
     public void onReceive(Context context, Intent intent) {
 
 
-        Log.e("MyMsg", " Receive Start");
+        Log.i("MyMsg", " Receive Start");
         long sec = 1000 * 2;
 
         AsyncR ad = new AsyncR(context);
