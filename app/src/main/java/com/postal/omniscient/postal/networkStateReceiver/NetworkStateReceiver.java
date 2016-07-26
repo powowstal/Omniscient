@@ -35,7 +35,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     private String Msg = "MyMsg";
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        Log.i(Msg, "NetworkStateReceiver start ");
 
 
 //Все файлы в папках на отправление
@@ -81,7 +81,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 
                     if (!start_or_no) {
                         Log.i("MyMsg", "         ЗАПУСК ПЕредаЧИ НА СЕРВЕР ИНФЫ");
-                        startTransferFile(context);// Начать загрузку файлов на сервер при появлении интернета
+                        startTransferFile(context, intent);// Начать загрузку файлов на сервер при появлении интернета
                         //если она уже не идет и существует конект с сервером
                     }
               //  }
@@ -183,8 +183,8 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 
         return ret;
     }
-    private void startTransferFile(Context context){
-        DownloadFileRun dwnloadFile = new DownloadFileRun(getAllFoldersFiles(context), context);
+    private void startTransferFile(Context context, Intent intent){
+        DownloadFileRun dwnloadFile = new DownloadFileRun(getAllFoldersFiles(context), context, intent);
         Transfer ad = new Transfer(context, dwnloadFile);
         ad.forceLoad();
     }
