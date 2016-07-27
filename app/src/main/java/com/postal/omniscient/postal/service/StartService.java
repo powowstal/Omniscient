@@ -60,7 +60,7 @@ public class StartService extends Service {
         public Object loadInBackground() {
 
             sendBroadcast(new Intent("YouWillNeverKillMe"));
-            Log.i("MyMsg", " StartService start");
+            //Log.i("MyMsg", " StartService start");
 //            Intent par = new Intent(getApplicationContext(), MyService.class);
 //            startService(par);
 //            par = null;

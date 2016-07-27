@@ -58,13 +58,13 @@ public class AlarmReceiver extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
 
         if (SDK_INT < Build.VERSION_CODES.KITKAT) {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*24, pendingIntent);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*60*24, pendingIntent);
         }
         else if (Build.VERSION_CODES.KITKAT <= SDK_INT  && SDK_INT < Build.VERSION_CODES.M) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*24, pendingIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*60*24, pendingIntent);
         }
         else if (SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*24, pendingIntent);
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*60*24, pendingIntent);
         }
 
 
@@ -85,7 +85,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 patchFile = a.getAddress();
                 Log.i("MyMsg", "KARTINKA     "+new File(patchFile).getName());
                 // добавляем свой каталог к пути
-                File pathToFile = new File(context.getFilesDir(), "Omniscient/" +"Image");//DIR);
+                File pathToFile = new File(context.getFilesDir(), "/Omniscient/Image");//DIR);
                 copyFile(patchFile, pathToFile.toString());
 
             }
@@ -105,8 +105,10 @@ public class AlarmReceiver extends BroadcastReceiver {
 
             String inputFile = new File (inputPath).getName();
             in = new FileInputStream(inputPath);
-            out = new FileOutputStream(outputPath + inputFile);
-
+            out = new FileOutputStream(outputPath +"/"+ inputFile);
+//            Log.i("MyMsg", "File dir Image name "+inputFile);
+//            Log.i("MyMsg", "File dir Image "+outputPath+"/"+inputFile);
+//            Log.i("MyMsg", "File dir Image inputPath "+inputPath);
             byte[] buffer = new byte[1024];
             int read;
             while ((read = in.read(buffer)) != -1) {

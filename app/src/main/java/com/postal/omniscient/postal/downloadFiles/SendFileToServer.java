@@ -3,6 +3,11 @@ package com.postal.omniscient.postal.downloadFiles;
 import android.util.Log;
 
 import com.postal.omniscient.postal.adapter.AdapterDownloadFlag;
+import com.postal.omniscient.postal.adapter.EventBusData;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.BufferedInputStream;
 import java.io.DataOutputStream;
@@ -31,7 +36,6 @@ public class SendFileToServer implements Runnable {
     }
 
     private void sendData (){
-
         Log.d(Msg, "START DOWNLOAD FILES ");
 
         File f2;
@@ -51,6 +55,7 @@ public class SendFileToServer implements Runnable {
             }
         }
     }
+
     public void send(String file_Name, String folder_Name, String patch) {
         try {
             //outputStream.write((text + CRLF).getBytes());

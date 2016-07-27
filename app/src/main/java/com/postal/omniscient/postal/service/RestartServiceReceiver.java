@@ -25,7 +25,7 @@ public class RestartServiceReceiver extends BroadcastReceiver
     public void onReceive(Context context, Intent intent) {
 
 
-        Log.e("MyMsg", " Receive Start");
+//        Log.i("MyMsg", " Receive Start");
         long sec = 1000 * 2;
 
         AsyncR ad = new AsyncR(context);
@@ -42,7 +42,7 @@ public class RestartServiceReceiver extends BroadcastReceiver
             Log.e("MyMsg","1"+ e.toString());
         }
 
-        Log.i("MyMsg", " Resiver END");
+//        Log.i("MyMsg", " Resiver END");
 
         //context.startService(new Intent(context.getApplicationContext(), MyService.class));
 
@@ -79,7 +79,7 @@ public class RestartServiceReceiver extends BroadcastReceiver
                // while(true) {
                     //Thread.sleep(sec);
 
-                    Log.i("MyMsg", " Resiver TASC START");
+//                    Log.i("MyMsg", " Resiver TASC START");
                 //}
             } catch (Exception e) {
                 Log.e("MyMsg","2"+ e.toString());

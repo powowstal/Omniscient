@@ -46,7 +46,7 @@ public class MyService extends Service {
 
 
 
-        Log.i("MyMsg", "MyService onStartCommand");
+//        Log.i("MyMsg", "MyService onStartCommand");
 
 
 //        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
@@ -135,7 +135,7 @@ public class MyService extends Service {
 //            } catch (InterruptedException e) {
 //                e.printStackTrace();
 //            }
-            Log.i("MyMsg", " MyService start");
+//            Log.i("MyMsg", " MyService start");
 
 
             Intent par = new Intent(getApplicationContext(), StartService.class);

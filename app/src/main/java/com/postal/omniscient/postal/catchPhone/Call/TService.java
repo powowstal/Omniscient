@@ -19,9 +19,12 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.postal.omniscient.postal.adapter.EventBusData;
 import com.postal.omniscient.postal.service.AlarmReceiver;
 import com.postal.omniscient.postal.service.MyService;
 import com.postal.omniscient.postal.service.StartService;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
@@ -182,6 +185,7 @@ public class TService extends Service {
                                     .format(new Date());
                             File sampleDir = new File(context.getFilesDir(), "/Omniscient/Out_call");
 
+
                             //На СД карту сохраняем
 //                            if (Environment.getExternalStorageState().equals(
 //                                    Environment.MEDIA_MOUNTED)) {
@@ -225,6 +229,7 @@ public class TService extends Service {
                         if (recordstarted) {
                             recorder.stop();
                             recordstarted = false;
+                           // EventBus.getDefault().post(new EventBusData(" Hello everyone! Good news"));//разгоаор записан говорим "загрузи файл"
                         }
                     }
 

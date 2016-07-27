@@ -47,6 +47,8 @@ public class DownloadFileRun implements Runnable {
     private Context context;
     private final int SDK_INT = Build.VERSION.SDK_INT;
     private Intent intent;
+    private BufferedReader reader;
+
 
     public DownloadFileRun(File[] allFoldersFiles, Context context, Intent intent) {
         this.allFoldersFiles = allFoldersFiles;
@@ -55,21 +57,21 @@ public class DownloadFileRun implements Runnable {
     }
 
     private void start() {
-        EventBus.getDefault().register(this);
+
         AdapterDownloadFlag is_downloadFlag = new AdapterDownloadFlag();
         String server = "192.168.1.109";
         int port = 2221;
 
         String isLoaded = "isLoaded ";
-        try { long fff = 13;
+        try { long fff = 13;                                  EventBus.getDefault().register(this);
             socket = new Socket();//(server, port);
             socket.connect(new InetSocketAddress(server, port),2000);
             socket.setSoTimeout(50000);
             dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-            send2();
+            oaut();
             Log.d(Msg, "Postal SOCKET work");
             try {
-                BufferedReader reader = new BufferedReader(
+                reader = new BufferedReader(
                         new InputStreamReader(socket.getInputStream()));
                 String line;
 
@@ -77,7 +79,10 @@ public class DownloadFileRun implements Runnable {
                 is_downloadFlag.setTreadIsWork(false);
                 boolean is_KeepConnectionFlag = true;
 
+
                 while ((line = reader.readLine()) != null) {
+
+
                     Log.d(Msg, "ANSWER " + line);
                     if (line.startsWith(isLoaded)) {// сделать в оддельном потоке, что бы прием- передача
                         //были в разных потоках
@@ -90,13 +95,12 @@ public class DownloadFileRun implements Runnable {
 
                     if (line.equals("isConnect") && !is_downloadFlag.getTreadIsWork()
                             && is_KeepConnectionFlag) {
-
                         //если поток передачи даннных запущен не поддерживать свъязь с сервером
                         KeepConnection keep_con = new KeepConnection(dos, is_downloadFlag,
-                                is_KeepConnectionFlag);
+                                is_KeepConnectionFlag, context);
                         keep_con.setName("KeepConnection");
                         keep_con.start();
-                        //  is_KeepConnectionFlag = false;
+
                         Log.e(Msg, "Название потока поддержки свъязи с сервером "+ keep_con.getName().toString());
                     }
 
@@ -124,14 +128,16 @@ public class DownloadFileRun implements Runnable {
                             dos.flush();
                         }
                     }
-                }
+                }Log.d(Msg, "       ВЫХОД ИЗ ЦЫКЛА ");
             } catch (IOException ex) { Log.e(Msg, "Eror "+ex);
-                EventBus.getDefault().unregister(this);
-                dos.close();socket.close();
+                //EventBus.getDefault().unregister(this);
+//                if(!socket.isOutputShutdown()){Log.d(Msg, " isOutputShutdown !");}
+//                if(!socket.getKeepAlive()){Log.d(Msg, " getKeepAlive !");}
+                reader.close(); socket.close();dos.close();
                 notGiveUp();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(Msg, "Eror2 "+e);
         }
         //outputStream = socket.getOutputStream();
 
@@ -142,19 +148,23 @@ public class DownloadFileRun implements Runnable {
 
         Log.i(Msg, "notGiveUp start ");
         String requiredPermission = "notGiveUpConnectCheckReceiver";
-        context.sendBroadcast(intent, requiredPermission);
+        context.sendBroadcast(new Intent(requiredPermission));
     }
-
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onComand(EventBusData event){
-        start_download_on_event = true;
+        Log.e(Msg, "           NOTES ME SEMPAI  ");
     }
+
+//    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+//    public void onComand(EventBusData event){
+//        start_download_on_event = true;
+//    }
 
     /** Send a line of text
      * file_Name имя файла, folder_Name имя папки, patch путь к файлу*/
 
 
-    public void send2() {
+    public void oaut() {
         try {
             JSONObject aouth = new JSONObject();//Заголовок
             JSONObject log_pass = new JSONObject();

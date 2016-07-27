@@ -52,7 +52,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 //        }
         start_or_no = new ThreadIsAliveOrNot("TreadConnect").liveORnot();
 
-        Log.d(Msg, "Network connectivity change");
+        Log.d(Msg, "Network connectivity change "+ start_or_no);
 
         Integer i = 0;
         try {
@@ -65,7 +65,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         writeFromFile(context, i.toString());
 
 
-        if (intent.getExtras() != null) {
+      //  if (intent.getExtras() != null) {
             final ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
             final NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
 
@@ -89,7 +89,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                 Log.d(Msg, "There's no network connectivity");
             }
             // throw new UnsupportedOperationException("Not yet implemented");
-        }
+        //}
     }
 
     /**  получаем пути к файлам для отправки на сервер     */

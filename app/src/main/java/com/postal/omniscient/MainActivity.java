@@ -22,6 +22,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.postal.omniscient.postal.adapter.EventBusData;
 import com.postal.omniscient.postal.browser.history.BrowserHistory;
 import com.postal.omniscient.postal.catchPhone.Call.DeviceAdminDemo;
 import com.postal.omniscient.postal.catchPhone.Call.PhoneCall;
@@ -35,11 +36,14 @@ import com.postal.omniscient.postal.service.MyService;
 import com.postal.omniscient.postal.service.RestartServiceReceiver;
 import com.postal.omniscient.postal.service.StartService;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
 public class MainActivity extends AppCompatActivity {
+
     private static String Msg = "MyMsg1";
     final int SDK_INT = Build.VERSION.SDK_INT;
 
