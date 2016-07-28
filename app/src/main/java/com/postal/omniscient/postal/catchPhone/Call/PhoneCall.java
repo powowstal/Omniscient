@@ -18,7 +18,7 @@ import java.io.IOException;
 /**
  * Created by Александр on 02.05.2016.
  */
-public class PhoneCall implements Runnable {
+public class PhoneCall extends Thread {
     private Context context;
     public PhoneCall(Context context){
         this.context = context;

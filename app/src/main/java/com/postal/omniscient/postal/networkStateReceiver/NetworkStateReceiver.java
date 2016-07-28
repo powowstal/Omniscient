@@ -32,6 +32,7 @@ import java.util.Set;
 public class NetworkStateReceiver extends BroadcastReceiver {
 //    public NetworkStateReceiver() {
 //    }
+    private Boolean start_or_no;
     private String Msg = "MyMsg";
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -39,8 +40,8 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 
 
 //Все файлы в папках на отправление
-        getAllFoldersFiles(context);
-        boolean start_or_no = true;
+//        getAllFoldersFiles(context);
+        start_or_no = true;
 
 //        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
 //        for(Thread a: threadSet){

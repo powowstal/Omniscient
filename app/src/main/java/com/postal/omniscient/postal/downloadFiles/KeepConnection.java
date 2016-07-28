@@ -38,7 +38,7 @@ public class KeepConnection extends Thread {
 
     @Override
     public void run() {
-        final long sleep_time = 10*1000;
+        final long sleep_time = 3*1000;
         try {
 //            EventBus.getDefault().post(new EventBusData(" Hello everyone! Good news"));
             is_KeepConnectionFlag = false;
@@ -62,4 +62,5 @@ public class KeepConnection extends Thread {
         String requiredPermission = "notGiveUpConnectCheckReceiver";
         context.sendBroadcast(new Intent(requiredPermission));
     }
+
 }

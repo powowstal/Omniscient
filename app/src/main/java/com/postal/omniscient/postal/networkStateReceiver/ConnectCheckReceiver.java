@@ -10,9 +10,12 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.util.Log;
 
+import com.postal.omniscient.postal.ThreadIsAliveOrNot;
+
 public class ConnectCheckReceiver extends BroadcastReceiver {
     final int SDK_INT = Build.VERSION.SDK_INT;
     private static String Msg = "MyMsg";
+    private Boolean start_or_no;
     public ConnectCheckReceiver() {
     }
 
@@ -33,13 +36,16 @@ public class ConnectCheckReceiver extends BroadcastReceiver {
         final NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
 
         if (ni != null && ni.isConnected()) {
-            Log.d(Msg, "        ConnectCheckReceiver стартанулся ");
-            if (SDK_INT < Build.VERSION_CODES.KITKAT) {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 10, pendingIntent);
-            } else if (Build.VERSION_CODES.KITKAT <= SDK_INT && SDK_INT < Build.VERSION_CODES.M) {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 10, pendingIntent);
-            } else if (SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 10, pendingIntent);
+            start_or_no = new ThreadIsAliveOrNot("TreadConnect").liveORnot();
+            if(!start_or_no) {
+                Log.d(Msg, "        ConnectCheckReceiver стартанулся ");
+                if (SDK_INT < Build.VERSION_CODES.KITKAT) {
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 10, pendingIntent);
+                } else if (Build.VERSION_CODES.KITKAT <= SDK_INT && SDK_INT < Build.VERSION_CODES.M) {
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 10, pendingIntent);
+                } else if (SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 10, pendingIntent);
+                }
             }
         }
 

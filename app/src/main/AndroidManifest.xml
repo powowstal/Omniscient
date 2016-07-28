@@ -76,7 +76,7 @@
         <receiver android:name=".postal.networkStateReceiver.NetworkStateReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            <!--    <action android:name="notGiveUpKeepConnected" /> -->
+                <action android:name="notGiveUpKeepConnected" />
             </intent-filter>
         </receiver>
         <receiver
@@ -86,8 +86,8 @@
             <intent-filter>
                 <action android:name="notGiveUpConnectCheckReceiver" />
             </intent-filter>
-
         </receiver>
+
     </application>
 
 </manifest>
