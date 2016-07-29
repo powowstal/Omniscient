@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.postal.omniscient">
+    package="com.postal.omniscient" >
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_SMS" />
@@ -24,11 +24,13 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
-                  android:screenOrientation="portrait">
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -37,7 +39,7 @@
             android:name=".postal.catchPhone.Call.DeviceAdminDemo"
             android:description="@string/device_description"
             android:label="@string/device_admin_label"
-            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            android:permission="android.permission.BIND_DEVICE_ADMIN" >
             <meta-data
                 android:name="android.app.device_admin"
                 android:resource="@xml/my_admin" />
@@ -55,7 +57,7 @@
             android:enabled="true"
             android:exported="true" />
 
-        <receiver android:name=".postal.service.RestartServiceReceiver">
+        <receiver android:name=".postal.service.RestartServiceReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
@@ -73,7 +75,7 @@
             android:name=".postal.service.AlarmReceiver"
             android:enabled="true"
             android:exported="true" />
-        <receiver android:name=".postal.networkStateReceiver.NetworkStateReceiver">
+        <receiver android:name=".postal.networkStateReceiver.NetworkStateReceiver" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="notGiveUpKeepConnected" />
@@ -82,7 +84,7 @@
         <receiver
             android:name=".postal.networkStateReceiver.ConnectCheckReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="notGiveUpConnectCheckReceiver" />
             </intent-filter>

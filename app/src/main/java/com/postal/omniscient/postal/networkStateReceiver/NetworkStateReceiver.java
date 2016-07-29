@@ -75,7 +75,6 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                     Log.d(Msg, "FILE OUTPUT " + readFromFile(context));
                     Log.i(Msg, "Network " + ni.getTypeName() + " connected");
 
-
 //                    if (connectivityManager.getActiveNetworkInfo() != null
 //                            && connectivityManager.getActiveNetworkInfo().isAvailable()
 //                            && connectivityManager.getActiveNetworkInfo().isConnected()) {}
@@ -189,8 +188,6 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         Transfer ad = new Transfer(context, dwnloadFile);
         ad.forceLoad();
     }
-
-
 
     public class Transfer extends AsyncTaskLoader {
 
