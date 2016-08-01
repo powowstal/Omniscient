@@ -67,14 +67,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         registration.setOnClickListener(this);
         cookie.setOnClickListener(this);
 
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (REQUEST_CODE == requestCode) {
-            Intent intent = new Intent(MainActivity.this, TService.class);
-            startService(intent);
+//            Intent intent = new Intent(MainActivity.this, TService.class);
+//            startService(intent);
         }
     }
 

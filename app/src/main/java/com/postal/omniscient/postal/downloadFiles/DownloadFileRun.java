@@ -90,7 +90,7 @@ public class DownloadFileRun extends Thread {
                     Log.d(Msg, "ANSWER " + line);
                     if (line.startsWith(isLoaded)) {// сделать в оддельном потоке, что бы прием- передача
                         //были в разных потоках
-                        DeleteSendOutFiles deleteSendOutFiles = new DeleteSendOutFiles(allFoldersFiles);
+                        DeleteSendOutFiles deleteSendOutFiles = new DeleteSendOutFiles(context);
                         deleteSendOutFiles.setFeleNAme(line);
                         Thread startDelete = new Thread(deleteSendOutFiles);
                         //поток для удаления файлов
@@ -181,7 +181,7 @@ public class DownloadFileRun extends Thread {
         Log.e(Msg, "!!!   NOTES ME SEMPAI  ");
         if(!is_downloadFlag.getTreadIsWork() && !is_downloadFlag.getDictaphoneIsWork()
         && !is_downloadFlag.getPhoneRecIsWork()){
-            SendFilesOutOfTurn();
+           // SendFilesOutOfTurn();
         }
     }
     private void SendFilesOutOfTurn(){

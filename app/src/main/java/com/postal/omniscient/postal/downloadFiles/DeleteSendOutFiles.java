@@ -1,5 +1,6 @@
 package com.postal.omniscient.postal.downloadFiles;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.io.File;
@@ -7,7 +8,7 @@ import java.io.File;
 /**
  * Created by Александр on 10.07.2016.
  */
-public class DeleteSendOutFiles implements Runnable {
+public class DeleteSendOutFiles extends Thread {
        private String Msg = "MyMsg";
     private String isLoaded = "isLoaded ";
     private String feleNAme;

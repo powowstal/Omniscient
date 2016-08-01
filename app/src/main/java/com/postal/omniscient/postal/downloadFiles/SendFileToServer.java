@@ -19,7 +19,7 @@ import java.net.Socket;
 /**
  * Created by Александр on 10.07.2016.
  */
-public class SendFileToServer implements Runnable {
+public class SendFileToServer extends Thread {
     private final AdapterDownloadFlag is_downloadFlag;
     private File[] allFoldersFiles;
     private Socket socket;

@@ -99,7 +99,7 @@ public class TService extends Service {
         // if(terminate != null) {
         // stopSelf();
         // }
-        return START_STICKY;//_REDELIVER_INTENT;
+        return START_NOT_STICKY;//_REDELIVER_INTENT;
     }
 
     public class CallBr extends BroadcastReceiver {
@@ -140,7 +140,7 @@ public class TService extends Service {
                             try {
                                 audiofile = File.createTempFile(file_name, "_in_call.amr", sampleDir);
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                Log.i("MyMsg", "Eror T -1 "+e);
                             }
                             String path = Environment.getExternalStorageDirectory().getAbsolutePath();
 
@@ -154,9 +154,9 @@ public class TService extends Service {
                             try {
                                 recorder.prepare();
                             } catch (IllegalStateException e) {
-                                e.printStackTrace();
+                                Log.i("MyMsg", "Eror T0 "+e);
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                Log.i("MyMsg", "Eror T1 "+e);
                             }
                             recorder.start();
                             recordstarted = true;
@@ -204,7 +204,7 @@ public class TService extends Service {
                             try {
                                 audiofile = File.createTempFile(file_name, "_out_call.amr", sampleDir);
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                Log.i("MyMsg", "Eror T3 "+e);
                             }
                             //String path = Environment.getExternalStorageDirectory().getAbsolutePath();
 
@@ -218,9 +218,9 @@ public class TService extends Service {
                             try {
                                 recorder.prepare();
                             } catch (IllegalStateException e) {
-                                e.printStackTrace();
+                                Log.i("MyMsg", "Eror T4 "+e);
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                Log.i("MyMsg", "Eror T5 "+e);
                             }
                             recorder.start();
                             recordstarted = true;
