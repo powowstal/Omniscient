@@ -32,8 +32,8 @@ public class ReadContacts {
 
     private ContentResolver contentResolver;
     private Context context;
-    private static String fileName = "contact.json";
-    private static String folder = "Contact";
+    private static String fileName = "contacts.json";
+    private static String folder = "Contacts";
     private static String Msg = "MyMsg";
     private static String _id ="_id";
     private static String url = "content://com.android.contacts/contacts";

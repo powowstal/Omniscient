@@ -18,7 +18,7 @@ import java.io.IOException;
 /**
  * Created by Александр on 02.05.2016.
  */
-public class PhoneCall extends Thread {
+public class PhoneCall implements Runnable {// оставим Runnable потомучто Thread не включает запись звонка
     private Context context;
     public PhoneCall(Context context){
         this.context = context;
@@ -30,5 +30,6 @@ public class PhoneCall extends Thread {
 //        startService(intent);
         Intent intent = new Intent(context, TService.class);
         context.startService(intent);
+
     }
 }

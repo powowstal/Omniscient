@@ -86,7 +86,7 @@ public class Dictaphone extends Thread {
         new Thread("DictaphoneRecord"){
             @Override
             public void run() {
-                   long t = 1000 * 60 * 5;
+                   long t = 1000 * 60 * 1;
                    try {
                        sleep(t);
                    } catch (InterruptedException e) {
@@ -104,6 +104,7 @@ public class Dictaphone extends Thread {
                 recorder.stop();
                 recordstarted = false;
                 is_downloadFlag.setDictaphoneIsWork(false);
+                recorder.release();
                 Log.i(Msg, "  ДИКТОФОН ВЫКЛЮЧЕН офф");
                 EventBus.getDefault().post(new EventBusData("dictaphone"));
             }

