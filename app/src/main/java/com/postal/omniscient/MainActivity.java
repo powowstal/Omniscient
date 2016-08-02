@@ -223,8 +223,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public Object loadInBackground() {
             Log.i("MyMsg", "MyActyvity Start");
-            Intent par = new Intent(getApplicationContext(), StartService.class);
-            startService(par);
+//            Intent par = new Intent(getApplicationContext(), StartService.class);
+//            startService(par);
 
             return null;
         }

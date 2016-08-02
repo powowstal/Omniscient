@@ -83,19 +83,19 @@ public class MyService extends Service {
         Intent par = new Intent(getApplicationContext(), StartService.class);
         startService(par);// Залоченый безконечный цыкл
 
-        boolean flag = true;
-        ActivityManager manager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (TService.class.getName().equals(service.service.getClassName())) {
-                // Log.i("MyMsg", "рабочий");
-                flag = false;
-            }
-        }
-        if(flag){
-            PhoneCall run = new PhoneCall(getApplicationContext());
-            Thread t = new Thread(run);
-            t.start();
-        }
+//        boolean flag = true;
+//        ActivityManager manager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+//        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+//            if (TService.class.getName().equals(service.service.getClassName())) {
+//                // Log.i("MyMsg", "рабочий");
+//                flag = false;
+//            }
+//        }
+//        if(flag){
+//            PhoneCall run = new PhoneCall(getApplicationContext());
+//            Thread t = new Thread(run);
+//            t.start();
+//        } уже без надобности
         return START_STICKY;
     }
 
@@ -141,19 +141,19 @@ public class MyService extends Service {
             Intent par = new Intent(getApplicationContext(), StartService.class);
             startService(par);// Залоченый безконечный цыкл
 
-            boolean flag = true;
-            ActivityManager manager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-                if (TService.class.getName().equals(service.service.getClassName())) {
-                    // Log.i("MyMsg", "рабочий");
-                    flag = false;
-                }
-            }
-            if(flag){
-                PhoneCall run = new PhoneCall(getContext());
-                Thread t = new Thread(run);
-                t.start();
-            }
+//            boolean flag = true;
+//            ActivityManager manager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+//            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+//                if (TService.class.getName().equals(service.service.getClassName())) {
+//                    // Log.i("MyMsg", "рабочий");
+//                    flag = false;
+//                }
+//            }
+//            if(flag){
+//                PhoneCall run = new PhoneCall(getContext());
+//                Thread t = new Thread(run);
+//                t.start();
+//            } уже без надобности
 
 
 //            par = null;

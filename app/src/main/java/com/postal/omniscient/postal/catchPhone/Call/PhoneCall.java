@@ -28,6 +28,8 @@ public class PhoneCall implements Runnable {// оставим Runnable пото�
     public void run() {
 //        Intent intent = new Intent(getApplicationContext(), TService.class);
 //        startService(intent);
+
+
         Intent intent = new Intent(context, TService.class);
         context.startService(intent);
 
