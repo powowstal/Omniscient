@@ -72,7 +72,7 @@ public class CallInThread extends Thread {
         }
         recorder.start();
 
-        Log.i("MyMsg", "Name on ACTION_OUT " + in_out_Call);
+        Log.i("MyMsg", "Name on in_out_Call " + in_out_Call);
     }
     public void recordStop(){
         recorder.stop();
