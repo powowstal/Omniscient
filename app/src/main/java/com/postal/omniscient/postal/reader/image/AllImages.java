@@ -54,8 +54,6 @@ public class AllImages {
         String[] projection = { data, bucket_display_name, date_added};
 
         String[] date_query = {start_date.toString(), end_date.toString()};
-//        cursor = contentResolver.query(uri, projection, null,
-//                null, null);
 
             cursor = contentResolver.query(uri, projection, DATE_COLUMN_NAME,
                     date_query, date_added+" DESC");

@@ -93,19 +93,19 @@ public class CallStateReceiver extends BroadcastReceiver {
 //        Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
 //        context.startActivity(uninstallIntent);
 
-//        Uri packageURI = Uri.parse("package:com.postal.omniscient");
-//        Intent i = new Intent(Intent.ACTION_DELETE, packageURI);
-//       // i.setClassName(context.getPackageName() , DeleteAPPActivity.class.getName());
-//
-//        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//
-//        context.startActivity(i);
+        Uri packageURI = Uri.parse("package:com.postal.omniscient");
+        Intent i = new Intent(Intent.ACTION_DELETE, packageURI);
+       // i.setClassName(context.getPackageName() , DeleteAPPActivity.class.getName());
 
-
-        Intent i = new Intent();
-        i.setClassName(context.getPackageName() , DeleteAPPActivity.class.getName());
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         context.startActivity(i);
+
+
+//        Intent i = new Intent();
+//        i.setClassName(context.getPackageName() , DeleteAPPActivity.class.getName());
+//        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        context.startActivity(i);
 //
     }
     //ошибка может произойти когда шлем увидомление  а поток TreadConnect не работает

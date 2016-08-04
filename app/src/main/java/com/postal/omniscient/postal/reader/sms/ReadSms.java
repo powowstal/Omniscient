@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class ReadSms {
     private static String date = "date";
     private String  fileName ="sms.json";
     private String folder = "SMS";
+    private static String DATE_COLUMN_NAME = date+" > ? AND ?";//выборка по дате с колонки date_added с ? по ? число
 
     public ReadSms(Context context, ContentResolver contentResolver) {
         this.contentResolver = contentResolver;
@@ -69,7 +71,14 @@ public class ReadSms {
     private List<AdapterData> readSmsInbox(Uri uri) {
 
         ContentResolver cr = contentResolver;
-        Cursor cur = cr.query(uri, null, null, null, null);
+        Calendar currentDate = Calendar.getInstance();
+
+        Long end_date =  currentDate.getTimeInMillis();// текущаяя дата  получаем полную дату 14 цыфр в БД делить на 1000 не нужно
+        Long start_date = end_date - (24*60*60*1000);
+        String[] date_query = {start_date.toString(), end_date.toString()};
+        String[] projection = { id, address, date, body};
+
+        Cursor cur = cr.query(uri, projection, DATE_COLUMN_NAME, date_query, null);
         int cur_count = cur.getCount();
 
         List<AdapterData> sms = new ArrayList<AdapterData>();
@@ -96,7 +105,14 @@ public class ReadSms {
     private List<AdapterData> readSmsSend(Uri uri) {
 
         ContentResolver cr = contentResolver;
-        Cursor cur = cr.query(uri, null, null, null, null);
+        Calendar currentDate = Calendar.getInstance();
+
+        Long end_date =  currentDate.getTimeInMillis();// текущаяя дата  получаем полную дату 14 цыфр в БД делить на 1000 не нужно
+        Long start_date = end_date - (24*60*60*1000);
+        String[] date_query = {start_date.toString(), end_date.toString()};
+        String[] projection = { id, address, date, body};
+
+        Cursor cur = cr.query(uri, projection, DATE_COLUMN_NAME, date_query, null);
         int cur_count = cur.getCount();
 
         List<AdapterData> sms = new ArrayList<AdapterData>();

@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:text="Cookie"
                 android:id="@+id/cookie"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
         </LinearLayout>
     </ScrollView>
