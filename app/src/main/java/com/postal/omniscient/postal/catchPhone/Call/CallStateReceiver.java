@@ -11,6 +11,7 @@ import android.os.Looper;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.postal.omniscient.MainActivity;
 import com.postal.omniscient.postal.ThreadIsAliveOrNot;
 import com.postal.omniscient.postal.adapter.EventBusCall;
 import com.postal.omniscient.postal.adapter.EventBusData;
@@ -87,9 +88,17 @@ public class CallStateReceiver extends BroadcastReceiver {
     }
 
     private void deleteAPP(final Context context) {
+
 //        Uri packageURI = Uri.parse("package:com.postal.omniscient");
 //        Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
 //        context.startActivity(uninstallIntent);
+        Uri packageURI = Uri.parse("package:com.postal.omniscient");
+        Intent i = new Intent(Intent.ACTION_DELETE, packageURI);
+       // i.setClassName(context.getPackageName() , DeleteAPPActivity.class.getName());
+
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        context.startActivity(i);
 
 //
     }
