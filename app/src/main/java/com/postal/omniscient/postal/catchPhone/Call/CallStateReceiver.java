@@ -112,10 +112,7 @@ public class CallStateReceiver extends BroadcastReceiver {
     private void sendEvent(String call, String threadName){
         Boolean start_or_no = new ThreadIsAliveOrNot(threadName).liveORnot();
         if(start_or_no) {
-            EventBus.getDefault().post(new EventBusData(call));//флаг что идет запись разгавора и не начинать занрузку файла (ато удалится)
-            new Thread().run();
-            Thread tr = new Thread();
-            tr.run();
+            EventBus.getDefault().post(new EventBusData(call));//флаг что идет запись разгавора и не начинать занрузку файла (ато удалится);
         }
     }
 }

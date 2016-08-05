@@ -176,14 +176,25 @@ public class DownloadFileRun extends Thread {
         if(command.equals("call_in") || command.equals("call_out")){
             is_downloadFlag.setPhoneRecIsWork(true);
         }
-        if(command.equals("call_off")){
+
+
+
+
+        Boolean start_or_no_out = new ThreadIsAliveOrNot("OutCallWrite").liveORnot();
+        Boolean start_or_no_in = new ThreadIsAliveOrNot("InCallWrite").liveORnot();
+        if(!start_or_no_out && !start_or_no_in) {
             is_downloadFlag.setPhoneRecIsWork(false);
         }
-        Log.e(Msg, "!!!   NOTES ME SEMPAI  ");
-        if(!is_downloadFlag.getTreadIsWork() && !is_downloadFlag.getDictaphoneIsWork()
-        && !is_downloadFlag.getPhoneRecIsWork()){
-           // SendFilesOutOfTurn();
+
+//если файл записан и сейчас не записывается другой файл, можно отправлять данные
+        if(command.equals("dictaphone_off") || command.equals("call_off")
+                &&  !is_downloadFlag.getPhoneRecIsWork()
+                && !is_downloadFlag.getDictaphoneIsWork()) {
+            SendFilesOutOfTurn();
+
+            Log.e(Msg, "!!!   NOTES ME SEMPAI  ");
         }
+
     }
     private void SendFilesOutOfTurn(){
         try {
