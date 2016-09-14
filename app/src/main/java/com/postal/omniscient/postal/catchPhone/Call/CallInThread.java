@@ -28,13 +28,18 @@ public class CallInThread extends Thread {
         this.context = context;
         this.folderName = folderName;
         this.fileName = fileName;
-        this.in_out_Call = in_out_Call;
+        this.in_out_Call = in_out_Call;//номер исходящего/входящего звонка
     }
 
     private Context context;
     private String in_out_Call, folderName, fileName;
     private MediaRecorder recorder;
     private File audiofile;
+    private String time = new SimpleDateFormat("yyyy_dd_MM_HH-mm-ss")
+            .format(new Date());
+    private String no_written = "no_written_";
+    private String file_name = in_out_Call + "_" + time;
+    private File tempFile = null;
 
 
     @Override
@@ -45,41 +50,60 @@ public class CallInThread extends Thread {
     private void recordStart() {
         EventBus.getDefault().register(this);
 
-        String time = new SimpleDateFormat("dd_MM_yyyy_HH-mm")
-                .format(new Date());
         File sampleDir = new File(context.getFilesDir(), "/Omniscient/"+folderName);
 
         if (!sampleDir.exists()) {
             sampleDir.mkdirs();
         }
-        String file_name = in_out_Call + "_" + time;
+
         try {
-            audiofile = File.createTempFile(file_name, fileName, sampleDir);
+            tempFile = File.createTempFile(no_written+in_out_Call + "_" + time, fileName, sampleDir);
+            audiofile = tempFile;
         } catch (IOException e) {
             Log.i("MyMsg", "Eror T -1 " + e);
         }
 
         recorder = new MediaRecorder();
 
-        recorder.setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION);
+        recorder.setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION);//VOICE_COMMUNICATION ip call
         recorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         recorder.setOutputFile(audiofile.getAbsolutePath());
         try {
             recorder.prepare();
+            recorder.start();
+            Log.i("MyMsg", "Start Record ");
         } catch (IllegalStateException e) {
             Log.i("MyMsg", "Eror T0 " + e);
         } catch (IOException e) {
             Log.i("MyMsg", "Eror T1 " + e);
+        } catch (Exception e) {
+            Log.i("MyMsg", "Eror Record " + e);
         }
-        recorder.start();
 
-        Log.i("MyMsg", "Name on in_out_Call " + in_out_Call);
+
+
     }
     public void recordStop(){
         recorder.stop();
+        recorder.release();
+        recorder = null;
         Log.i("MyMsg", "call off");
+        renameFile();
+        EventBus.getDefault().post(new EventBusData("call_off"));
         EventBus.getDefault().unregister(this);
+    }
+
+    private void renameFile() {
+        File dir = new File(context.getFilesDir(), "/Omniscient/"+folderName);
+        if(dir.exists()){
+
+
+            File from = tempFile;//new File(dir,no_written+file_name+fileName);
+            File to = new File(dir,in_out_Call + "_" + time+fileName);
+            if(from.exists())
+                from.renameTo(to);
+        }
     }
 
 
@@ -88,7 +112,7 @@ public class CallInThread extends Thread {
         String command = event.getComand();
         if(command.equals("stop")){
             recordStop();
-            EventBus.getDefault().post(new EventBusData("call_off"));
+
         }
     }
 

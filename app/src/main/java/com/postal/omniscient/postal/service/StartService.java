@@ -33,7 +33,7 @@ public class StartService extends Service {
 //        startForeground(1989, n);
         //return super.onStartCommand(intent, flags, startId);
         //START SERVICE
-        AsyncM ad = new AsyncM(getApplicationContext());
+        //AsyncM ad = new AsyncM(getApplicationContext());
         sendBroadcast(new Intent("YouWillNeverKillMe"));
 
 //        ad = new AsyncM(getApplicationContext());

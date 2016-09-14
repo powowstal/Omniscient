@@ -40,8 +40,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
                 android:ems="10"
-                android:id="@+id/login"
-                android:hint="@string/hint_login" />
+                android:id="@+id/userID"
+                android:hint="@string/hint_userID" />
 
             <EditText
                 android:layout_width="fill_parent"
@@ -50,7 +50,8 @@
                 android:ems="10"
                 android:id="@+id/password"
                 android:layout_marginTop="20dp"
-                android:hint="@string/hint_password" />
+                android:hint="@string/hint_password"
+                android:visibility="gone" />
 
             <Button
                 android:layout_width="150dp"

