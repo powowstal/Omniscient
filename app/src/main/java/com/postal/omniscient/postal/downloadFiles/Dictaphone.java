@@ -31,7 +31,7 @@ public class Dictaphone extends Thread {
     private String Msg = "MyMsg";
     private String no_written = "no_written_";
     private File tempFile = null;
-    private String time = new SimpleDateFormat("dd_MM_yyyy_HH-mm")
+    private String time = new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss")
             .format(new Date());
 
     public Dictaphone(AdapterDownloadFlag is_downloadFlag, Context context) {
@@ -74,8 +74,8 @@ public class Dictaphone extends Thread {
             recorder = new MediaRecorder();
 
             recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            recorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
-            recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
             recorder.setOutputFile(audiofile.getAbsolutePath());
             try {
                 recorder.prepare();
@@ -122,7 +122,7 @@ public class Dictaphone extends Thread {
         if(dir.exists()){ //context.getFilesDir()
 
             File from = tempFile;
-            File to = new File(dir, record_name + "_" + time + ".amr");
+            File to = new File(dir, time + "_" + record_name + ".mp3");
             if(from.exists())
                 from.renameTo(to);
         }

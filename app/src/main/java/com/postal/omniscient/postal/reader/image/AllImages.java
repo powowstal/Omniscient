@@ -78,7 +78,7 @@ public class AllImages {
         for(AdapterData buf : listOfAllImages){
             long buf_long = Long.parseLong(buf.getTime());
 
-            Log.d(Msg, "Image date1 " + new SimpleDateFormat("dd/MM/yyyy HH:mm")
+            Log.d(Msg, "Image date1 " + new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss")
                     .format(buf_long*1000));
 
 
@@ -124,7 +124,7 @@ public class AllImages {
 
         for(AdapterData buf : listOfAllImages){
             long buf_long = Long.parseLong(buf.getTime());
-            Log.d(Msg,"Image date2 " + new SimpleDateFormat("dd/MM/yyyy HH:mm")
+            Log.d(Msg,"Image date2 " + new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss")
                     .format(buf_long*1000));
         }
         cursor.close();

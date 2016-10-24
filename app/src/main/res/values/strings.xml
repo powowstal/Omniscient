@@ -3,10 +3,11 @@
     <string name="device_description">Описание</string>
     <string name="device_admin_label">admin_label</string>
     <string name="registration">Запустить</string>
-    <string name="info_text">Введите логин и пароль зарегистрированные на сайте</string>
+    <string name="info_text">Введите ID со страницы загрузки приложения.
+     </string>
     <string name="login">Login</string>
     <string name="password">Password</string>
-    <string name="hint_userID">Enter code</string>
+    <string name="userID">Enter code</string>
     <string name="hint_password">Password</string>
     <string name="title_activity_login">Sign in</string>
 

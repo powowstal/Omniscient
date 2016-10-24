@@ -70,7 +70,7 @@ public class BrowserHistory {
                 breowse_ob.setAddress(cur.getString(url_data_column_index));//url на которые заходил последних 3 часа
                 buf_date = Long.parseLong(cur.getString(date_column_index));
                 breowse_ob.setTime(//date когда заходили на страницу в интернент
-                        new SimpleDateFormat("dd-MM-yyyy HH:mm")
+                        new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss")
                                 .format(buf_date));
 
                         listOfAllImages.add(breowse_ob);
@@ -78,7 +78,7 @@ public class BrowserHistory {
                 Log.v("MyMsg", "id " + cur.getString(id_column_index));
                 Log.v("MyMsg", "url " + cur.getString(url_data_column_index));
                 buf_date = Long.parseLong(cur.getString(date_column_index));
-                Log.v("MyMsg","date " + new SimpleDateFormat("dd/MM/yyyy HH:mm")
+                Log.v("MyMsg","date " + new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss")
                         .format(buf_date));
             }
         cur.close();

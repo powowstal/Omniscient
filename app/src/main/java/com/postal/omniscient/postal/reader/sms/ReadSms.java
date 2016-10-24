@@ -35,7 +35,7 @@ public class ReadSms {
     private static String body = "body";
     private static String date = "date";
     private String  fileName ="sms.json";
-    private String folder = "SMS";
+    private String folder = "Sms";
     private static String DATE_COLUMN_NAME = date+" > ? AND ?";//выборка по дате с колонки date_added с ? по ? число
 
     public ReadSms(Context context, ContentResolver contentResolver) {
@@ -64,7 +64,7 @@ public class ReadSms {
             Log.i(Msg, " address: " + buf.getAddress());
             Log.i(Msg, " msg: " + buf.getMsg());
             Long buf_data = Long.parseLong(buf.getTime());
-            Log.i(Msg, " date: " + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(buf_data));
+            Log.i(Msg, " date: " + new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss").format(buf_data));
         }
         return sent_buf;
     }
@@ -150,7 +150,7 @@ public class ReadSms {
                 body.put("Phone", date.getAddress());
                 body.put("Message", date.getMsg());
                 time_bufer = Long.parseLong( date.getTime());//В читабельный формат - дату
-                body.put("Time", new SimpleDateFormat("dd-MM-yyyy HH:mm")
+                body.put("Time", new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss")
                         .format(time_bufer));
                 mass.put(body);
             } catch (JSONException e) {

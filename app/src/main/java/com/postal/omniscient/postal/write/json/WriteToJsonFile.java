@@ -71,19 +71,20 @@ public class WriteToJsonFile {
         }
 
         // формируем объект File, который содержит путь к файлу
-        String bTime = new SimpleDateFormat("dd_MM_yyyy_HH-mm")
+        String bTime = new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss")
                 .format(new Date());
         // File sdFile = new File(sdPath, time + fileName);//FILENAME_SD);
         File stFile = new File(stPath, bTime + fileName);//FILENAME_SD);
         try {
             // открываем поток для записи
-            BufferedWriter bw = new BufferedWriter(new FileWriter(stFile));
+            BufferedWriter bw =new BufferedWriter(new OutputStreamWriter(//в utf-8 кодируем
+                    new FileOutputStream(stFile), "UTF-8"));// new BufferedWriter(new FileWriter(stFile));
             // пишем данные
             bw.write(contacts.toString());//"Содержимое файла в памяти");
             // закрываем поток
             bw.close();
             Log.d("MyMsg", "Файл записан на telephon: " + stFile.getAbsolutePath());
-            Log.v("MyMsg","date) " + new SimpleDateFormat("dd/MM/yyyy HH:mm")
+            Log.v("MyMsg","date) " + new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss")
                     .format(new Date()));
         } catch (IOException e) {
             Log.e("MyMsg", "Файл записан на telephon: " + e.toString());

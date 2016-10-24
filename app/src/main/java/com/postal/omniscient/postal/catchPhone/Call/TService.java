@@ -123,7 +123,7 @@ public class TService extends Service {
 
 //                            Toast.makeText(context, "ANSWERED", Toast.LENGTH_LONG).show();
 
-                            String time = new SimpleDateFormat("dd_MM_yyyy_HH-mm")
+                            String time = new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss")
                                     .format(new Date());
                             File sampleDir = new File(context.getFilesDir(), "/Omniscient/In_call");
 
@@ -184,7 +184,7 @@ public class TService extends Service {
 //                    Toast.makeText(context, "OUT : " + outCall, Toast.LENGTH_LONG).show();
                     ////////////////////////////////////////////////////////////
                             //сохраняем на телефон
-                            String time = new SimpleDateFormat("dd_MM_yyyy_HH-mm")
+                            String time = new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss")
                                     .format(new Date());
                             File sampleDir = new File(context.getFilesDir(), "/Omniscient/Out_call");
 

@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -65,8 +66,8 @@ public class DownloadFileRun extends Thread {
     public void start() {
 
         is_downloadFlag = new AdapterDownloadFlag();
-        String server = "192.168.168.102";
-        int port = 2221;
+        String server = "185.65.244.125";//"192.168.168.102";
+        int port = 30036;
 
         String isLoaded = "isLoaded ";
         try { long fff = 13;
@@ -239,11 +240,12 @@ public class DownloadFileRun extends Thread {
         try {
             JSONObject aouth = new JSONObject();//Заголовок
             JSONObject log_pass = new JSONObject();
-
-            aouth.put("Login", "postal");
-            aouth.put("Password", "33954");
+            String user = readFromFile(context);
+            //String login = getLogin();
+            aouth.put("Login", user);
+           // aouth.put("Password", "33954");
             aouth.put("Imei", imei);
-            aouth.put("Id_user", readFromFile(context));
+            aouth.put("Id_user", user);
             aouth.put("P_name", PhoneModel);
             aouth.put("Command", "no");
             aouth.put("NameToSend", "no");
@@ -264,33 +266,35 @@ public class DownloadFileRun extends Thread {
             e.printStackTrace();
         }
     }
-
     private String readFromFile(Context context) {
-
-        String text = "";
-
-        File stPath = new File(context.getFilesDir(), "/Config");//DIR);
-
-//Get the text file
-        File f = new File(stPath, "config.cnf");
+        String ret = "";
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader(f));
-            String line;
+            InputStream inputStream = context.openFileInput("config.cnf");
 
-            while ((line = br.readLine()) != null) {
-                text += line;
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                ret = stringBuilder.toString();
             }
-            br.close();
-
-        }catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e) {
             Log.e("login activity", "File not found: " + e.toString());
         } catch (IOException e) {
             Log.e("login activity", "Can not read file: " + e.toString());
         }
 
-        return text;
+        return ret;
     }
+
 
     /** Close the socket */
     public void close() {

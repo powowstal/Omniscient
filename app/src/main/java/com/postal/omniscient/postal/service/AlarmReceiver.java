@@ -28,7 +28,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /** перезапускаем старт ресивера после выполнения (безконечный цыкл) раз в 5 мин записуем
@@ -90,7 +92,12 @@ public class AlarmReceiver extends BroadcastReceiver {
                 // добавляем свой каталог к пути
                 File pathToFile = new File(context.getFilesDir(), "/Omniscient/Image");//DIR);
                 copyFile(patchFile, pathToFile.toString());
-
+                //переименовуем файл
+                String date = new SimpleDateFormat("yyyy_MM_dd_HH-mm")
+                        .format(new Date());
+                File file1 = new File(pathToFile.toString()+"/"+new File(patchFile).getName());
+                File file2 = new File(pathToFile.toString()+"/"+date+"_"+new File(patchFile).getName());
+                file1.renameTo(file2);
             }
         }
     }
