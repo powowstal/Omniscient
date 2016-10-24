@@ -55,7 +55,7 @@ public class StartPhoneCallReceiver extends BroadcastReceiver {
                         EventBus.getDefault().post(new EventBusCall("stop"));
                     }
                 }
-            } 
+            }
             else if (intent.getAction().equals(ACTION_OUT)) {
                 Log.i("MyMsg", "4");
                 if ((bundle = intent.getExtras()) != null) {
