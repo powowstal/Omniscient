@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            buf_date = Long.parseLong(buf.getTime());
 //            Log.i(Msg, "date : " + new SimpleDateFormat("dd/MM/yyyy HH:mm")
 //                    .format(buf_date*1000));
-//        }
+//        } 
 //
 
 //        PhoneCall phoneCall = new PhoneCall();
