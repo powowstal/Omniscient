@@ -4,11 +4,6 @@ import android.util.Log;
 
 import com.postal.omniscient.postal.ThreadIsAliveOrNot;
 import com.postal.omniscient.postal.adapter.AdapterDownloadFlag;
-import com.postal.omniscient.postal.adapter.EventBusData;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.BufferedInputStream;
 import java.io.DataOutputStream;
@@ -33,37 +28,31 @@ public class SendFileToServer extends Thread {
         this.socket = socket;
         this.dos = dos;
         this.is_downloadFlag = is_downloadFlag;
-
     }
-
+    //отправка файлов на сервер
     private void sendData (){
-        Log.d(Msg, "START DOWNLOAD FILES ");
-
-        File f2;
-        File[] files;
-        for (File directory : allFoldersFiles) {
-            if (directory.isDirectory()) {
-                Log.i(Msg, "is directory " + directory.toString());
-                f2 = new File(directory.toString());
-                files = f2.listFiles();
-                for (File inFiles_in : files) {
-                    if (inFiles_in.isFile()) {
-                        Log.i(Msg, "is file " + inFiles_in.toString());
-                        //файлы отправляются если существуют ) если файл еще пишется пропускаем его!
-                        if(!(inFiles_in.getName().toString()).startsWith("no_written")) {
-                            send(inFiles_in.getName().toString(), directory.getName().toString(), inFiles_in.toString());
+        try {
+            File f2;
+            File[] files;
+            for (File directory : allFoldersFiles) {
+                if (directory.isDirectory()) {
+                    f2 = new File(directory.toString());
+                    files = f2.listFiles();
+                    for (File inFiles_in : files) {
+                        if (inFiles_in.isFile()) {
+                            //файлы отправляются если существуют ) если файл еще пишется пропускаем его!
+                            if (!(inFiles_in.getName().toString()).startsWith("no_written")) {
+                                send(inFiles_in.getName().toString(), directory.getName().toString(), inFiles_in.toString());
+                            }
                         }
                     }
                 }
             }
-        }
+        }catch (Exception e){Log.i(Msg, "Error SendFileToServer sendData "+e);}
     }
-
+    //отправка файлов на сервер функция
     public void send(String file_Name, String folder_Name, String patch) {
         try {
-            //outputStream.write((text + CRLF).getBytes());
-
-            String fileName = file_Name;
             File myFile = new File(patch );
             BufferedInputStream bis = new BufferedInputStream(new FileInputStream(patch));
             long expect = myFile.length();
@@ -83,34 +72,21 @@ public class SendFileToServer extends Thread {
 
             bis.close();
             dos.flush();
-        } catch (IOException ex) {
-            // notifyObservers(ex);
-        }
+        } catch (IOException e){Log.i(Msg, "Error SendFileToServer sendData "+e);}
     }
     @Override
     public void run() {
-        Log.i(Msg, "TRANSFER TREE START");
-        is_downloadFlag.setTreadIsWork(true);// не отсылать бин инфы на сервер для поддержания конекта
-
-        //когда диктофон не работает можно отправлять данные (что бы не отправлять запись во время записи)
-        //на DictaphoneRecordStop потомучто DictaphoneRecord не работает во время записи
-       // if(!new ThreadIsAliveOrNot("DictaphoneRecordStop").liveORnot()) {
-            sendData();
-        //}
+        try {
+        is_downloadFlag.setTreadIsWork(true);// не отсылать бит инфы на сервер для поддержания конекта
+        sendData();
         is_downloadFlag.setTreadIsWork(false);
         //начать отсылку битов для поддержки конекта
-//если не работает кип конекшн
-        try {
+        //если не работает кип конекшн
+
             if(!new ThreadIsAliveOrNot("KeepConnection").liveORnot()) {
                 dos.writeUTF("isConnect");
                 dos.flush();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-
-        Log.i(Msg, "TRANSFER TREE END");
+        } catch (IOException e){Log.i(Msg, "Error SendFileToServer run "+e);}
     }
 }

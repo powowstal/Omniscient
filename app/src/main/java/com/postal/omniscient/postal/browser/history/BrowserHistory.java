@@ -27,7 +27,6 @@ public class BrowserHistory {
     private ContentResolver contentResolver;
     private static String fileName = "browser.json";
     private static String folder = "Browser";
-    private static String Msg = "MyMsg";
     private static String id ="_id";
     private static String url_data = "url";
     private static String date = "date";
@@ -43,67 +42,68 @@ public class BrowserHistory {
      */
     public List<AdapterData> getBrowserHist()  {
         Uri uri;
-        AdapterData breowse_ob;
-        List<AdapterData> listOfAllImages = new ArrayList<AdapterData>();
-        Calendar currentDate = Calendar.getInstance();
-        Long end_date =  currentDate.getTimeInMillis();
-        Long start_date = end_date - (24*60*60*1000);
-        String[] date_query = {start_date.toString(), end_date.toString()};
+        AdapterData browser_ob;
+        List<AdapterData> listOfAllImages = null;
+        try {
+            listOfAllImages = new ArrayList<AdapterData>();
+            Calendar currentDate = Calendar.getInstance();
+            Long end_date = currentDate.getTimeInMillis();
+            Long start_date = end_date - (24 * 60 * 60 * 1000);
+            String[] date_query = {start_date.toString(), end_date.toString()};
 
 
-        uri = Uri.parse("content://browser/bookmarks");
-        String[] projection = { id, url_data, date};
+            uri = Uri.parse("content://browser/bookmarks");
+            String[] projection = {id, url_data, date};
 
 
-    Cursor cur = contentResolver.query(uri,
-            projection, DATE_COLUMN_NAME, date_query, date+" DESC");// DESC - сортировка по убываню
+            Cursor cur = contentResolver.query(uri,
+                    projection, DATE_COLUMN_NAME, date_query, date + " DESC");// DESC - сортировка по убываню
 
-        int id_column_index, url_data_column_index, date_column_index;
-        id_column_index = cur.getColumnIndexOrThrow(id);
-        url_data_column_index = cur.getColumnIndexOrThrow(url_data);
-        date_column_index = cur.getColumnIndexOrThrow(date);
+            int id_column_index, url_data_column_index, date_column_index;
+            id_column_index = cur.getColumnIndexOrThrow(id);
+            url_data_column_index = cur.getColumnIndexOrThrow(url_data);
+            date_column_index = cur.getColumnIndexOrThrow(date);
 
-        long buf_date;
+            long buf_date;
             while (cur.moveToNext()) {
-                breowse_ob = new AdapterData();
-                breowse_ob.setId(cur.getString(id_column_index));//id
-                breowse_ob.setAddress(cur.getString(url_data_column_index));//url на которые заходил последних 3 часа
+                browser_ob = new AdapterData();
+                browser_ob.setId(cur.getString(id_column_index));//id
+                browser_ob.setAddress(cur.getString(url_data_column_index));//url на которые заходил последних 3 часа
                 buf_date = Long.parseLong(cur.getString(date_column_index));
-                breowse_ob.setTime(//date когда заходили на страницу в интернент
+                browser_ob.setTime(//date когда заходили на страницу в интернент
                         new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss")
                                 .format(buf_date));
 
-                        listOfAllImages.add(breowse_ob);
+                listOfAllImages.add(browser_ob);
 
-                Log.v("MyMsg", "id " + cur.getString(id_column_index));
-                Log.v("MyMsg", "url " + cur.getString(url_data_column_index));
-                buf_date = Long.parseLong(cur.getString(date_column_index));
-                Log.v("MyMsg","date " + new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss")
-                        .format(buf_date));
             }
-        cur.close();
+            cur.close();
+        }catch (Exception e){Log.i("MyMsg", "Error BrowserHistory getBrowserHist "+e);}
         return listOfAllImages;
     }
+    //пишем историю браузера в json файл
     public void historyToJson(){
         WriteToJsonFile writeToFile = new WriteToJsonFile(context);
         JSONObject history = new JSONObject();//Заголовок
         JSONObject url_and_time;//url и время посещений
         JSONArray mass = new JSONArray();//массив куда записуем url & time
-        for(AdapterData date : getBrowserHist()){
-            url_and_time = new JSONObject();
+        try {
+            for (AdapterData date : getBrowserHist()) {
+                url_and_time = new JSONObject();
+                try {
+                    url_and_time.put("Url", date.getAddress());
+                    url_and_time.put("Time", date.getTime());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mass.put(url_and_time);
+            }
             try {
-                url_and_time.put("Url", date.getAddress());
-                url_and_time.put("Time", date.getTime());
+                history.put("History", mass);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            mass.put(url_and_time);
-        }
-        try {
-            history.put("History", mass);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        writeToFile.writeFileSD(history, fileName, folder);
+            writeToFile.writeFileSD(history, fileName, folder);
+        }catch (Exception e){Log.i("MyMsg", "Error BrowserHistory historyToJson "+e);}
     }
 }

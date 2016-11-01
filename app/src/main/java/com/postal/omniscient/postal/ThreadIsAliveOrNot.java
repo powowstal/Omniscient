@@ -1,5 +1,6 @@
 package com.postal.omniscient.postal;
 
+import android.util.Log;
 import java.util.Set;
 
 /**
@@ -11,15 +12,19 @@ public class ThreadIsAliveOrNot {
     }
     private String threadName;
     private Boolean live;
-
+/**проверка запущен ли поток если да - live = true */
     public Boolean liveORnot(){
-        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-        live = false;
-        for(Thread th: threadSet){
-            if(th.getName().equals(threadName)){
-                live = true;
-            }
+        try {
+            Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+            live = false;
+            for (Thread th : threadSet) {
+                if (th.getName().equals(threadName)) {
+                    live = true;
+                }
 
+            }
+        }catch (Exception e){
+            Log.i("MyMsg","Error ThreadIsAliveOrNot liveORnot"+e);
         }
         return live;
     }

@@ -1,7 +1,7 @@
 package com.postal.omniscient.postal.sort.implement.interfaces.Comparator;
 
+import android.util.Log;
 import com.postal.omniscient.postal.adapter.AdapterData;
-
 import java.util.Comparator;
 
 /**
@@ -15,14 +15,16 @@ public class SortByPhoNumber implements Comparator <AdapterData> {
     @Override
     public int compare(AdapterData ob1, AdapterData ob2) {
 /**способ сортировки*/
-        int result = ob1.getAddress().compareTo(ob2.getAddress());
-        if(result != 0) {
-            return result;
-        }
-        result = ob1.getTime().compareTo(ob2.getTime());
-        if(result != 0) {
-            return result;
-        }
+        try {
+            int result = ob1.getAddress().compareTo(ob2.getAddress());
+            if (result != 0) {
+                return result;
+            }
+            result = ob1.getTime().compareTo(ob2.getTime());
+            if (result != 0) {
+                return result;
+            }
+        }catch (Exception e){Log.i("MyMsg", "Error SortByPhoNumber compare "+e);}
         return 0;
     }
 }

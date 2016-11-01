@@ -43,16 +43,6 @@
                 android:id="@+id/userID"
                 android:hint="@string/userID" />
 
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:ems="10"
-                android:id="@+id/password"
-                android:layout_marginTop="20dp"
-                android:hint="@string/hint_password"
-                android:visibility="gone" />
-
             <Button
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
@@ -62,13 +52,6 @@
                 android:text="@string/registration"
                 android:background="@drawable/notification_template_icon_bg"
                 android:textColor="@color/abc_input_method_navigation_guard"/>
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cookie"
-                android:id="@+id/cookie"
-                android:visibility="gone" />
 
         </LinearLayout>
     </ScrollView>

