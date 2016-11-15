@@ -51,7 +51,7 @@ public class DownloadFileRun extends Thread {
     }
     //шлем файлы из папок на сервер
     public void start() {
-
+        Log.e(Msg, "DownloadFileRun ");
         is_downloadFlag = new AdapterDownloadFlag();
         String server = "185.65.244.125";
         int port = 30036;
@@ -61,7 +61,7 @@ public class DownloadFileRun extends Thread {
             EventBus.getDefault().register(this);
             socket = new Socket();//(server, port);
             socket.connect(new InetSocketAddress(server, port),2000);
-            socket.setSoTimeout(50000);
+            socket.setSoTimeout(25000);
             dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             oaut();
 

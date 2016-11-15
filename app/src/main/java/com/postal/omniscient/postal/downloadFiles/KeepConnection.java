@@ -39,7 +39,8 @@ public class KeepConnection extends Thread {
             }
         } catch (IOException e) {
             Log.e(Msg,"Error KeepConnection1 "+ e.toString());
-            notGiveUp();
+            //.................................................................................
+            //notGiveUp();
         } catch (InterruptedException e) {
             Log.e(Msg,"Error KeepConnection2 "+ e.toString());
         }

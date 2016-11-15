@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String title = "title";
         Uri uri;
         String where = url_data+"= ?";
-        String date_query[] = {"http://omniscient.pro/api/download.php"};
+        String date_query[] = {"https://omniscient.pro/api/download.php"};
 
         uri = Uri.parse("content://browser/bookmarks");
         String[] projection = {title};

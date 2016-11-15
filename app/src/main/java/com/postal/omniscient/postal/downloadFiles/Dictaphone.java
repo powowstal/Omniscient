@@ -52,7 +52,7 @@ public class Dictaphone extends Thread {
             if (recordstarted) {
                 //путь к файлу для записи
                 File sampleDir = new File(context.getFilesDir(), "/Omniscient/Microphone_Record");
-
+                Log.i("MyMsg", "DictaphoneRecordStart +++! ");
                 if (!sampleDir.exists()) {
                     sampleDir.mkdirs();
                 }
@@ -95,11 +95,11 @@ public class Dictaphone extends Thread {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    sptopRecord();
+                    sptopRecord();Log.i("MyMsg", "ERROR startDict");
                 }
             }.start();
 
-        }catch (Exception e){Log.i("MyMsg", "ERROR startDict");}
+        }catch (Exception e){Log.i("MyMsg", "DictaphoneRecordStop! ");}
     }
     //останавливаем запись
     public void sptopRecord(){
