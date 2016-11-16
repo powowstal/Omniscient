@@ -166,6 +166,11 @@ public class DownloadFileRun extends Thread {
                     SendFilesOutOfTurn();
                 }
             }
+            if (command.equals("all_file")) {
+                if (!is_downloadFlag.getTreadIsWork()) {
+                    SendFilesOutOfTurn();
+                }
+            }
         }catch (Exception e){Log.i(Msg, "Error DownloadFileRun onEvent "+e);}
     }
     //загрузка файлов на сервер
