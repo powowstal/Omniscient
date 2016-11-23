@@ -51,6 +51,9 @@ public class DownloadFileRun extends Thread {
     }
     //шлем файлы из папок на сервер
     public void start() {
+        Thread t = Thread.currentThread();
+        String name = t.getName();
+        Log.e(Msg, "name = " + name);
         Log.e(Msg, "DownloadFileRun ");
         is_downloadFlag = new AdapterDownloadFlag();
         String server = "185.65.244.125";

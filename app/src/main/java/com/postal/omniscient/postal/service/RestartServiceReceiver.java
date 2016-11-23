@@ -53,8 +53,12 @@ public class RestartServiceReceiver extends BroadcastReceiver {
             if (!start_or_no) {
                 if (ni != null && ni.isConnected()) {// включен ли интернет
                     if (!start_or_no) {//если поток не работает
-                        startTransferFile(context, intent);// Начать загрузку файлов на сервер при появлении интернета
-                        //если она уже не идет и существует конект с сервером
+//                        startTransferFile(context, intent);// Начать загрузку файлов на сервер при появлении интернета
+//                        //если она уже не идет и существует конект с сервером
+///////////////////////////////////////////////////////////////////////////////////////////
+                        Log.i(Msg, "notGiveUp start ");
+                        String requiredPermission = "notGiveUpKeepConnected";
+                        context.sendBroadcast(new Intent(requiredPermission));
                     }
                 }
             }

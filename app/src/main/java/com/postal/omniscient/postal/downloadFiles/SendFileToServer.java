@@ -98,6 +98,10 @@ public class SendFileToServer extends Thread {
                     dos.flush();
                 }
             }
+            //////////////////////////////////////////////////////
+            sleep(3000);
+            socket.close();
+            /////////////////////////////////////////////////////
         } catch (Exception e) {
             Log.i(Msg, "Error SendFileToServer run " + e);
         }
