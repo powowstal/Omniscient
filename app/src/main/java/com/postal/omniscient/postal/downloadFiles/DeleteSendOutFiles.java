@@ -28,8 +28,9 @@ public class DeleteSendOutFiles extends Thread {
             File fileDir = new File(context.getFilesDir(), "/Omniscient/"+line);
             if (fileDir.exists()) {
                 fileDir.delete();
+                Log.i(Msg, "________------- DELETE "+line);
             }
-        } catch (Exception e){}
+        } catch (Exception e){Log.i(Msg, "Error DeleteSendOutFiles deleteFileIsLoaded");}
 
     }
     @Override

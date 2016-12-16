@@ -64,7 +64,7 @@ final Context context1 = context;
             dataCollection.start();
             dataCollection.join();
 
-
+            
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
             Intent myIntent = new Intent(context, AlarmReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);

@@ -36,6 +36,7 @@ public class KeepConnection extends Thread {
             if (!is_downloadFlag.getTreadIsWork()) {
                 dos.writeUTF("isConnect");
                 dos.flush();
+                Log.e(Msg,"isConnect ");
             }
         } catch (IOException e) {
             Log.e(Msg,"Error KeepConnection1 "+ e.toString());

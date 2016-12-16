@@ -84,6 +84,11 @@ public class CallInThread extends Thread {
                 Log.i("MyMsg", "Eror T1 " + e);
             } catch (Exception e) {
                 Log.i("MyMsg", "Eror Record " + e);
+            try {
+                audiofile.delete();
+                recorder.stop();
+                recorder = null;
+            }catch (Exception er){Log.i("MyMsg", "Error in Record close " + er);}
             }
         }catch (Exception e){Log.i("MyMsg", "Error in Record " + e);}
     }
