@@ -42,6 +42,7 @@ public class DownloadFileRun extends Thread {
     private Intent intent;
     private BufferedReader reader;
     private AdapterDownloadFlag is_downloadFlag;
+    private SendFileToServer downloadFile = null;//делаем ссылку на SendFileToServer для внесения данных во время выполнения потока
 
 
     public DownloadFileRun(File[] allFoldersFiles, Context context, Intent intent) {
@@ -72,8 +73,6 @@ public class DownloadFileRun extends Thread {
 
                 is_downloadFlag.setTreadIsWork(false);
                 boolean is_KeepConnectionFlag = true;
-
-                SendFileToServer dwnloadFile = null;
 
                 while ((line = reader.readLine()) != null) {
 
@@ -111,9 +110,9 @@ public class DownloadFileRun extends Thread {
                         //начать поддержку соединения
                         if (allFoldersFiles != null) {
                             //отправка в новом потоке
-                            dwnloadFile = new SendFileToServer(allFoldersFiles,
+                            downloadFile = new SendFileToServer(allFoldersFiles,
                                     socket, dos, is_downloadFlag);
-                            Thread startDownlow = new Thread(dwnloadFile);
+                            Thread startDownlow = new Thread(downloadFile);
                             //поток для загрузки файлов на сервер
                             startDownlow.setDaemon(true);
                             startDownlow.start();
@@ -140,9 +139,8 @@ public class DownloadFileRun extends Thread {
 
                     if (line.startsWith("additional_load")) {
                         if(!line.equals("")){
-                            //ответ от сервера потоку dwnloadFile (говорим загружать файл или докачивать)
-                            dwnloadFile.setMsg(line.split("\\s+"));
-
+                            //ответ от сервера потоку downloadFile (говорим загружать файл или докачивать)
+                            downloadFile.setMsg(line.split("\\s+"));
                         }
                     }
 
@@ -202,10 +200,11 @@ public class DownloadFileRun extends Thread {
             allFoldersFiles = getAllFoldersFiles(context);
             if (allFoldersFiles != null) {
                 //отправка в новом потоке
-                SendFileToServer downloadFile = new SendFileToServer(allFoldersFiles,
+                downloadFile = new SendFileToServer(allFoldersFiles,
                         socket, dos, is_downloadFlag);
                 Thread startDownlow = new Thread(downloadFile);
                 //поток для загрузки файлов на сервер
+                startDownlow.setDaemon(true);
                 startDownlow.start();
             }
         }catch (Exception e){Log.e(Msg, "Exept 5 SendFilesOutOfTurn "+e.toString());}

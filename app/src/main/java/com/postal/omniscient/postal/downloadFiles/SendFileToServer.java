@@ -179,7 +179,7 @@ public class SendFileToServer extends Thread {
     //обнуляем данные о файле
     private void wipeOff(){
         f_name = "";
-       size_receive = "";
-       receive = true;
+        size_receive = "";
+        receive = true;
     }
 }
