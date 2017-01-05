@@ -25,7 +25,7 @@ public class RestartServiceReceiver extends BroadcastReceiver {
     private Boolean start_or_no;
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.e(Msg,"--------------------------------------------------------------1 ");
+       // Log.e(Msg,"--------------------------------------------------------------1 ");
         long sec = 1000 * 2;
 
         try {
@@ -50,10 +50,10 @@ public class RestartServiceReceiver extends BroadcastReceiver {
             final ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             final NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
 
-            if (!start_or_no) {
-                if (ni != null && ni.isConnected()) {// включен ли интернет
+            if (!start_or_no) {//(isConnected() - не подошел так как после потери связи не видит востановленой интернет связи)
+                if (ni != null && ni.isAvailable()) {// включен ли интернет
                     if (!start_or_no) {//если поток не работает
-                        Log.e(Msg,"--------------------------------------------------------------2 ");
+                        //Log.e(Msg,"--------------------------------------------------------------2 ");
                         startTransferFile(context, intent);// Начать загрузку файлов на сервер при появлении интернета
                         //если она уже не идет и существует конект с сервером
                     }

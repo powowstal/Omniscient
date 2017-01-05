@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.postal.omniscient.postal.SPreferences.PreferencesGetSet;
 import com.postal.omniscient.postal.service.AlarmReceiver;
 
 import java.io.IOException;
@@ -72,6 +73,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // запуск приложения
     private void startAPP() {
         try {
+            PreferencesGetSet Sp = new PreferencesGetSet();
+            Sp.writeToPreferences(getApplicationContext());//устанавлеваем первое время для настроек
+
             // если не ввели код, говорим - "введите код"
             if (userID.getText().length() < 1) {
                 Toast toast = Toast.makeText(getApplicationContext(),
@@ -123,7 +127,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //запись id_user в файл
     private void writeToFile(Context context, String data) {
         try {
-
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.cnf", Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
             outputStreamWriter.close();

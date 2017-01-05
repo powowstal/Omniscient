@@ -1,4 +1,4 @@
-package com.postal.omniscient.postal.browser.history;
+package com.postal.omniscient.postal.reader.browser_history;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
+import com.postal.omniscient.postal.SPreferences.PreferencesGetSet;
 import com.postal.omniscient.postal.adapter.AdapterData;
 import com.postal.omniscient.postal.write.json.WriteToJsonFile;
 
@@ -45,10 +46,11 @@ public class BrowserHistory {
         AdapterData browser_ob;
         List<AdapterData> listOfAllImages = null;
         try {
+            PreferencesGetSet Sp = new PreferencesGetSet();
             listOfAllImages = new ArrayList<AdapterData>();
             Calendar currentDate = Calendar.getInstance();
             Long end_date = currentDate.getTimeInMillis();
-            Long start_date = end_date - (24 * 60 * 60 * 1000);
+            Long start_date = Sp.readeFromPreferences(context)-1;
             String[] date_query = {start_date.toString(), end_date.toString()};
 
 

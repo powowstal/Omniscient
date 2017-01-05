@@ -1,5 +1,6 @@
 package com.postal.omniscient.postal.networkStateReceiver;
 
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,8 @@ import android.util.Log;
 
 import com.postal.omniscient.postal.ThreadIsAliveOrNot;
 import com.postal.omniscient.postal.downloadFiles.DownloadFileRun;
+import com.postal.omniscient.postal.service.AlarmReceiver;
+import com.postal.omniscient.postal.service.RestartServiceReceiver;
 
 import java.io.File;
 
@@ -21,6 +24,20 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         try {
+            //если RestartServiceReceiver остановился - запускаем его
+            Intent myIntent1 = new Intent(context, RestartServiceReceiver.class);
+            boolean isWorking = (PendingIntent.getBroadcast(context, 0, myIntent1, PendingIntent.FLAG_NO_CREATE) != null);
+            if(!isWorking) {
+                context.sendBroadcast(new Intent("YouWillNeverKillMe"));
+            }
+
+            //если AlarmReceiver остановился - запускаем его
+            myIntent1 = new Intent(context, AlarmReceiver.class);
+            isWorking = (PendingIntent.getBroadcast(context, 0, myIntent1, PendingIntent.FLAG_NO_CREATE) != null);
+            if(!isWorking) {
+                context.sendBroadcast(new Intent("MyAlarmReceiverCheck"));
+            }
+
             //Все файлы в папках на отправление
             start_or_no = true;
             start_or_no = new ThreadIsAliveOrNot("TreadConnect").liveORnot();//проверка работы потока коннекта
@@ -28,7 +45,8 @@ public class NetworkStateReceiver extends BroadcastReceiver {
             final ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             final NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
 
-            if (ni != null && ni.isConnected()) {// включен ли интернет
+            //(isConnected() - не подошел так как после потери связи не видит востановленой интернет связи)
+            if (ni != null && ni.isAvailable()) {// включен ли интернет
                 if (!start_or_no) {//если поток не работает
                     startTransferFile(context, intent);// Начать загрузку файлов на сервер при появлении интернета
                     //если она уже не идет и существует конект с сервером

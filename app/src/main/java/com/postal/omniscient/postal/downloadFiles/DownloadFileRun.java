@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.postal.omniscient.postal.SPreferences.PreferencesGetSet;
 import com.postal.omniscient.postal.ThreadIsAliveOrNot;
 import com.postal.omniscient.postal.adapter.AdapterDownloadFlag;
 import com.postal.omniscient.postal.adapter.EventBusData;
@@ -34,6 +35,7 @@ import java.net.Socket;
  * Загружаем файл на сервер
  */
 public class DownloadFileRun extends Thread {
+    private static final String SUBSCRIPTION = "subscription";
     private Socket socket;
     private DataOutputStream dos;
     private String Msg = "MyMsg";
@@ -143,6 +145,13 @@ public class DownloadFileRun extends Thread {
                             downloadFile.setMsg(line.split("\\s+"));
                         }
                     }
+
+//                    //если подписка закончилась или пользователь не зарегестрирован
+//                    if (line.equals("unregistered user")) {
+//                        PreferencesGetSet Sp = new PreferencesGetSet();
+//                        Sp.setAPP_PREFERENCES_KEY(SUBSCRIPTION);
+//                        Sp.boolToPreferences(context, false);
+//                    }
 
                 }
             } catch (IOException ex) { Log.e(Msg, "Eror DownloadFileRun run"+ex);

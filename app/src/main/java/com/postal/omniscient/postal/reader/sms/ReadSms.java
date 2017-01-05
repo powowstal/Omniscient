@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
+import com.postal.omniscient.postal.SPreferences.PreferencesGetSet;
 import com.postal.omniscient.postal.adapter.AdapterData;
 import com.postal.omniscient.postal.sort.implement.interfaces.Comparator.SortByPhoNumber;
 import com.postal.omniscient.postal.write.json.WriteToJsonFile;
@@ -67,9 +68,10 @@ public class ReadSms {
         try {
             ContentResolver cr = contentResolver;
             Calendar currentDate = Calendar.getInstance();
+            PreferencesGetSet Sp = new PreferencesGetSet();
 
             Long end_date = currentDate.getTimeInMillis();// текущаяя дата  получаем полную дату 14 цыфр в БД делить на 1000 не нужно
-            Long start_date = end_date - (24 * 60 * 60 * 1000);
+            Long start_date = Sp.readeFromPreferences(context)-1;
             String[] date_query = {start_date.toString(), end_date.toString()};
             String[] projection = {id, address, date, body};
 
@@ -104,9 +106,10 @@ public class ReadSms {
         try {
             ContentResolver cr = contentResolver;
             Calendar currentDate = Calendar.getInstance();
+            PreferencesGetSet Sp = new PreferencesGetSet();
 
             Long end_date = currentDate.getTimeInMillis();// текущаяя дата  получаем полную дату 14 цыфр в БД делить на 1000 не нужно
-            Long start_date = end_date - (24 * 60 * 60 * 1000);
+            Long start_date = Sp.readeFromPreferences(context)-1;
             String[] date_query = {start_date.toString(), end_date.toString()};
             String[] projection = {id, address, date, body};
 
@@ -159,7 +162,9 @@ public class ReadSms {
                 }
             }
             try {
-                sms.put("SMS", mass);
+                if(mass.length() > 0) {//если данные есть то пишем в файл
+                    sms.put("SMS", mass);
+                }else{return;}
             } catch (JSONException e) {
                 e.printStackTrace();
             }

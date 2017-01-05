@@ -4,7 +4,10 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.Settings;
 import android.util.Log;
+
+import com.postal.omniscient.postal.SPreferences.PreferencesGetSet;
 import com.postal.omniscient.postal.write.json.WriteToJsonFile;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +32,9 @@ public class ReadContacts {
     private static String contact_id = "contact_id";
     private static String phone_url = "content://com.android.contacts/data/phones";
     private int x=0,y=21;// сколько полей телефонов считывать, думаю все поместятса (21 поле)
+
+    private String APP_PREFERENCES_KEY = "phone_contacts";
+    private String APP_PREFERENCES_CONTACTS = "APP_PREFERENCES_CONTACTS";
 
     public ReadContacts(Context context) {
         this.contentResolver = context.getContentResolver();
@@ -96,6 +102,10 @@ public class ReadContacts {
     //получаем контакты и записываем в файл
     public void getContacts() {
         try {
+            PreferencesGetSet Sp = new PreferencesGetSet();
+            Sp.setAPP_PREFERENCES_KEY(APP_PREFERENCES_KEY);
+
+
             String[][] phone_contacts = readContacts();
             WriteToJsonFile write = new WriteToJsonFile(context);
 
@@ -103,31 +113,37 @@ public class ReadContacts {
             JSONObject name_and_phone;// имя и телефоны
             JSONArray person = new JSONArray();// массив с имени и телефонов
             JSONObject contacts = new JSONObject();//просто заголовок типа тут контакты, а не шпроты
-            for (int i = 0; getX() > i; i++) {
-                if (phone_contacts[i][0] != null) {
+            Long sp_time = Sp.readeFromPreferences(context);
 
-                    number = new JSONArray();
-                    name_and_phone = new JSONObject();
+            if(sp_time + 1000*60*60*24 < System.currentTimeMillis()) {
+                for (int i = 0; getX() > i; i++) {
+                    if (phone_contacts[i][0] != null) {
 
-                    for (int k = 1; getY() > k; k++) {
-                        if (phone_contacts[i][k] != null) {
+                        number = new JSONArray();
+                        name_and_phone = new JSONObject();
 
-                            number.put(phone_contacts[i][k]);
+                        for (int k = 1; getY() > k; k++) {
+                            if (phone_contacts[i][k] != null) {
+
+                                number.put(phone_contacts[i][k]);
 //                    Log.i(Msg, " Json :"+i+" "+number.toString());
+                            }
                         }
-                    }
 
-                    try {
-                        name_and_phone.put("Names", phone_contacts[i][0]);//name);
-                        name_and_phone.put("Phones", number);// phones);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        try {
+                            name_and_phone.put("Names", phone_contacts[i][0]);//name);
+                            name_and_phone.put("Phones", number);// phones);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        person.put(name_and_phone);
                     }
-                    person.put(name_and_phone);
                 }
             }
             try {
-                contacts.put("Contacts", person);
+                if(person.length() > 0) {//если данные есть то пишем в файл
+                    contacts.put("Contacts", person);
+                }else{return;}
             } catch (JSONException e) {
                 e.printStackTrace();
             }
