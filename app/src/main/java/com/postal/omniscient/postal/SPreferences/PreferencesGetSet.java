@@ -63,4 +63,24 @@ public class PreferencesGetSet {
             Log.i("MyMsg","Error PreferencesGetSet readeBoolFromPreferences "+e);}
         return mCounter;
     }
+    //записать в настройки String
+    public void stringToPreferences(Context context, String data) {
+        try {
+            mSettings = context.getSharedPreferences(APP_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = mSettings.edit();
+            editor.putString(APP_PREFERENCES_KEY, data);
+            editor.apply();
+        } catch (Exception e) {
+            Log.i("MyMsg","Error PreferencesGetSet stringToPreferences "+e);}
+    }
+    //получить настройки String
+    public String readeStringFromPreferences(Context context) {
+        String mCounter = "";
+        try{
+            mSettings = context.getSharedPreferences(APP_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);//context
+            mCounter = mSettings.getString(APP_PREFERENCES_KEY, "");
+        } catch (Exception e) {
+            Log.i("MyMsg","Error PreferencesGetSet readeStringFromPreferences "+e);}
+        return mCounter;
+    }
 }
