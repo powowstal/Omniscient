@@ -48,7 +48,7 @@ public class AllImages {
             PreferencesGetSet Sp = new PreferencesGetSet();
             // текущаяя дата (/1000 потому что получаем полную дату 14 цыфр а в БД картинок 10 цыфр
             Long end_date =  currentDate.getTimeInMillis()/1000;
-            Long start_date = Sp.readeFromPreferences(context)-1;
+            Long start_date = (Sp.readeFromPreferences(context)-1)/1000;
 
             uri = Uri.parse(url);//android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 

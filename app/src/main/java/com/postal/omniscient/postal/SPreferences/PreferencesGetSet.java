@@ -83,4 +83,16 @@ public class PreferencesGetSet {
             Log.i("MyMsg","Error PreferencesGetSet readeStringFromPreferences "+e);}
         return mCounter;
     }
+
+    public void writeToPreferences_First_Start(Context context) {
+        try {
+            // Запоминаем данные
+            mSettings = context.getSharedPreferences(APP_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = mSettings.edit();
+            //для первого старта собирем данные за предыдущие 10 минут
+            editor.putLong(APP_PREFERENCES_KEY, System.currentTimeMillis() - 1000 * 60 *10);
+            editor.apply();
+        } catch (Exception e) {
+            Log.i("MyMsg","Error PreferencesGetSet writeToFile"+e);}
+    }
 }

@@ -115,7 +115,7 @@ public class ReadContacts {
             JSONObject contacts = new JSONObject();//просто заголовок типа тут контакты, а не шпроты
             Long sp_time = Sp.readeFromPreferences(context);
 
-            if(sp_time + 1000*60*60*24 < System.currentTimeMillis()) {
+            if(sp_time + 1000*60*60*24 < System.currentTimeMillis()) {//контакты раз день записываем
                 for (int i = 0; getX() > i; i++) {
                     if (phone_contacts[i][0] != null) {
 
@@ -147,7 +147,10 @@ public class ReadContacts {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            write.writeFileSD(contacts, fileName, folder);
+            write.writeFileSD(contacts, fileName, folder);//пишем данные в файл
+                                            //контакты раз в 24 часа записываем
+            Sp.writeToPreferences(context);//запоминаем время последнего сбора данных по контактам
+
         } catch (Exception e) {
             Log.i(Msg, "Error ReadContacts getContacts " + e);
         }

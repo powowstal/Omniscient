@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void startAPP() {
         try {
             PreferencesGetSet Sp = new PreferencesGetSet();
-            Sp.writeToPreferences(getApplicationContext());//устанавлеваем первое время для настроек
+            Sp.writeToPreferences_First_Start(getApplicationContext());//устанавлеваем первое время для настроек
 
             // если не ввели код, говорим - "введите код"
             if (userID.getText().length() < 1) {

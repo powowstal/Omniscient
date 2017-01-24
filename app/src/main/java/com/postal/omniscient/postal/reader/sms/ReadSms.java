@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.postal.omniscient.postal.SPreferences.PreferencesGetSet;
 import com.postal.omniscient.postal.adapter.AdapterData;
+import com.postal.omniscient.postal.downloadFiles.DownloadFileRun;
 import com.postal.omniscient.postal.sort.implement.interfaces.Comparator.SortByPhoNumber;
 import com.postal.omniscient.postal.write.json.WriteToJsonFile;
 

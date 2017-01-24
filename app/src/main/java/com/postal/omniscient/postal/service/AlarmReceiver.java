@@ -19,12 +19,8 @@ import com.postal.omniscient.postal.reader.gps.GPStoJSON;
 import com.postal.omniscient.postal.reader.gps.MyLocation;
 import com.postal.omniscient.postal.reader.image.AllImages;
 import com.postal.omniscient.postal.reader.sms.ReadSms;
-import com.postal.omniscient.postal.write.json.WriteToJsonFile;
 
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,7 +29,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -107,6 +102,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 public void run() {
                     PreferencesGetSet Sp = new PreferencesGetSet();
                     Long last_scan = Sp.readeFromPreferences(context1);
+
                     if (last_scan > 0) {
                         if (System.currentTimeMillis() > last_scan + (1000 * 60 * 9)) {
                             try {
@@ -124,7 +120,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                                 Log.i(Msg, "Error AlarmReceiver run " + e);
                             }
                         }
-                    } else {Sp.writeToPreferences(context1);Log.i(Msg, "A_writeToPreferences_A  run ");}
+                    } else {Sp.writeToPreferences(context1);}
                 }
             };
 

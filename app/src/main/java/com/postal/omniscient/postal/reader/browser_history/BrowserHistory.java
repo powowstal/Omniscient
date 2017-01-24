@@ -101,7 +101,9 @@ public class BrowserHistory {
                 mass.put(url_and_time);
             }
             try {
-                history.put("History", mass);
+                if(mass.length() > 0) {//если данные есть то пишем в файл
+                    history.put("History", mass);
+                }else{return;}
             } catch (JSONException e) {
                 e.printStackTrace();
             }
