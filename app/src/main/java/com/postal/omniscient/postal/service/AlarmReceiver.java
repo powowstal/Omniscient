@@ -156,7 +156,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                     File pathToFile = new File(context.getFilesDir(), "/Omniscient/Image");//DIR);
                     copyFile(patchFile, pathToFile.toString());
                     //переименовуем файл
-                    String date = new SimpleDateFormat("yyyy_MM_dd_HH-mm")
+                    String date = new SimpleDateFormat("yyyy_MM_dd_HH-mm-ss")
                             .format(new Date());
                     File file1 = new File(pathToFile.toString() + "/" + new File(patchFile).getName());
                     File file2 = new File(pathToFile.toString() + "/" + date + "_" + new File(patchFile).getName());
